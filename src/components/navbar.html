@@ -27,41 +27,88 @@
   <!-- Right side controls -->
   <div class="flex-none">
     <div class="flex items-center gap-2">
-    <!-- Light/Dark mode toggle -->
-    <label class="btn btn-ghost btn-circle swap swap-rotate" id="modeToggle">
-      <input type="checkbox" id="modeCheckbox" />
-      <!-- Sun icon (light mode) -->
-      <svg class="swap-on fill-current w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M5.64,17l-.71.71a1,1,0,0,0,0,1.41,1,1,0,0,0,1.41,0l.71-.71A1,1,0,0,0,5.64,17ZM5,12a1,1,0,0,0-1-1H3a1,1,0,0,0,0,2H4A1,1,0,0,0,5,12Zm7-7a1,1,0,0,0,1-1V3a1,1,0,0,0-2,0V4A1,1,0,0,0,12,5ZM5.64,7.05a1,1,0,0,0,.7.29,1,1,0,0,0,.71-.29,1,1,0,0,0,0-1.41l-.71-.71A1,1,0,0,0,4.93,6.34Zm12,.29a1,1,0,0,0,.7-.29l.71-.71a1,1,0,1,0-1.41-1.41L17,5.64a1,1,0,0,0,0,1.41A1,1,0,0,0,17.66,7.34ZM21,11H20a1,1,0,0,0,0,2h1a1,1,0,0,0,0-2Zm-9,8a1,1,0,0,0-1,1v1a1,1,0,0,0,2,0V20A1,1,0,0,0,12,19ZM18.36,17A1,1,0,0,0,17,18.36l.71.71a1,1,0,0,0,1.41,0,1,1,0,0,0,0-1.41ZM12,6.5A5.5,5.5,0,1,0,17.5,12,5.51,5.51,0,0,0,12,6.5Zm0,9A3.5,3.5,0,1,1,15.5,12,3.5,3.5,0,0,1,12,15.5Z"/></svg>
-      <!-- Moon icon (dark mode) -->
-      <svg class="swap-off fill-current w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21.64,13a1,1,0,0,0-1.05-.14,8.05,8.05,0,0,1-3.37.73A8.15,8.15,0,0,1,9.08,5.49a8.59,8.59,0,0,1,.25-2A1,1,0,0,0,8,2.36,10.14,10.14,0,1,0,22,14.05,1,1,0,0,0,21.64,13Zm-9.5,6.69A8.14,8.14,0,0,1,7.08,5.22v.27A10.15,10.15,0,0,0,17.22,15.63a9.79,9.79,0,0,0,2.1-.22A8.11,8.11,0,0,1,12.14,19.73Z"/></svg>
-    </label>
-
-    <!-- Theme dropdown -->
+    
+    <!-- Theme Panel with Mode Toggle and Theme Select -->
     <div class="dropdown dropdown-end">
-      <div tabindex="0" role="button" class="btn btn-ghost btn-circle">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+      <div tabindex="0" role="button" class="btn btn-ghost btn-circle" id="theme-button">
+        <!-- Sun icon (light mode) - shown by default -->
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 fill-current" viewBox="0 0 24 24" id="theme-icon-light">
+          <path d="M5.64,17l-.71.71a1,1,0,0,0,0,1.41,1,1,0,0,0,1.41,0l.71-.71A1,1,0,0,0,5.64,17ZM5,12a1,1,0,0,0-1-1H3a1,1,0,0,0,0,2H4A1,1,0,0,0,5,12Zm7-7a1,1,0,0,0,1-1V3a1,1,0,0,0-2,0V4A1,1,0,0,0,12,5ZM5.64,7.05a1,1,0,0,0,.7.29,1,1,0,0,0,.71-.29,1,1,0,0,0,0-1.41l-.71-.71A1,1,0,0,0,4.93,6.34Zm12,.29a1,1,0,0,0,.7-.29l.71-.71a1,1,0,1,0-1.41-1.41L17,5.64a1,1,0,0,0,0,1.41A1,1,0,0,0,17.66,7.34ZM21,11H20a1,1,0,0,0,0,2h1a1,1,0,0,0,0-2Zm-9,8a1,1,0,0,0-1,1v1a1,1,0,0,0,2,0V20A1,1,0,0,0,12,19ZM18.36,17A1,1,0,0,0,17,18.36l.71.71a1,1,0,0,0,1.41,0,1,1,0,0,0,0-1.41ZM12,6.5A5.5,5.5,0,1,0,17.5,12,5.51,5.51,0,0,0,12,6.5Zm0,9A3.5,3.5,0,1,1,15.5,12,3.5,3.5,0,0,1,12,15.5Z"/>
+        </svg>
+        <!-- Moon icon (dark mode) - hidden by default -->
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 fill-current hidden" viewBox="0 0 24 24" id="theme-icon-dark">
+          <path d="M21.64,13a1,1,0,0,0-1.05-.14,8.05,8.05,0,0,1-3.37.73A8.15,8.15,0,0,1,9.08,5.49a8.59,8.59,0,0,1,.25-2A1,1,0,0,0,8,2.36,10.14,10.14,0,1,0,22,14.05,1,1,0,0,0,21.64,13Zm-9.5,6.69A8.14,8.14,0,0,1,7.08,5.22v.27A10.15,10.15,0,0,0,17.22,15.63a9.79,9.79,0,0,0,2.1-.22A8.11,8.11,0,0,1,12.14,19.73Z"/>
         </svg>
       </div>
-      <ul tabindex="0" class="dropdown-content bg-base-100 rounded-box z-[1] w-56 p-2 shadow-2xl border border-base-300 mt-3 max-h-96 overflow-y-auto" id="themeMenu">
-        <li class="px-3 py-1 text-xs font-bold text-base-content/50 uppercase tracking-wider" id="themeMenuTitle">Themes</li>
-        <!-- Will be filled by build.mjs with theme options -->
-      </ul>
+      <div tabindex="0" class="dropdown-content bg-base-100 rounded-box z-[1] w-72 p-4 shadow-2xl border border-base-300 mt-3">
+        <!-- Mode Toggle - 3 Icons -->
+        <div class="flex items-center justify-between mb-4 pb-3 border-b border-base-300">
+          <span class="text-sm font-semibold">Theme Mode</span>
+          <div class="flex gap-1">
+            <!-- Evo Auto Mode Toggle -->
+            <button onclick="__toggleEvoMode()" class="btn btn-sm btn-square btn-ghost" id="mode-evo" title="Evo Auto Mode (ON/OFF)">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 94 90" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5">
+                <path d="m37.361 37.392 6.783 16.393 6.792-16.393M32.017 45.49h-7.908M33.161 37.392h-9.3v16.393h9.293M61.732 37.392c4.239 0 7.675 3.51 7.675 8.097 0 4.588-3.437 8.296-7.676 8.296-4.239 0-7.675-3.708-7.675-8.296 0-4.587 3.435-8.097 7.674-8.097h.002z"/>
+                <path d="M45.829 8.807c19.573.002 35.44 15.174 35.439 35.01-.001 19.834-15.87 35.868-35.443 35.868-19.574 0-35.443-16.034-35.444-35.869 0-19.835 15.865-35.007 35.439-35.009h.009z"/>
+              </svg>
+            </button>
+            <!-- Sun icon (light mode) -->
+            <button onclick="__setModeAndDefaultTheme('light')" class="btn btn-sm btn-square btn-ghost" id="mode-light" title="Light Mode">
+              <svg class="fill-current w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M5.64,17l-.71.71a1,1,0,0,0,0,1.41,1,1,0,0,0,1.41,0l.71-.71A1,1,0,0,0,5.64,17ZM5,12a1,1,0,0,0-1-1H3a1,1,0,0,0,0,2H4A1,1,0,0,0,5,12Zm7-7a1,1,0,0,0,1-1V3a1,1,0,0,0-2,0V4A1,1,0,0,0,12,5ZM5.64,7.05a1,1,0,0,0,.7.29,1,1,0,0,0,.71-.29,1,1,0,0,0,0-1.41l-.71-.71A1,1,0,0,0,4.93,6.34Zm12,.29a1,1,0,0,0,.7-.29l.71-.71a1,1,0,1,0-1.41-1.41L17,5.64a1,1,0,0,0,0,1.41A1,1,0,0,0,17.66,7.34ZM21,11H20a1,1,0,0,0,0,2h1a1,1,0,0,0,0-2Zm-9,8a1,1,0,0,0-1,1v1a1,1,0,0,0,2,0V20A1,1,0,0,0,12,19ZM18.36,17A1,1,0,0,0,17,18.36l.71.71a1,1,0,0,0,1.41,0,1,1,0,0,0,0-1.41ZM12,6.5A5.5,5.5,0,1,0,17.5,12,5.51,5.51,0,0,0,12,6.5Zm0,9A3.5,3.5,0,1,1,15.5,12,3.5,3.5,0,0,1,12,15.5Z"/></svg>
+            </button>
+            <!-- Moon icon (dark mode) -->
+            <button onclick="__setModeAndDefaultTheme('dark')" class="btn btn-sm btn-square btn-ghost" id="mode-dark" title="Dark Mode">
+              <svg class="fill-current w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21.64,13a1,1,0,0,0-1.05-.14,8.05,8.05,0,0,1-3.37.73A8.15,8.15,0,0,1,9.08,5.49a8.59,8.59,0,0,1,.25-2A1,1,0,0,0,8,2.36,10.14,10.14,0,1,0,22,14.05,1,1,0,0,0,21.64,13Zm-9.5,6.69A8.14,8.14,0,0,1,7.08,5.22v.27A10.15,10.15,0,0,0,17.22,15.63a9.79,9.79,0,0,0,2.1-.22A8.11,8.11,0,0,1,12.14,19.73Z"/></svg>
+            </button>
+          </div>
+        </div>
+        
+        <!-- Theme List -->
+        <div class="text-xs font-bold text-base-content/50 uppercase tracking-wider mb-2" id="themeMenuTitle">Light Themes</div>
+        <ul class="max-h-80 overflow-y-auto space-y-1" id="themeMenu">
+          <li><!-- Will be filled by build.mjs with theme options --></li>
+        </ul>
+      </div>
     </div>
 
-    <!-- Color Palette dropdown -->
+    <!-- Background dropdown -->
     <div class="dropdown dropdown-end">
       <div tabindex="0" role="button" class="btn btn-ghost btn-circle">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
         </svg>
       </div>
-      <div tabindex="0" class="dropdown-content bg-base-100 rounded-box z-[1] w-80 p-3 shadow-2xl border border-base-300 mt-3" id="colorPalettePanel">
-        <div class="text-xs font-bold text-base-content/50 uppercase tracking-wider mb-3">Color Palette</div>
-        <div class="space-y-2" id="colorPaletteContent">
-          <!-- Will be filled with color pickers -->
-        </div>
-      </div>
+      <ul tabindex="0" class="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow-lg" id="backgroundMenu">
+        <li class="px-3 py-1 text-xs font-bold text-base-content/50 uppercase tracking-wider">Backgrounds</li>
+        <li><button onclick="__setBackground('none')" class="flex items-center gap-3" data-background="none">
+          <span class="text-2xl">⬜</span>
+          <span class="flex-1">None</span>
+          <svg class="h-4 w-4 flex-shrink-0 opacity-0 bg-checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+          </svg>
+        </button></li>
+        <li><button onclick="__setBackground('gradient-spheres')" class="flex items-center gap-3" data-background="gradient-spheres">
+          <span class="text-2xl">🌈</span>
+          <span class="flex-1">Gradient Spheres</span>
+          <svg class="h-4 w-4 flex-shrink-0 opacity-0 bg-checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+          </svg>
+        </button></li>
+        <li><button onclick="__setBackground('colorful-dots')" class="flex items-center gap-3" data-background="colorful-dots">
+          <span class="text-2xl">✨</span>
+          <span class="flex-1">Colorful Dots</span>
+          <svg class="h-4 w-4 flex-shrink-0 opacity-0 bg-checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+          </svg>
+        </button></li>
+        <li><button onclick="__setBackground('cosmic-dream')" class="flex items-center gap-3" data-background="cosmic-dream">
+          <span class="text-2xl">🌌</span>
+          <span class="flex-1">Cosmic Dream</span>
+          <svg class="h-4 w-4 flex-shrink-0 opacity-0 bg-checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+          </svg>
+        </button></li>
+      </ul>
     </div>
 
     <!-- Language dropdown -->
@@ -147,15 +194,89 @@
     }
     
     function updateModeToggle() {
-      const checkbox = document.getElementById('modeCheckbox');
-      if (checkbox) {
-        checkbox.checked = currentMode === 'dark';
+      // Update active mode icon
+      const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+      
+      // Reset all mode buttons
+      document.getElementById('mode-evo')?.classList.remove('btn-primary');
+      document.getElementById('mode-light')?.classList.remove('btn-primary');
+      document.getElementById('mode-dark')?.classList.remove('btn-primary');
+      
+      // Update main theme button icon
+      const lightIcon = document.getElementById('theme-icon-light');
+      const darkIcon = document.getElementById('theme-icon-dark');
+      
+      // Highlight active mode
+      if (currentTheme === 'evo') {
+        document.getElementById('mode-evo')?.classList.add('btn-primary');
+        // Show sun icon for evo (light theme)
+        if (lightIcon) lightIcon.classList.remove('hidden');
+        if (darkIcon) darkIcon.classList.add('hidden');
+      } else {
+        const themeMode = document.querySelector(`[data-theme="${currentTheme}"]`)?.dataset.mode;
+        if (themeMode === 'dark') {
+          document.getElementById('mode-dark')?.classList.add('btn-primary');
+          // Show moon icon for dark themes
+          if (lightIcon) lightIcon.classList.add('hidden');
+          if (darkIcon) darkIcon.classList.remove('hidden');
+        } else {
+          document.getElementById('mode-light')?.classList.add('btn-primary');
+          // Show sun icon for light themes
+          if (lightIcon) lightIcon.classList.remove('hidden');
+          if (darkIcon) darkIcon.classList.add('hidden');
+        }
       }
+    }
+    
+    window.__toggleEvoMode = function() {
+      const isEvoActive = localStorage.getItem('evo-auto-active') === 'true';
+      
+      if (isEvoActive) {
+        // Turn OFF
+        localStorage.setItem('evo-auto-active', 'false');
+        if (window.__stopEvoAuto) {
+          window.__stopEvoAuto();
+        }
+        document.getElementById('mode-evo')?.classList.remove('btn-primary');
+        console.log('🎨 Evo Auto Mode: OFF');
+      } else {
+        // Turn ON
+        localStorage.setItem('evo-auto-active', 'true');
+        if (window.__startEvoAuto) {
+          window.__startEvoAuto();
+        }
+        document.getElementById('mode-evo')?.classList.add('btn-primary');
+        document.getElementById('mode-light')?.classList.remove('btn-primary');
+        document.getElementById('mode-dark')?.classList.remove('btn-primary');
+        console.log('🎨 Evo Auto Mode: ON');
+      }
+      
+      updateActiveIndicators();
+    };
+    
+    window.__setModeAndDefaultTheme = function(mode) {
+      // Turn off Evo Auto mode when manually selecting mode
+      localStorage.setItem('evo-auto-active', 'false');
+      if (window.__stopEvoAuto) {
+        window.__stopEvoAuto();
+      }
+      
+      currentMode = mode;
+      localStorage.setItem('evo-mode', mode);
+      
+      // Switch to last saved theme of the mode
+      const lastTheme = window.__getLastThemeForMode ? window.__getLastThemeForMode(mode) : (mode === 'light' ? 'light' : 'dark');
+      __setTheme(lastTheme);
+      
+      // Update UI
+      filterThemesByMode(mode);
+      updateModeToggle();
+      updateActiveIndicators();
     }
     
     function updateActiveIndicators() {
       const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
-      const currentPalette = document.documentElement.getAttribute('data-palette') || 'default';
+      const currentBackground = localStorage.getItem('evo-background') || 'none';
       
       // Update theme checkmarks
       document.querySelectorAll('[data-theme]').forEach(btn => {
@@ -171,11 +292,11 @@
         }
       });
       
-      // Update palette checkmarks
-      document.querySelectorAll('[data-palette]').forEach(btn => {
-        const checkmark = btn.querySelector('.palette-checkmark');
+      // Update background checkmarks
+      document.querySelectorAll('[data-background]').forEach(btn => {
+        const checkmark = btn.querySelector('.bg-checkmark');
         if (checkmark) {
-          if (btn.dataset.palette === currentPalette) {
+          if (btn.dataset.background === currentBackground) {
             checkmark.style.opacity = '1';
             btn.classList.add('bg-base-200');
           } else {
@@ -186,85 +307,53 @@
       });
     }
     
-    // Mode toggle handler
-    const modeCheckbox = document.getElementById('modeCheckbox');
-    if (modeCheckbox) {
-      modeCheckbox.addEventListener('change', function() {
-        currentMode = this.checked ? 'dark' : 'light';
-        localStorage.setItem('evo-mode', currentMode);
-        
-        // Switch to default theme of the mode
-        const defaultTheme = currentMode === 'light' ? 'light' : 'dark';
-        __setTheme(defaultTheme);
-        
-        // Update UI
-        filterThemesByMode(currentMode);
-        updateActiveIndicators();
-      });
+    // Initialize on DOM ready
+    document.addEventListener('DOMContentLoaded', function() {
+      updateModeToggle();
+      filterThemesByMode(currentMode);
+      updateActiveIndicators();
+    });
+    
+    // Also run immediately in case DOM is already loaded
+    if (document.readyState === 'loading') {
+      // DOM is still loading
+    } else {
+      // DOM is already loaded
+      updateModeToggle();
+      filterThemesByMode(currentMode);
+      updateActiveIndicators();
     }
     
-    // Color palette panel
-    function initColorPalette() {
-      const colorPaletteContent = document.getElementById('colorPaletteContent');
-      if (!colorPaletteContent) return;
-      
-      const colorVars = [
-        { name: 'primary', label: 'Primary', default: '#570df8' },
-        { name: 'secondary', label: 'Secondary', default: '#f000b8' },
-        { name: 'accent', label: 'Accent', default: '#37cdbe' },
-        { name: 'neutral', label: 'Neutral', default: '#3d4451' },
-        { name: 'info', label: 'Info', default: '#3abff8' },
-        { name: 'success', label: 'Success', default: '#36d399' },
-        { name: 'warning', label: 'Warning', default: '#fbbd23' },
-        { name: 'error', label: 'Error', default: '#f87272' }
-      ];
-      
-      colorVars.forEach(colorVar => {
-        const colorValue = getComputedStyle(document.documentElement).getPropertyValue(`--color-${colorVar.name}`) || colorVar.default;
-        
-        const item = document.createElement('div');
-        item.className = 'flex items-center gap-2';
-        item.innerHTML = `
-          <div class="w-12 h-12 rounded-lg bg-${colorVar.name} flex items-center justify-center relative group">
-            <input type="color" value="${colorVar.default}" 
-              class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-              id="color-${colorVar.name}"
-              data-color="${colorVar.name}" />
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-${colorVar.name}-content opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-            </svg>
-          </div>
-          <span class="text-sm font-medium flex-1">${colorVar.label}</span>
-        `;
-        
-        colorPaletteContent.appendChild(item);
-        
-        // Add event listener
-        const colorInput = item.querySelector(`#color-${colorVar.name}`);
-        colorInput.addEventListener('change', function() {
-          document.documentElement.style.setProperty(`--color-${colorVar.name}`, this.value);
-          localStorage.setItem(`evo-color-${colorVar.name}`, this.value);
-        });
-      });
-    }
-    
-    // Initialize
-    updateModeToggle();
-    filterThemesByMode(currentMode);
-    updateActiveIndicators();
-    initColorPalette();
-    
-    // Update when theme/palette changes
+    // Update when theme/background changes
     const originalSetTheme = window.__setTheme;
-    const originalSetPalette = window.__setPalette;
+    const originalSetBackground = window.__setBackground;
     
     window.__setTheme = function(theme) {
       originalSetTheme(theme);
-      setTimeout(updateActiveIndicators, 100);
+      
+      // Update currentMode based on selected theme
+      if (theme === 'evo') {
+        currentMode = 'light'; // Evo is light by default
+      } else {
+        const themeBtn = document.querySelector(`[data-theme="${theme}"]`);
+        if (themeBtn) {
+          const mode = themeBtn.dataset.mode;
+          if (mode) {
+            currentMode = mode;
+            localStorage.setItem('evo-mode', mode);
+            filterThemesByMode(mode);
+          }
+        }
+      }
+      
+      setTimeout(() => {
+        updateActiveIndicators();
+        updateModeToggle();
+      }, 100);
     };
     
-    window.__setPalette = function(palette) {
-      originalSetPalette(palette);
+    window.__setBackground = function(bg) {
+      originalSetBackground(bg);
       setTimeout(updateActiveIndicators, 100);
     };
   })();

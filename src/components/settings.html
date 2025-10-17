@@ -32,16 +32,16 @@
           </select>
         </div>
 
-        <!-- Palette Select -->
+        <!-- Background Select -->
         <div class="form-control mb-3">
           <label class="label py-1">
-            <span class="label-text text-sm font-semibold">Color Palette</span>
+            <span class="label-text text-sm font-semibold">Animated Background</span>
           </label>
-          <select class="select select-sm select-bordered w-full" id="settings_palette" onchange="__setPalette(this.value)">
+          <select class="select select-sm select-bordered w-full" id="settings_background" onchange="__setBackground(this.value)">
             <!-- Will be filled by build.mjs -->
           </select>
           <label class="label py-0">
-            <span class="label-text-alt text-xs">Pre-defined color combinations</span>
+            <span class="label-text-alt text-xs">Dynamic background animations</span>
           </label>
         </div>
       </div>
@@ -288,15 +288,15 @@
   document.getElementById('settings_modal')?.addEventListener('show', function() {
     const themeSel = document.getElementById('settings_theme');
     const langSel = document.getElementById('settings_lang');
-    const paletteSel = document.getElementById('settings_palette');
+    const backgroundSel = document.getElementById('settings_background');
     
     const curTheme = document.documentElement.getAttribute('data-theme') || 'light';
     const curLang = document.documentElement.getAttribute('lang') || 'uk';
-    const curPalette = document.documentElement.getAttribute('data-palette') || 'default';
+    const curBackground = localStorage.getItem('evo-background') || 'none';
     
     if (themeSel) themeSel.value = curTheme;
     if (langSel) langSel.value = curLang;
-    if (paletteSel) paletteSel.value = curPalette;
+    if (backgroundSel) backgroundSel.value = curBackground;
 
     // Load saved theme variables
     const savedVars = localStorage.getItem('evo-theme-variables');

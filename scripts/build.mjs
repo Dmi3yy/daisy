@@ -24,9 +24,8 @@ function arg(name, def) {
 // Get CLI/ENV arguments with defaults
 const theme = arg("theme", process.env.THEME || "light");
 const lang = arg("lang", process.env.LANG || "uk");
-const palette = arg("palette", process.env.PALETTE || "default");
 
-console.log(`[build] Starting build with theme="${theme}" lang="${lang}" palette="${palette}"`);
+console.log(`[build] Starting build with theme="${theme}" lang="${lang}"`);
 
 // All built-in themes from daisyUI v5 with color indicators and mode
 const builtInThemes = [
@@ -70,13 +69,12 @@ const builtInThemes = [
   { id: "evo", name: "evo", mode: "light", colors: ["#667eea", "#764ba2", "#f093fb", "#4facfe"] }
 ];
 
-// Color palette presets (for semantic color variations)
-const palettes = [
-  { id: "default", name: "Default", icon: "⚪" },
-  { id: "teal", name: "Teal Ocean", icon: "🌊" },
-  { id: "violet", name: "Violet Dream", icon: "💜" },
-  { id: "amber", name: "Amber Sunset", icon: "🌅" },
-  { id: "rose", name: "Rose Garden", icon: "🌹" }
+// Animated backgrounds
+const backgrounds = [
+  { id: "none", name: "None", icon: "⬜" },
+  { id: "gradient-spheres", name: "Gradient Spheres", icon: "🌈" },
+  { id: "colorful-dots", name: "Colorful Dots", icon: "✨" },
+  { id: "cosmic-dream", name: "Cosmic Dream", icon: "🌌" }
 ];
 
 // Read template files
@@ -132,33 +130,15 @@ base = base.replace(
   (_, open, _inner, close) => open + "\n        " + themeOptions + "\n      " + close
 );
 
-// Inject palette options into palette menu (navbar)
-console.log("[build] Injecting palette options...");
-const paletteMenuItems = palettes
-  .map(p => `<li>
-          <button onclick="__setPalette('${p.id}')" class="flex w-full items-center gap-3 px-4 py-2 hover:bg-base-200 rounded-lg transition-colors" data-palette="${p.id}">
-            <span class="text-2xl">${p.icon}</span>
-            <span class="flex-1 text-left">${p.name}</span>
-            <svg class="h-4 w-4 flex-shrink-0 opacity-0 palette-checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-            </svg>
-          </button>
-        </li>`)
+// Inject background options into settings select
+console.log("[build] Injecting background options...");
+const backgroundOptions = backgrounds
+  .map(bg => `<option value="${bg.id}">${bg.icon} ${bg.name}</option>`)
   .join("\n        ");
 
 base = base.replace(
-  /(<ul[^>]*id="paletteMenu"[^>]*>[\s\S]*?<li[^>]*>[\s\S]*?<\/li>)([\s\S]*?)(<\/ul>)/,
-  (_, open, _inner, close) => open + "\n        " + paletteMenuItems + "\n      " + close
-);
-
-// Inject palette options into settings select
-const paletteOptions = palettes
-  .map(p => `<option value="${p.id}">${p.name}</option>`)
-  .join("\n        ");
-
-base = base.replace(
-  /(<select[^>]*id="settings_palette"[^>]*>)([\s\S]*?)(<\/select>)/g,
-  (_, open, _inner, close) => open + "\n        " + paletteOptions + "\n      " + close
+  /(<select[^>]*id="settings_background"[^>]*>)([\s\S]*?)(<\/select>)/g,
+  (_, open, _inner, close) => open + "\n        " + backgroundOptions + "\n      " + close
 );
 
 // Ensure dist directory exists
@@ -174,8 +154,7 @@ const darkThemes = builtInThemes.filter(t => t.mode === 'dark').length;
 console.log(`[build] ✓ Successfully built index.html`);
 console.log(`[build] ✓ Theme: ${theme}`);
 console.log(`[build] ✓ Language: ${lang}`);
-console.log(`[build] ✓ Palette: ${palette}`);
 console.log(`[build] ✓ Total themes: ${builtInThemes.length} (${lightThemes} light + ${darkThemes} dark)`);
-console.log(`[build] ✓ Total palettes available: ${palettes.length}`);
+console.log(`[build] ✓ Total backgrounds available: ${backgrounds.length}`);
 console.log(`[build] ✓ Output: ${outputPath}`);
 

@@ -10,20 +10,42 @@
     (function () {
       // Storage keys
       const themeKey = "evo-theme";
+      const lightThemeKey = "evo-light-theme";
+      const darkThemeKey = "evo-dark-theme";
       const langKey = "evo-lang";
       const paletteKey = "evo-palette";
       const themeVarsKey = "evo-theme-variables";
+      const backgroundKey = "evo-background";
+      const backgroundColorKey = "evo-background-color";
 
       // Load saved preferences
       const storedTheme = localStorage.getItem(themeKey);
       const storedLang = localStorage.getItem(langKey);
-      const storedPalette = localStorage.getItem(paletteKey);
       const storedVars = localStorage.getItem(themeVarsKey);
 
       // Apply saved theme and language
       if (storedTheme) document.documentElement.setAttribute("data-theme", storedTheme);
       if (storedLang) document.documentElement.setAttribute("lang", storedLang);
-      if (storedPalette) document.documentElement.setAttribute("data-palette", storedPalette);
+      
+      // Apply saved background after DOM is loaded
+      const storedBackground = localStorage.getItem(backgroundKey);
+      if (storedBackground) {
+        window.addEventListener('DOMContentLoaded', function() {
+          window.__applyBackground(storedBackground);
+        });
+      }
+      
+      // Start Evo Auto Mode if it was active
+      window.addEventListener('DOMContentLoaded', function() {
+        const evoAutoActive = localStorage.getItem('evo-auto-active') === 'true';
+        if (evoAutoActive && window.__startEvoAuto) {
+          window.__startEvoAuto();
+          // Update button state
+          setTimeout(() => {
+            document.getElementById('mode-evo')?.classList.add('btn-primary');
+          }, 100);
+        }
+      });
 
       // Apply custom theme variables
       if (storedVars) {
@@ -43,10 +65,22 @@
         }
       }
 
+      // Theme modes mapping
+      const lightThemes = ['light', 'cupcake', 'bumblebee', 'emerald', 'corporate', 'retro', 'valentine', 'garden', 'aqua', 'pastel', 'fantasy', 'wireframe', 'cmyk', 'autumn', 'acid', 'lemonade', 'winter', 'nord', 'sunset', 'lofi', 'evo'];
+      const darkThemes = ['dark', 'synthwave', 'cyberpunk', 'halloween', 'forest', 'black', 'luxury', 'dracula', 'business', 'night', 'coffee', 'dim'];
+
       // Global functions for theme/lang switching
       window.__setTheme = function (t) {
         document.documentElement.setAttribute("data-theme", t);
         localStorage.setItem(themeKey, t);
+        
+        // Save theme based on mode
+        if (lightThemes.includes(t)) {
+          localStorage.setItem(lightThemeKey, t);
+        } else if (darkThemes.includes(t)) {
+          localStorage.setItem(darkThemeKey, t);
+        }
+        
         // Reapply custom variables for new theme
         const vars = localStorage.getItem(themeVarsKey);
         if (vars) {
@@ -62,16 +96,423 @@
           }
         }
       };
+      
+      window.__getLastThemeForMode = function(mode) {
+        if (mode === 'light') {
+          return localStorage.getItem(lightThemeKey) || 'light';
+        } else if (mode === 'dark') {
+          return localStorage.getItem(darkThemeKey) || 'dark';
+        }
+        return 'light';
+      };
 
       window.__setLang = function (l) {
         document.documentElement.setAttribute("lang", l);
         localStorage.setItem(langKey, l);
       };
 
-      window.__setPalette = function (p) {
-        document.documentElement.setAttribute("data-palette", p);
-        localStorage.setItem(paletteKey, p);
-        // Apply palette colors (will be handled by the palette system)
+      window.__setBackground = function (bg) {
+        localStorage.setItem(backgroundKey, bg);
+        __applyBackground(bg);
+      };
+
+      window.__applyBackground = function(bgId) {
+        const container = document.getElementById('app-background');
+        if (!container) return;
+
+        // Stop cosmic dream if it was active
+        if (window.__stopCosmicDream) {
+          window.__stopCosmicDream();
+        }
+
+        // Clear existing background
+        container.innerHTML = '';
+        container.className = '';
+
+        if (bgId === 'none' || !bgId) {
+          // Disable glass surfaces when no dynamic background
+          document.body.classList.remove('has-dynamic-bg');
+          return;
+        }
+
+        // Mark page as having a dynamic background (enables glass UI surfaces)
+        document.body.classList.add('has-dynamic-bg');
+
+        if (bgId === 'solid-color') {
+          // Solid color background (no dynamic effects)
+          const color = localStorage.getItem(backgroundColorKey) || '#111827';
+          container.className = 'bg-solid-color';
+          container.style.background = color;
+          // Solid color is not considered dynamic
+          document.body.classList.remove('has-dynamic-bg');
+        } else if (bgId === 'gradient-spheres') {
+          container.className = 'bg-gradient-spheres';
+          container.innerHTML = `
+            <div class="gradient-sphere sphere-1"></div>
+            <div class="gradient-sphere sphere-2"></div>
+            <div class="gradient-sphere sphere-3"></div>
+            <div class="glow"></div>
+            <div class="grid-overlay"></div>
+            <div class="noise-overlay"></div>
+            <div class="particles-container" id="particles-container"></div>
+          `;
+          __initGradientSpheresParticles();
+        } else if (bgId === 'colorful-dots') {
+          container.className = 'bg-colorful-dots';
+          container.innerHTML = `
+            <div class="dots-layer dots-layer-1">.</div>
+            <div class="dots-layer dots-layer-2">.</div>
+            <div class="dots-layer dots-layer-3">.</div>
+            <div class="dots-layer dots-layer-4">.</div>
+          `;
+        } else if (bgId === 'cosmic-dream') {
+          container.className = 'bg-cosmic-dream';
+          container.innerHTML = `
+            <div class="cosmic-spheres">
+              <div class="cosmic-sphere cosmic-sphere-1"></div>
+              <div class="cosmic-sphere cosmic-sphere-2"></div>
+              <div class="cosmic-sphere cosmic-sphere-3"></div>
+            </div>
+            <div class="cosmic-dots cosmic-dots-1">.</div>
+            <div class="cosmic-dots cosmic-dots-2">.</div>
+          `;
+          __initCosmicDream();
+        }
+        
+        // Add glass effect to hero when background is active
+        const hero = document.querySelector('.hero');
+        if (hero && bgId && bgId !== 'none') {
+          hero.classList.add('hero-glass');
+        } else if (hero) {
+          hero.classList.remove('hero-glass');
+        }
+      };
+
+      // Set solid background color and apply if active
+      window.__setBackgroundColor = function(hex) {
+        try {
+          localStorage.setItem(backgroundColorKey, hex);
+          const active = localStorage.getItem(backgroundKey);
+          if (active === 'solid-color') {
+            __applyBackground('solid-color');
+          }
+        } catch (e) {
+          console.error('Failed to save background color', e);
+        }
+      }
+
+      window.__initCosmicDream = function() {
+        function getRandomColor() {
+          return Math.floor(Math.random() * 360);
+        }
+        
+        function updateCosmicColors() {
+          const root = document.documentElement;
+          const spheres = document.querySelectorAll('.cosmic-sphere');
+          
+          // Update sphere colors
+          if (spheres[0]) {
+            const c1 = getRandomColor();
+            spheres[0].style.background = `radial-gradient(circle, hsla(${c1}, 80%, 60%, 0.8), hsla(${c1 + 30}, 80%, 50%, 0.4))`;
+          }
+          if (spheres[1]) {
+            const c2 = getRandomColor();
+            spheres[1].style.background = `radial-gradient(circle, hsla(${c2}, 80%, 60%, 0.8), hsla(${c2 + 30}, 80%, 50%, 0.4))`;
+          }
+          if (spheres[2]) {
+            const c3 = getRandomColor();
+            spheres[2].style.background = `radial-gradient(circle, hsla(${c3}, 80%, 60%, 0.8), hsla(${c3 + 30}, 80%, 50%, 0.4))`;
+          }
+          
+          // Update dots colors via CSS variables
+          for (let i = 1; i <= 10; i++) {
+            root.style.setProperty(`--cosmic-hue-${i}`, getRandomColor());
+          }
+          
+          // Change background color
+          const bgContainer = document.querySelector('.bg-cosmic-dream');
+          if (bgContainer) {
+            const bgHue = getRandomColor();
+            bgContainer.style.background = `linear-gradient(135deg, 
+              hsla(${bgHue}, 60%, 12%, 1) 0%, 
+              hsla(${bgHue + 60}, 50%, 15%, 1) 50%, 
+              hsla(${bgHue + 120}, 60%, 10%, 1) 100%)`;
+          }
+        }
+        
+        // Initial colors
+        updateCosmicColors();
+        
+        // Change colors every 8 seconds
+        const colorInterval = setInterval(updateCosmicColors, 8000);
+        
+        // Store interval ID to stop it later
+        window.__cosmicColorInterval = colorInterval;
+      };
+      
+      window.__stopCosmicDream = function() {
+        if (window.__cosmicColorInterval) {
+          clearInterval(window.__cosmicColorInterval);
+          window.__cosmicColorInterval = null;
+        }
+        if (window.__evoAutoInterval) {
+          clearInterval(window.__evoAutoInterval);
+          window.__evoAutoInterval = null;
+        }
+        document.documentElement.style.transition = '';
+      };
+
+      // Evo Auto Mode - CONTINUOUS SMOOTH THEME TRANSITION
+      (function() {
+        let themeCache = null;
+        let animationFrameId = null;
+        
+        const lightThemes = ['light', 'cupcake', 'bumblebee', 'emerald', 'corporate', 'retro', 'valentine', 'garden', 'aqua', 'pastel', 'fantasy', 'wireframe', 'cmyk', 'autumn', 'acid', 'lemonade', 'winter', 'nord', 'sunset', 'lofi'];
+        const darkThemes = ['dark', 'synthwave', 'cyberpunk', 'halloween', 'forest', 'black', 'luxury', 'dracula', 'business', 'night', 'coffee', 'dim'];
+        const allThemes = [...lightThemes, ...darkThemes, 'evo'];
+        
+        const themeProps = [
+            // Colors
+            "--p", "--s", "--a", "--n", "--b1", "--b2", "--b3", "--in", "--su", "--wa", "--er",
+            "--pc", "--sc", "--ac", "--nc", "--bc", "--inc", "--suc", "--wac", "--erc",
+            // Radii
+            "--rounded-box", "--rounded-btn", "--rounded-badge", "--tab-radius",
+            // Other numeric properties
+            "--animation-btn", "--animation-input",
+            "--btn-focus-scale",
+            "--border-btn", "--tab-border"
+        ];
+
+        function parseLCH(lchString) {
+            if (!lchString) return null;
+            const parts = lchString.trim().replace('%','').split(/\s+/);
+            if (parts.length !== 3) return null;
+            return { l: parseFloat(parts[0]), c: parseFloat(parts[1]), h: parseFloat(parts[2]) };
+        }
+
+        function parseUnitValue(unitString) {
+            if (!unitString) return null;
+            const match = unitString.trim().match(/([\d.]+)(.*)/);
+            if (!match || match.length < 3) return null;
+            return { value: parseFloat(match[1]), unit: match[2] || '' };
+        }
+        
+        function interpolateHue(h1, h2, progress) {
+            let diff = h2 - h1;
+            if (diff > 180) diff -= 360;
+            else if (diff < -180) diff += 360;
+            return (h1 + diff * progress + 360) % 360;
+        }
+
+        function generateThemeCache() {
+            console.log("🎨 Generating daisyUI theme property cache...");
+            const cache = {};
+            const el = document.createElement('div');
+            el.style.display = 'none';
+            document.body.appendChild(el);
+
+            allThemes.forEach(theme => {
+                el.setAttribute('data-theme', theme);
+                const computedStyles = getComputedStyle(el);
+                const values = {};
+                themeProps.forEach(prop => {
+                    values[prop] = computedStyles.getPropertyValue(prop).trim();
+                });
+                cache[theme] = values;
+            });
+
+            document.body.removeChild(el);
+            themeCache = cache;
+            try {
+                localStorage.setItem('daisy-theme-cache', JSON.stringify(cache));
+                console.log("🎨 Theme property cache generated and stored.");
+            } catch(e) {
+                console.error("Could not store theme property cache in localStorage", e);
+            }
+        }
+        
+        function init() {
+            try {
+                const cached = localStorage.getItem('daisy-theme-cache');
+                if (cached) {
+                    themeCache = JSON.parse(cached);
+                } else {
+                    window.addEventListener('load', generateThemeCache);
+                }
+            } catch (e) {
+                console.error("Failed to load theme property cache, will regenerate.", e);
+                window.addEventListener('load', generateThemeCache);
+            }
+        }
+        
+        window.__startEvoAuto = function() {
+            if (animationFrameId || !themeCache) return; // Already running or cache not ready
+
+            let fromTheme, toTheme;
+            let startTime = null;
+            const duration = 12000; // 12 seconds for each transition, making it slow and beautiful
+
+            function getCurrentModeThemes() {
+                const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+                return darkThemes.includes(currentTheme) ? darkThemes : lightThemes;
+            }
+
+            function pickNextTheme(current) {
+                const themeList = getCurrentModeThemes();
+                let next;
+                do {
+                    next = themeList[Math.floor(Math.random() * themeList.length)];
+                } while (next === current);
+                return next;
+            }
+            
+            fromTheme = document.documentElement.getAttribute('data-theme') || 'light';
+            toTheme = pickNextTheme(fromTheme);
+            console.log(`🎨 Evo Auto: Starting perpetual transition from ${fromTheme}...`);
+
+            function animate(currentTime) {
+                if (!startTime) startTime = currentTime;
+                const progress = Math.min((currentTime - startTime) / duration, 1);
+                
+                const fromProps = themeCache[fromTheme];
+                const toProps = themeCache[toTheme];
+
+                if (fromProps && toProps) {
+                     themeProps.forEach(prop => {
+                        const from = fromProps[prop];
+                        const to = toProps[prop];
+                        
+                        if (from && to) {
+                            // First, try to parse as color (OKLCH)
+                            const fromLCH = parseLCH(from);
+                            const toLCH = parseLCH(to);
+
+                            if(fromLCH && toLCH) {
+                                const l = fromLCH.l + (toLCH.l - fromLCH.l) * progress;
+                                const c = fromLCH.c + (toLCH.c - fromLCH.c) * progress;
+                                const h = interpolateHue(fromLCH.h, toLCH.h, progress);
+                                document.documentElement.style.setProperty(prop, `${l}% ${c} ${h}`);
+                            } else {
+                                // If not a color, treat as a unit value (e.g., 1rem, 0.95, 1px, 0.25s)
+                                const fromVal = parseUnitValue(from);
+                                const toVal = parseUnitValue(to);
+                                if (fromVal && toVal && fromVal.unit === toVal.unit) {
+                                    const val = fromVal.value + (toVal.value - fromVal.value) * progress;
+                                    document.documentElement.style.setProperty(prop, `${val}${fromVal.unit}`);
+                                }
+                            }
+                        }
+                    });
+                }
+
+                if (progress >= 1) {
+                    // Cycle complete, start the next one
+                    document.documentElement.setAttribute('data-theme', toTheme);
+                    fromTheme = toTheme;
+                    toTheme = pickNextTheme(fromTheme);
+                    startTime = null; // Reset start time for the new cycle
+                    console.log(`🎨 Evo Auto: Morphing towards ${toTheme}`);
+                }
+
+                animationFrameId = requestAnimationFrame(animate);
+            }
+
+            animationFrameId = requestAnimationFrame(animate);
+        };
+        
+        window.__stopEvoAuto = function() {
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+                animationFrameId = null;
+            }
+            const root = document.documentElement;
+            themeProps.forEach(prop => root.style.removeProperty(prop));
+            console.log("🎨 Evo Auto Mode stopped.");
+        };
+
+        init();
+      })();
+
+      window.__initGradientSpheresParticles = function() {
+        const particlesContainer = document.getElementById('particles-container');
+        if (!particlesContainer) return;
+        
+        const particleCount = 80;
+        
+        // Create particles
+        for (let i = 0; i < particleCount; i++) {
+          createParticle();
+        }
+        
+        function createParticle() {
+          const particle = document.createElement('div');
+          particle.className = 'particle';
+          
+          const size = Math.random() * 3 + 1;
+          particle.style.width = size + 'px';
+          particle.style.height = size + 'px';
+          
+          resetParticle(particle);
+          particlesContainer.appendChild(particle);
+          animateParticle(particle);
+        }
+        
+        function resetParticle(particle) {
+          const posX = Math.random() * 100;
+          const posY = Math.random() * 100;
+          
+          particle.style.left = posX + '%';
+          particle.style.top = posY + '%';
+          particle.style.opacity = '0';
+          
+          return { x: posX, y: posY };
+        }
+        
+        function animateParticle(particle) {
+          const pos = resetParticle(particle);
+          const duration = Math.random() * 10 + 10;
+          const delay = Math.random() * 5;
+          
+          setTimeout(() => {
+            particle.style.transition = 'all ' + duration + 's linear';
+            particle.style.opacity = Math.random() * 0.3 + 0.1;
+            
+            const moveX = pos.x + (Math.random() * 20 - 10);
+            const moveY = pos.y - Math.random() * 30;
+            
+            particle.style.left = moveX + '%';
+            particle.style.top = moveY + '%';
+            
+            setTimeout(() => animateParticle(particle), duration * 1000);
+          }, delay * 1000);
+        }
+        
+        // Mouse interaction
+        document.addEventListener('mousemove', function(e) {
+          const mouseX = (e.clientX / window.innerWidth) * 100;
+          const mouseY = (e.clientY / window.innerHeight) * 100;
+          
+          const particle = document.createElement('div');
+          particle.className = 'particle';
+          
+          const size = Math.random() * 4 + 2;
+          particle.style.width = size + 'px';
+          particle.style.height = size + 'px';
+          particle.style.left = mouseX + '%';
+          particle.style.top = mouseY + '%';
+          particle.style.opacity = '0.6';
+          
+          particlesContainer.appendChild(particle);
+          
+          setTimeout(() => {
+            particle.style.transition = 'all 2s ease-out';
+            particle.style.left = (mouseX + (Math.random() * 10 - 5)) + '%';
+            particle.style.top = (mouseY + (Math.random() * 10 - 5)) + '%';
+            particle.style.opacity = '0';
+            
+            setTimeout(() => particle.remove(), 2000);
+          }, 10);
+        });
       };
 
       window.__setThemeVar = function (key, value) {
@@ -134,6 +575,9 @@
   </script>
 </head>
 <body class="min-h-screen">
+  <!-- Animated Background Container -->
+  <div id="app-background"></div>
+  
   <div class="drawer drawer-end">
     <input id="settings-drawer" type="checkbox" class="drawer-toggle" />
     
