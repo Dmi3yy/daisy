@@ -1,0 +1,541 @@
+<div class="hero bg-base-200 rounded-box p-10 mb-10">
+  <div class="hero-content text-center">
+    <div class="max-w-2xl">
+      <h1 class="text-5xl font-bold mb-4">Evolution UI Kit</h1>
+      <p class="text-lg mb-6">
+        Complete daisyUI 5 component library with Tailwind CSS v4
+      </p>
+      <div class="flex gap-4 justify-center flex-wrap">
+        <button class="btn btn-primary btn-lg">Get Started</button>
+        <button class="btn btn-outline btn-lg">View Docs</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Buttons Section -->
+<section class="mb-12">
+  <h2 class="text-3xl font-bold mb-6">Buttons</h2>
+  
+  <div class="space-y-6">
+    <div>
+      <h4 class="font-semibold mb-3 text-sm opacity-70">Colors</h4>
+      <div class="flex flex-wrap gap-2">
+        <button class="btn">Default</button>
+        <button class="btn btn-neutral">Neutral</button>
+        <button class="btn btn-primary">Primary</button>
+        <button class="btn btn-secondary">Secondary</button>
+        <button class="btn btn-accent">Accent</button>
+        <button class="btn btn-info">Info</button>
+        <button class="btn btn-success">Success</button>
+        <button class="btn btn-warning">Warning</button>
+        <button class="btn btn-error">Error</button>
+      </div>
+    </div>
+    
+    <div>
+      <h4 class="font-semibold mb-3 text-sm opacity-70">Styles</h4>
+      <div class="flex flex-wrap gap-2">
+        <button class="btn btn-outline">Outline</button>
+        <button class="btn btn-ghost">Ghost</button>
+        <button class="btn btn-link">Link</button>
+        <button class="btn btn-outline btn-primary">Outline Primary</button>
+      </div>
+    </div>
+    
+    <div>
+      <h4 class="font-semibold mb-3 text-sm opacity-70">Sizes</h4>
+      <div class="flex flex-wrap gap-2 items-center">
+        <button class="btn btn-xs">Tiny</button>
+        <button class="btn btn-sm">Small</button>
+        <button class="btn">Normal</button>
+        <button class="btn btn-lg">Large</button>
+        <button class="btn btn-xl">Extra Large</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Alerts Section -->
+<section class="mb-12">
+  <h2 class="text-3xl font-bold mb-6">Alerts</h2>
+  <div class="space-y-3">
+    <div role="alert" class="alert alert-info">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+      <span>New version has been released.</span>
+    </div>
+    <div role="alert" class="alert alert-success">
+      <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+      <span>Your purchase has been confirmed!</span>
+    </div>
+    <div role="alert" class="alert alert-warning">
+      <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+      <span>Warning: Invalid email address!</span>
+    </div>
+    <div role="alert" class="alert alert-error">
+      <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+      <span>Error! Task failed successfully.</span>
+    </div>
+  </div>
+</section>
+
+<!-- Badges Section -->
+<section class="mb-12">
+  <h2 class="text-3xl font-bold mb-6">Badges</h2>
+  <div class="space-y-3">
+    <div class="flex flex-wrap gap-2">
+      <span class="badge">Default</span>
+      <span class="badge badge-neutral">Neutral</span>
+      <span class="badge badge-primary">Primary</span>
+      <span class="badge badge-secondary">Secondary</span>
+      <span class="badge badge-accent">Accent</span>
+      <span class="badge badge-info">Info</span>
+      <span class="badge badge-success">Success</span>
+      <span class="badge badge-warning">Warning</span>
+      <span class="badge badge-error">Error</span>
+    </div>
+    <div class="flex flex-wrap gap-2">
+      <span class="badge badge-outline">Outline</span>
+      <span class="badge badge-ghost">Ghost</span>
+    </div>
+    <div class="flex flex-wrap gap-2 items-center">
+      <span class="badge badge-xs">Tiny</span>
+      <span class="badge badge-sm">Small</span>
+      <span class="badge">Normal</span>
+      <span class="badge badge-lg">Large</span>
+    </div>
+  </div>
+</section>
+
+<!-- Cards Section -->
+<section class="mb-12">
+  <h2 class="text-3xl font-bold mb-6">Cards</h2>
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    
+    <!-- Product Card -->
+    <div class="card bg-base-100 shadow">
+      <figure><img src="https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp" alt="Shoes" /></figure>
+      <div class="card-body">
+        <h2 class="card-title">
+          Shoes!
+          <div class="badge badge-secondary">NEW</div>
+        </h2>
+        <p>If a dog chews shoes whose shoes does he choose?</p>
+        <div class="card-actions justify-end">
+          <button class="btn btn-primary btn-sm">Buy Now</button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Hover Gallery Product Card -->
+    <div class="card bg-base-100 shadow">
+      <figure class="hover-gallery">
+        <img src="https://img.daisyui.com/images/stock/daisyui-hat-1.webp" alt="daisyUI Hat" />
+        <img src="https://img.daisyui.com/images/stock/daisyui-hat-2.webp" alt="daisyUI Hat" />
+        <img src="https://img.daisyui.com/images/stock/daisyui-hat-3.webp" alt="daisyUI Hat" />
+        <img src="https://img.daisyui.com/images/stock/daisyui-hat-4.webp" alt="daisyUI Hat" />
+      </figure>
+      <div class="card-body">
+        <h2 class="card-title flex justify-between">
+          daisyUI Hat
+          <span class="font-normal">$25</span>
+        </h2>
+        <p>High Quality classic cap</p>
+      </div>
+    </div>
+    
+    <!-- Stats Card -->
+    <div class="stats shadow">
+      <div class="stat">
+        <div class="stat-figure text-primary">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-8 h-8 stroke-current"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+        </div>
+        <div class="stat-title">Total Likes</div>
+        <div class="stat-value text-primary">25.6K</div>
+        <div class="stat-desc">21% more than last month</div>
+      </div>
+    </div>
+    
+  </div>
+</section>
+
+<!-- Countdown Section -->
+<section class="mb-12">
+  <h2 class="text-3xl font-bold mb-6">Countdown</h2>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div class="bg-base-200 rounded-box p-6">
+      <div class="grid grid-flow-col gap-5 text-center auto-cols-max">
+        <div class="flex flex-col">
+          <span class="countdown font-mono text-5xl">
+            <span id="countdown-days" style="--value:15;"></span>
+          </span>
+          days
+        </div> 
+        <div class="flex flex-col">
+          <span class="countdown font-mono text-5xl">
+            <span id="countdown-hours" style="--value:10;"></span>
+          </span>
+          hours
+        </div> 
+        <div class="flex flex-col">
+          <span class="countdown font-mono text-5xl">
+            <span id="countdown-minutes" style="--value:24;"></span>
+          </span>
+          min
+        </div> 
+        <div class="flex flex-col">
+          <span class="countdown font-mono text-5xl">
+            <span id="countdown-seconds" style="--value:58;"></span>
+          </span>
+          sec
+        </div>
+      </div>
+    </div>
+    
+    <div class="bg-base-200 rounded-box p-6 flex items-center justify-center">
+      <span class="countdown font-mono text-4xl">
+        <span id="countdown-h" style="--value:10;" aria-live="polite" aria-label="10">10</span>
+        :
+        <span id="countdown-m" style="--value:24;" aria-live="polite" aria-label="24">24</span>
+        :
+        <span id="countdown-s" style="--value:59;" aria-live="polite" aria-label="59">59</span>
+      </span>
+    </div>
+  </div>
+</section>
+
+<!-- Diff Comparison -->
+<section class="mb-12">
+  <h2 class="text-3xl font-bold mb-6">Diff Comparison</h2>
+  <figure class="diff aspect-16/9 rounded-box" tabindex="0">
+    <div class="diff-item-1" role="img" tabindex="0">
+      <img alt="daisy" src="https://img.daisyui.com/images/stock/photo-1560717789-0ac7c58ac90a.webp" />
+    </div>
+    <div class="diff-item-2" role="img">
+      <img alt="daisy" src="https://img.daisyui.com/images/stock/photo-1560717789-0ac7c58ac90a-blur.webp" />
+    </div>
+    <div class="diff-resizer"></div>
+  </figure>
+</section>
+
+<!-- Chat Section -->
+<section class="mb-12">
+  <h2 class="text-3xl font-bold mb-6">Chat</h2>
+  <div class="bg-base-200 rounded-box p-6">
+    <div class="chat chat-start">
+      <div class="chat-image avatar">
+        <div class="w-10 rounded-full">
+          <img alt="Avatar" src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
+        </div>
+      </div>
+      <div class="chat-bubble">Hello! How are you?</div>
+    </div>
+    <div class="chat chat-end">
+      <div class="chat-image avatar">
+        <div class="w-10 rounded-full">
+          <img alt="Avatar" src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
+        </div>
+      </div>
+      <div class="chat-bubble chat-bubble-primary">I'm good, thanks!</div>
+    </div>
+    <div class="chat chat-start">
+      <div class="chat-image avatar">
+        <div class="w-10 rounded-full">
+          <img alt="Avatar" src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
+        </div>
+      </div>
+      <div class="chat-bubble">Want to grab coffee later?</div>
+    </div>
+  </div>
+</section>
+
+<!-- Music List Section -->
+<section class="mb-12">
+  <h2 class="text-3xl font-bold mb-6">List</h2>
+  <ul class="list bg-base-100 rounded-box shadow">
+    <li class="p-4 pb-2 text-xs opacity-60 tracking-wide">Most played songs this week</li>
+    
+    <li class="list-row">
+      <div><img class="size-10 rounded-box" src="https://img.daisyui.com/images/profile/demo/1@94.webp" alt="Dio Lupa"/></div>
+      <div>
+        <div>Dio Lupa</div>
+        <div class="text-xs uppercase font-semibold opacity-60">Remaining Reason</div>
+      </div>
+      <button class="btn btn-square btn-ghost">
+        <svg class="size-[1.2em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g stroke-linejoin="round" stroke-linecap="round" stroke-width="2" fill="none" stroke="currentColor"><path d="M6 3L20 12 6 21 6 3z"></path></g></svg>
+      </button>
+      <button class="btn btn-square btn-ghost">
+        <svg class="size-[1.2em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g stroke-linejoin="round" stroke-linecap="round" stroke-width="2" fill="none" stroke="currentColor"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path></g></svg>
+      </button>
+    </li>
+    
+    <li class="list-row">
+      <div><img class="size-10 rounded-box" src="https://img.daisyui.com/images/profile/demo/4@94.webp" alt="Ellie Beilish"/></div>
+      <div>
+        <div>Ellie Beilish</div>
+        <div class="text-xs uppercase font-semibold opacity-60">Bears of a fever</div>
+      </div>
+      <button class="btn btn-square btn-ghost">
+        <svg class="size-[1.2em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g stroke-linejoin="round" stroke-linecap="round" stroke-width="2" fill="none" stroke="currentColor"><path d="M6 3L20 12 6 21 6 3z"></path></g></svg>
+      </button>
+      <button class="btn btn-square btn-ghost">
+        <svg class="size-[1.2em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g stroke-linejoin="round" stroke-linecap="round" stroke-width="2" fill="none" stroke="currentColor"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path></g></svg>
+      </button>
+    </li>
+    
+    <li class="list-row">
+      <div><img class="size-10 rounded-box" src="https://img.daisyui.com/images/profile/demo/3@94.webp" alt="Sabrino Gardener"/></div>
+      <div>
+        <div>Sabrino Gardener</div>
+        <div class="text-xs uppercase font-semibold opacity-60">Cappuccino</div>
+      </div>
+      <button class="btn btn-square btn-ghost">
+        <svg class="size-[1.2em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g stroke-linejoin="round" stroke-linecap="round" stroke-width="2" fill="none" stroke="currentColor"><path d="M6 3L20 12 6 21 6 3z"></path></g></svg>
+      </button>
+      <button class="btn btn-square btn-ghost">
+        <svg class="size-[1.2em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g stroke-linejoin="round" stroke-linecap="round" stroke-width="2" fill="none" stroke="currentColor"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path></g></svg>
+      </button>
+    </li>
+  </ul>
+</section>
+
+<!-- Carousel Section -->
+<section class="mb-12">
+  <h2 class="text-3xl font-bold mb-6">Carousel</h2>
+  <div class="carousel carousel-center rounded-box">
+    <div class="carousel-item">
+      <img src="https://img.daisyui.com/images/stock/photo-1559703248-dcaaec9fab78.webp" alt="Pizza" />
+    </div>
+    <div class="carousel-item">
+      <img src="https://img.daisyui.com/images/stock/photo-1565098772267-60af42b81ef2.webp" alt="Pizza" />
+    </div>
+    <div class="carousel-item">
+      <img src="https://img.daisyui.com/images/stock/photo-1572635148818-ef6fd45eb394.webp" alt="Pizza" />
+    </div>
+    <div class="carousel-item">
+      <img src="https://img.daisyui.com/images/stock/photo-1494253109108-2e30c049369b.webp" alt="Pizza" />
+    </div>
+    <div class="carousel-item">
+      <img src="https://img.daisyui.com/images/stock/photo-1550258987-190a2d41a8ba.webp" alt="Pizza" />
+    </div>
+    <div class="carousel-item">
+      <img src="https://img.daisyui.com/images/stock/photo-1559181567-c3190ca9959b.webp" alt="Pizza" />
+    </div>
+    <div class="carousel-item">
+      <img src="https://img.daisyui.com/images/stock/photo-1601004890684-d8cbf643f5f2.webp" alt="Pizza" />
+    </div>
+  </div>
+</section>
+
+<!-- Form Inputs Section -->
+<section class="mb-12">
+  <h2 class="text-3xl font-bold mb-6">Form Inputs</h2>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    
+    <div>
+      <h4 class="font-semibold mb-3">Text Input</h4>
+      <input type="text" placeholder="Type here" class="input input-bordered w-full" />
+    </div>
+    
+    <div>
+      <h4 class="font-semibold mb-3">Select</h4>
+      <select class="select select-bordered w-full">
+        <option disabled selected>Pick one</option>
+        <option>Option 1</option>
+        <option>Option 2</option>
+      </select>
+    </div>
+    
+    <div>
+      <h4 class="font-semibold mb-3">Checkbox & Radio</h4>
+      <div class="flex gap-4">
+        <input type="checkbox" checked class="checkbox" />
+        <input type="checkbox" checked class="checkbox checkbox-primary" />
+        <input type="radio" name="radio-1" class="radio" checked />
+        <input type="radio" name="radio-1" class="radio radio-primary" />
+      </div>
+    </div>
+    
+    <div>
+      <h4 class="font-semibold mb-3">Toggle</h4>
+      <div class="flex gap-4">
+        <input type="checkbox" class="toggle" checked />
+        <input type="checkbox" class="toggle toggle-primary" checked />
+        <input type="checkbox" class="toggle toggle-secondary" checked />
+      </div>
+    </div>
+    
+    <div>
+      <h4 class="font-semibold mb-3">Range</h4>
+      <input type="range" min="0" max="100" value="50" class="range range-primary" />
+    </div>
+    
+    <div>
+      <h4 class="font-semibold mb-3">Rating</h4>
+      <div class="rating">
+        <input type="radio" name="rating-2" class="mask mask-star-2 bg-orange-400" />
+        <input type="radio" name="rating-2" class="mask mask-star-2 bg-orange-400" checked />
+        <input type="radio" name="rating-2" class="mask mask-star-2 bg-orange-400" />
+        <input type="radio" name="rating-2" class="mask mask-star-2 bg-orange-400" />
+        <input type="radio" name="rating-2" class="mask mask-star-2 bg-orange-400" />
+      </div>
+    </div>
+    
+  </div>
+</section>
+
+<!-- Progress Section -->
+<section class="mb-12">
+  <h2 class="text-3xl font-bold mb-6">Progress</h2>
+  <div class="space-y-3">
+    <progress class="progress progress-primary w-full" value="20" max="100"></progress>
+    <progress class="progress progress-secondary w-full" value="40" max="100"></progress>
+    <progress class="progress progress-accent w-full" value="60" max="100"></progress>
+    <progress class="progress progress-success w-full" value="80" max="100"></progress>
+  </div>
+</section>
+
+<!-- Loading Section -->
+<section class="mb-12">
+  <h2 class="text-3xl font-bold mb-6">Loading</h2>
+  <div class="flex gap-4 flex-wrap items-center">
+    <span class="loading loading-spinner loading-xs"></span>
+    <span class="loading loading-spinner loading-sm"></span>
+    <span class="loading loading-spinner loading-md"></span>
+    <span class="loading loading-spinner loading-lg"></span>
+    <span class="loading loading-dots loading-lg"></span>
+    <span class="loading loading-ring loading-lg"></span>
+    <span class="loading loading-ball loading-lg"></span>
+    <span class="loading loading-bars loading-lg"></span>
+  </div>
+</section>
+
+<!-- Navigation Components -->
+<section class="mb-12">
+  <h2 class="text-3xl font-bold mb-6">Navigation</h2>
+  
+  <div class="space-y-6">
+    <div>
+      <h4 class="font-semibold mb-3">Tabs</h4>
+      <div role="tablist" class="tabs tabs-lifted">
+        <input type="radio" name="my_tabs_2" role="tab" class="tab" aria-label="Tab 1" checked />
+        <div role="tabpanel" class="tab-content bg-base-100 border-base-300 rounded-box p-6">
+          Tab content 1
+        </div>
+        <input type="radio" name="my_tabs_2" role="tab" class="tab" aria-label="Tab 2" />
+        <div role="tabpanel" class="tab-content bg-base-100 border-base-300 rounded-box p-6">
+          Tab content 2
+        </div>
+      </div>
+    </div>
+    
+    <div>
+      <h4 class="font-semibold mb-3">Menu</h4>
+      <ul class="menu bg-base-200 rounded-box w-56">
+        <li><a>Item 1</a></li>
+        <li><a>Item 2</a></li>
+        <li><a>Item 3</a></li>
+      </ul>
+    </div>
+    
+    <div>
+      <h4 class="font-semibold mb-3">Breadcrumbs</h4>
+      <div class="breadcrumbs">
+        <ul>
+          <li><a>Home</a></li>
+          <li><a>Documents</a></li>
+          <li>Add Document</li>
+        </ul>
+      </div>
+    </div>
+    
+    <div>
+      <h4 class="font-semibold mb-3">Steps</h4>
+      <ul class="steps">
+        <li class="step step-primary">Register</li>
+        <li class="step step-primary">Choose plan</li>
+        <li class="step">Purchase</li>
+        <li class="step">Receive Product</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- Layout Components -->
+<section class="mb-12">
+  <h2 class="text-3xl font-bold mb-6">Layout</h2>
+  
+  <div class="space-y-6">
+    <div>
+      <h4 class="font-semibold mb-3">Divider</h4>
+      <div class="divider">OR</div>
+    </div>
+    
+    <div>
+      <h4 class="font-semibold mb-3">Join</h4>
+      <div class="join">
+        <button class="btn join-item">Button</button>
+        <button class="btn join-item btn-active">Button</button>
+        <button class="btn join-item">Button</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+// Countdown animation
+(function() {
+  let targetDate = new Date();
+  targetDate.setDate(targetDate.getDate() + 15);
+  targetDate.setHours(targetDate.getHours() + 10);
+  targetDate.setMinutes(targetDate.getMinutes() + 24);
+  targetDate.setSeconds(targetDate.getSeconds() + 58);
+  
+  function updateCountdown() {
+    const now = new Date();
+    const diff = targetDate - now;
+    
+    if (diff > 0) {
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+      
+      // Update large countdown
+      const daysEl = document.getElementById('countdown-days');
+      const hoursEl = document.getElementById('countdown-hours');
+      const minutesEl = document.getElementById('countdown-minutes');
+      const secondsEl = document.getElementById('countdown-seconds');
+      
+      if (daysEl) daysEl.style.setProperty('--value', days);
+      if (hoursEl) hoursEl.style.setProperty('--value', hours);
+      if (minutesEl) minutesEl.style.setProperty('--value', minutes);
+      if (secondsEl) secondsEl.style.setProperty('--value', seconds);
+      
+      // Update small countdown
+      const hEl = document.getElementById('countdown-h');
+      const mEl = document.getElementById('countdown-m');
+      const sEl = document.getElementById('countdown-s');
+      
+      if (hEl) {
+        hEl.style.setProperty('--value', hours);
+        hEl.textContent = hours;
+        hEl.setAttribute('aria-label', hours);
+      }
+      if (mEl) {
+        mEl.style.setProperty('--value', minutes);
+        mEl.textContent = minutes;
+        mEl.setAttribute('aria-label', minutes);
+      }
+      if (sEl) {
+        sEl.style.setProperty('--value', seconds);
+        sEl.textContent = seconds;
+        sEl.setAttribute('aria-label', seconds);
+      }
+    }
+  }
+  
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
+})();
+</script>

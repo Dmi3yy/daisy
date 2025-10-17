@@ -1,0 +1,63 @@
+{
+  "palettes": [
+    {
+      "id": "default",
+      "name": "Default",
+      "description": "Standard daisyUI color scheme",
+      "colors": {}
+    },
+    {
+      "id": "teal",
+      "name": "Teal Ocean",
+      "description": "Calm teal and cyan ocean-inspired palette",
+      "colors": {
+        "--color-primary": "oklch(55% 0.25 200)",
+        "--color-primary-content": "oklch(98% 0.01 200)",
+        "--color-secondary": "oklch(65% 0.20 180)",
+        "--color-secondary-content": "oklch(98% 0.01 180)",
+        "--color-accent": "oklch(70% 0.22 190)",
+        "--color-accent-content": "oklch(98% 0.01 190)"
+      }
+    },
+    {
+      "id": "violet",
+      "name": "Violet Dream",
+      "description": "Deep violet and purple dream palette",
+      "colors": {
+        "--color-primary": "oklch(55% 0.28 290)",
+        "--color-primary-content": "oklch(98% 0.01 290)",
+        "--color-secondary": "oklch(65% 0.25 270)",
+        "--color-secondary-content": "oklch(98% 0.01 270)",
+        "--color-accent": "oklch(70% 0.22 310)",
+        "--color-accent-content": "oklch(98% 0.01 310)"
+      }
+    },
+    {
+      "id": "amber",
+      "name": "Amber Sunset",
+      "description": "Warm amber and orange sunset palette",
+      "colors": {
+        "--color-primary": "oklch(65% 0.25 50)",
+        "--color-primary-content": "oklch(20% 0.05 50)",
+        "--color-secondary": "oklch(70% 0.22 40)",
+        "--color-secondary-content": "oklch(20% 0.05 40)",
+        "--color-accent": "oklch(60% 0.28 60)",
+        "--color-accent-content": "oklch(98% 0.01 60)"
+      }
+    },
+    {
+      "id": "rose",
+      "name": "Rose Garden",
+      "description": "Romantic rose and pink garden palette",
+      "colors": {
+        "--color-primary": "oklch(60% 0.25 350)",
+        "--color-primary-content": "oklch(98% 0.01 350)",
+        "--color-secondary": "oklch(70% 0.20 340)",
+        "--color-secondary-content": "oklch(98% 0.01 340)",
+        "--color-accent": "oklch(65% 0.22 360)",
+        "--color-accent-content": "oklch(98% 0.01 360)"
+      }
+    }
+  ]
+}
+

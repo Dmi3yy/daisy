@@ -1,0 +1,348 @@
+<!-- Settings Panel -->
+<div class="flex flex-col h-full">
+  <div class="flex items-center justify-between mb-4">
+    <h3 class="font-bold text-xl">Theme Builder</h3>
+    <label for="settings-drawer" class="btn btn-sm btn-circle btn-ghost">✕</label>
+  </div>
+  
+  <div class="tabs tabs-boxed mb-4">
+      <input type="radio" name="settings_tabs" class="tab" aria-label="General" checked />
+      <div class="tab-content bg-base-200 border-base-300 rounded-box p-4">
+        <h4 class="font-semibold text-base mb-3">General Settings</h4>
+        
+        <!-- Theme Select -->
+        <div class="form-control mb-3">
+          <label class="label py-1">
+            <span class="label-text text-sm font-semibold">Theme</span>
+          </label>
+          <select class="select select-sm select-bordered w-full" id="settings_theme" onchange="__setTheme(this.value)">
+            <!-- Will be filled by build.mjs -->
+          </select>
+        </div>
+
+        <!-- Language Select -->
+        <div class="form-control mb-3">
+          <label class="label py-1">
+            <span class="label-text text-sm font-semibold">Language</span>
+          </label>
+          <select class="select select-sm select-bordered w-full" id="settings_lang" onchange="__setLang(this.value)">
+            <option value="uk">🇺🇦 Українська</option>
+            <option value="en">🇬🇧 English</option>
+            <option value="pl">🇵🇱 Polski</option>
+          </select>
+        </div>
+
+        <!-- Palette Select -->
+        <div class="form-control mb-3">
+          <label class="label py-1">
+            <span class="label-text text-sm font-semibold">Color Palette</span>
+          </label>
+          <select class="select select-sm select-bordered w-full" id="settings_palette" onchange="__setPalette(this.value)">
+            <!-- Will be filled by build.mjs -->
+          </select>
+          <label class="label py-0">
+            <span class="label-text-alt text-xs">Pre-defined color combinations</span>
+          </label>
+        </div>
+      </div>
+
+      <input type="radio" name="settings_tabs" class="tab" aria-label="Radius" />
+      <div class="tab-content bg-base-100 border-base-300 rounded-box p-4">
+        <h4 class="font-semibold text-base mb-3">Border Radius</h4>
+        
+        <!-- Radius Selector -->
+        <div class="form-control mb-3">
+          <label class="label py-1">
+            <span class="label-text text-sm font-semibold">Selector Radius</span>
+            <span class="label-text-alt text-xs" id="radius_selector_value">1rem</span>
+          </label>
+          <input type="range" min="0" max="2" step="0.25" value="1" class="range range-xs" 
+                 id="radius_selector" 
+                 oninput="this.nextElementSibling.textContent = this.value + 'rem'; document.getElementById('radius_selector_value').textContent = this.value + 'rem'; __setThemeVar('--radius-selector', this.value + 'rem')" />
+          <div class="w-full flex justify-between text-xs px-2 mt-1">
+            <span>0</span>
+            <span>0.5</span>
+            <span>1</span>
+            <span>1.5</span>
+            <span>2</span>
+          </div>
+          <label class="label py-0">
+            <span class="label-text-alt text-xs">Checkboxes, toggles, badges</span>
+          </label>
+        </div>
+
+        <!-- Radius Field -->
+        <div class="form-control mb-4">
+          <label class="label">
+            <span class="label-text font-semibold">Field Radius</span>
+            <span class="label-text-alt" id="radius_field_value">0.25rem</span>
+          </label>
+          <input type="range" min="0" max="2" step="0.25" value="0.25" class="range" 
+                 id="radius_field"
+                 oninput="this.nextElementSibling.textContent = this.value + 'rem'; document.getElementById('radius_field_value').textContent = this.value + 'rem'; __setThemeVar('--radius-field', this.value + 'rem')" />
+          <div class="w-full flex justify-between text-xs px-2 mt-2">
+            <span>0</span>
+            <span>0.5</span>
+            <span>1</span>
+            <span>1.5</span>
+            <span>2</span>
+          </div>
+          <label class="label">
+            <span class="label-text-alt">Border radius of fields (button, input, select, tab)</span>
+          </label>
+        </div>
+
+        <!-- Radius Box -->
+        <div class="form-control mb-4">
+          <label class="label">
+            <span class="label-text font-semibold">Box Radius</span>
+            <span class="label-text-alt" id="radius_box_value">0.5rem</span>
+          </label>
+          <input type="range" min="0" max="2" step="0.25" value="0.5" class="range" 
+                 id="radius_box"
+                 oninput="this.nextElementSibling.textContent = this.value + 'rem'; document.getElementById('radius_box_value').textContent = this.value + 'rem'; __setThemeVar('--radius-box', this.value + 'rem')" />
+          <div class="w-full flex justify-between text-xs px-2 mt-2">
+            <span>0</span>
+            <span>0.5</span>
+            <span>1</span>
+            <span>1.5</span>
+            <span>2</span>
+          </div>
+          <label class="label">
+            <span class="label-text-alt">Border radius of boxes (card, modal, alert)</span>
+          </label>
+        </div>
+      </div>
+
+      <input type="radio" name="settings_tabs" class="tab" aria-label="Sizes" />
+      <div class="tab-content bg-base-100 border-base-300 rounded-box p-6">
+        <h4 class="font-semibold text-lg mb-4">Base Sizes</h4>
+        
+        <!-- Size Selector -->
+        <div class="form-control mb-4">
+          <label class="label">
+            <span class="label-text font-semibold">Selector Size</span>
+            <span class="label-text-alt" id="size_selector_value">0.25rem</span>
+          </label>
+          <input type="range" min="0.1875" max="0.3125" step="0.03125" value="0.25" class="range range-sm" 
+                 id="size_selector"
+                 oninput="this.nextElementSibling.textContent = this.value + 'rem'; document.getElementById('size_selector_value').textContent = this.value + 'rem'; __setThemeVar('--size-selector', this.value + 'rem')" />
+          <div class="w-full flex justify-between text-xs px-2 mt-2">
+            <span>Smaller</span>
+            <span>Default</span>
+            <span>Bigger</span>
+          </div>
+          <label class="label">
+            <span class="label-text-alt">Base size of selectors (checkbox, toggle, badge)</span>
+          </label>
+        </div>
+
+        <!-- Size Field -->
+        <div class="form-control mb-4">
+          <label class="label">
+            <span class="label-text font-semibold">Field Size</span>
+            <span class="label-text-alt" id="size_field_value">0.25rem</span>
+          </label>
+          <input type="range" min="0.1875" max="0.3125" step="0.03125" value="0.25" class="range range-sm" 
+                 id="size_field"
+                 oninput="this.nextElementSibling.textContent = this.value + 'rem'; document.getElementById('size_field_value').textContent = this.value + 'rem'; __setThemeVar('--size-field', this.value + 'rem')" />
+          <div class="w-full flex justify-between text-xs px-2 mt-2">
+            <span>Smaller</span>
+            <span>Default</span>
+            <span>Bigger</span>
+          </div>
+          <label class="label">
+            <span class="label-text-alt">Base size of fields (button, input, select, tab)</span>
+          </label>
+        </div>
+      </div>
+
+      <input type="radio" name="settings_tabs" class="tab" aria-label="Effects" />
+      <div class="tab-content bg-base-100 border-base-300 rounded-box p-6">
+        <h4 class="font-semibold text-lg mb-4">Visual Effects</h4>
+        
+        <!-- Border Width -->
+        <div class="form-control mb-4">
+          <label class="label">
+            <span class="label-text font-semibold">Border Width</span>
+            <span class="label-text-alt" id="border_value">1px</span>
+          </label>
+          <input type="range" min="0" max="2" step="0.5" value="1" class="range range-sm" 
+                 id="border"
+                 oninput="this.nextElementSibling.textContent = this.value + 'px'; document.getElementById('border_value').textContent = this.value + 'px'; __setThemeVar('--border', this.value + 'px')" />
+          <div class="w-full flex justify-between text-xs px-2 mt-2">
+            <span>None</span>
+            <span>Thin</span>
+            <span>Default</span>
+            <span>Thick</span>
+            <span>Extra</span>
+          </div>
+          <label class="label">
+            <span class="label-text-alt">Border width for components</span>
+          </label>
+        </div>
+
+        <!-- Depth -->
+        <div class="form-control mb-4">
+          <label class="label">
+            <span class="label-text font-semibold">Depth (3D Shadow)</span>
+          </label>
+          <div class="flex gap-4">
+            <label class="label cursor-pointer gap-2">
+              <input type="radio" name="depth" class="radio" value="0" onchange="__setThemeVar('--depth', this.value)" />
+              <span class="label-text">Off</span>
+            </label>
+            <label class="label cursor-pointer gap-2">
+              <input type="radio" name="depth" class="radio" value="1" checked onchange="__setThemeVar('--depth', this.value)" />
+              <span class="label-text">On</span>
+            </label>
+          </div>
+          <label class="label">
+            <span class="label-text-alt">Adds subtle 3D depth effect to components</span>
+          </label>
+        </div>
+
+        <!-- Noise -->
+        <div class="form-control mb-4">
+          <label class="label">
+            <span class="label-text font-semibold">Noise (Grain Effect)</span>
+          </label>
+          <div class="flex gap-4">
+            <label class="label cursor-pointer gap-2">
+              <input type="radio" name="noise" class="radio" value="0" checked onchange="__setThemeVar('--noise', this.value)" />
+              <span class="label-text">Off</span>
+            </label>
+            <label class="label cursor-pointer gap-2">
+              <input type="radio" name="noise" class="radio" value="1" onchange="__setThemeVar('--noise', this.value)" />
+              <span class="label-text">On</span>
+            </label>
+          </div>
+          <label class="label">
+            <span class="label-text-alt">Adds subtle grain/noise effect to components</span>
+          </label>
+        </div>
+      </div>
+
+      <input type="radio" name="settings_tabs" class="tab" aria-label="Export/Import" />
+      <div class="tab-content bg-base-100 border-base-300 rounded-box p-6">
+        <h4 class="font-semibold text-lg mb-4">Theme Management</h4>
+        
+        <div class="alert alert-info mb-4">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+          <span>Export your current theme settings as JSON or import a previously saved theme.</span>
+        </div>
+
+        <!-- Export -->
+        <div class="form-control mb-4">
+          <label class="label">
+            <span class="label-text font-semibold">Export Theme</span>
+          </label>
+          <button class="btn btn-primary btn-block" onclick="__exportTheme()">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+            </svg>
+            Download Theme as JSON
+          </button>
+        </div>
+
+        <!-- Import -->
+        <div class="form-control mb-4">
+          <label class="label">
+            <span class="label-text font-semibold">Import Theme</span>
+          </label>
+          <input type="file" accept=".json" class="file-input file-input-bordered w-full" 
+                 id="theme_import" 
+                 onchange="if(this.files[0]) __importTheme(this.files[0])" />
+        </div>
+
+        <div class="divider">OR</div>
+
+        <!-- Reset -->
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text font-semibold">Reset to Defaults</span>
+          </label>
+          <button class="btn btn-warning btn-block" onclick="if(confirm('Reset all settings to default?')) { localStorage.clear(); location.reload(); }">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+            </svg>
+            Reset All Settings
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-action">
+      <form method="dialog">
+        <button class="btn">Close</button>
+      </form>
+    </div>
+  </div>
+  <form method="dialog" class="modal-backdrop">
+    <button>close</button>
+  </form>
+</dialog>
+
+<script>
+  // Sync settings modal with current values when opened
+  document.getElementById('settings_modal')?.addEventListener('show', function() {
+    const themeSel = document.getElementById('settings_theme');
+    const langSel = document.getElementById('settings_lang');
+    const paletteSel = document.getElementById('settings_palette');
+    
+    const curTheme = document.documentElement.getAttribute('data-theme') || 'light';
+    const curLang = document.documentElement.getAttribute('lang') || 'uk';
+    const curPalette = document.documentElement.getAttribute('data-palette') || 'default';
+    
+    if (themeSel) themeSel.value = curTheme;
+    if (langSel) langSel.value = curLang;
+    if (paletteSel) paletteSel.value = curPalette;
+
+    // Load saved theme variables
+    const savedVars = localStorage.getItem('evo-theme-variables');
+    if (savedVars) {
+      try {
+        const vars = JSON.parse(savedVars);
+        if (vars['--radius-selector']) {
+          const val = parseFloat(vars['--radius-selector']);
+          document.getElementById('radius_selector').value = val;
+          document.getElementById('radius_selector_value').textContent = val + 'rem';
+        }
+        if (vars['--radius-field']) {
+          const val = parseFloat(vars['--radius-field']);
+          document.getElementById('radius_field').value = val;
+          document.getElementById('radius_field_value').textContent = val + 'rem';
+        }
+        if (vars['--radius-box']) {
+          const val = parseFloat(vars['--radius-box']);
+          document.getElementById('radius_box').value = val;
+          document.getElementById('radius_box_value').textContent = val + 'rem';
+        }
+        if (vars['--size-selector']) {
+          const val = parseFloat(vars['--size-selector']);
+          document.getElementById('size_selector').value = val;
+          document.getElementById('size_selector_value').textContent = val + 'rem';
+        }
+        if (vars['--size-field']) {
+          const val = parseFloat(vars['--size-field']);
+          document.getElementById('size_field').value = val;
+          document.getElementById('size_field_value').textContent = val + 'rem';
+        }
+        if (vars['--border']) {
+          const val = parseFloat(vars['--border']);
+          document.getElementById('border').value = val;
+          document.getElementById('border_value').textContent = val + 'px';
+        }
+        if (vars['--depth']) {
+          document.querySelector('input[name="depth"][value="' + vars['--depth'] + '"]').checked = true;
+        }
+        if (vars['--noise']) {
+          document.querySelector('input[name="noise"][value="' + vars['--noise'] + '"]').checked = true;
+        }
+      } catch (e) {
+        console.error('Failed to load theme variables:', e);
+      }
+    }
+  });
+</script>
+

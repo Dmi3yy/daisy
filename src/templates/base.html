@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="[[LANG]]" data-theme="[[THEME]]">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Evolution + DaisyUI 5.7</title>
+  <link rel="stylesheet" href="./styles.css" />
+  <script>
+    (function () {
+      // Storage keys
+      const themeKey = "evo-theme";
+      const langKey = "evo-lang";
+      const paletteKey = "evo-palette";
+      const themeVarsKey = "evo-theme-variables";
+
+      // Load saved preferences
+      const storedTheme = localStorage.getItem(themeKey);
+      const storedLang = localStorage.getItem(langKey);
+      const storedPalette = localStorage.getItem(paletteKey);
+      const storedVars = localStorage.getItem(themeVarsKey);
+
+      // Apply saved theme and language
+      if (storedTheme) document.documentElement.setAttribute("data-theme", storedTheme);
+      if (storedLang) document.documentElement.setAttribute("lang", storedLang);
+      if (storedPalette) document.documentElement.setAttribute("data-palette", storedPalette);
+
+      // Apply custom theme variables
+      if (storedVars) {
+        try {
+          const vars = JSON.parse(storedVars);
+          const style = document.createElement('style');
+          style.id = 'evo-custom-vars';
+          let css = ':root[data-theme="' + (storedTheme || '[[THEME]]') + '"] {';
+          Object.keys(vars).forEach(key => {
+            css += key + ':' + vars[key] + ';';
+          });
+          css += '}';
+          style.textContent = css;
+          document.head.appendChild(style);
+        } catch (e) {
+          console.error('Failed to parse theme variables:', e);
+        }
+      }
+
+      // Global functions for theme/lang switching
+      window.__setTheme = function (t) {
+        document.documentElement.setAttribute("data-theme", t);
+        localStorage.setItem(themeKey, t);
+        // Reapply custom variables for new theme
+        const vars = localStorage.getItem(themeVarsKey);
+        if (vars) {
+          const style = document.getElementById('evo-custom-vars');
+          if (style) {
+            const varsObj = JSON.parse(vars);
+            let css = ':root[data-theme="' + t + '"] {';
+            Object.keys(varsObj).forEach(key => {
+              css += key + ':' + varsObj[key] + ';';
+            });
+            css += '}';
+            style.textContent = css;
+          }
+        }
+      };
+
+      window.__setLang = function (l) {
+        document.documentElement.setAttribute("lang", l);
+        localStorage.setItem(langKey, l);
+      };
+
+      window.__setPalette = function (p) {
+        document.documentElement.setAttribute("data-palette", p);
+        localStorage.setItem(paletteKey, p);
+        // Apply palette colors (will be handled by the palette system)
+      };
+
+      window.__setThemeVar = function (key, value) {
+        const vars = JSON.parse(localStorage.getItem(themeVarsKey) || '{}');
+        vars[key] = value;
+        localStorage.setItem(themeVarsKey, JSON.stringify(vars));
+        
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        const style = document.getElementById('evo-custom-vars') || document.createElement('style');
+        style.id = 'evo-custom-vars';
+        let css = ':root[data-theme="' + currentTheme + '"] {';
+        Object.keys(vars).forEach(k => {
+          css += k + ':' + vars[k] + ';';
+        });
+        css += '}';
+        style.textContent = css;
+        if (!style.parentNode) document.head.appendChild(style);
+      };
+
+      window.__exportTheme = function () {
+        const theme = localStorage.getItem(themeKey) || '[[THEME]]';
+        const palette = localStorage.getItem(paletteKey) || 'default';
+        const vars = JSON.parse(localStorage.getItem(themeVarsKey) || '{}');
+        const exportData = {
+          name: theme,
+          palette: palette,
+          vars: vars
+        };
+        const dataStr = JSON.stringify(exportData, null, 2);
+        const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
+        const exportFileDefaultName = 'evo-theme-' + theme + '.json';
+        const linkElement = document.createElement('a');
+        linkElement.setAttribute('href', dataUri);
+        linkElement.setAttribute('download', exportFileDefaultName);
+        linkElement.click();
+      };
+
+      window.__importTheme = function (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          try {
+            const data = JSON.parse(e.target.result);
+            if (data.name) __setTheme(data.name);
+            if (data.palette) __setPalette(data.palette);
+            if (data.vars) {
+              localStorage.setItem(themeVarsKey, JSON.stringify(data.vars));
+              Object.keys(data.vars).forEach(key => {
+                __setThemeVar(key, data.vars[key]);
+              });
+            }
+            alert('Theme imported successfully!');
+            location.reload();
+          } catch (err) {
+            alert('Failed to import theme: ' + err.message);
+          }
+        };
+        reader.readAsText(file);
+      };
+    })();
+  </script>
+</head>
+<body class="min-h-screen">
+  <div class="drawer drawer-end">
+    <input id="settings-drawer" type="checkbox" class="drawer-toggle" />
+    
+    <div class="drawer-content">
+      <!-- @@NAVBAR -->
+      <main class="container mx-auto px-4 py-8">
+        <!-- @@CONTENT -->
+      </main>
+      <!-- @@FOOTER -->
+    </div>
+    
+    <div class="drawer-side z-50">
+      <label for="settings-drawer" aria-label="close sidebar" class="drawer-overlay"></label>
+      <div class="bg-base-100 min-h-full w-96 p-6 overflow-y-auto">
+        <!-- @@SETTINGS -->
+      </div>
+    </div>
+  </div>
+</body>
+</html>
+

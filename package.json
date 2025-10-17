@@ -1,0 +1,36 @@
+{
+  "name": "evo-daisy",
+  "version": "1.0.0",
+  "description": "Evolution Build - Tailwind CSS v4 + daisyUI v5.7 component assembly system",
+  "type": "module",
+  "scripts": {
+    "clean": "rm -rf dist && mkdir -p dist",
+    "build:css": "tailwindcss -i ./src/app.css -o ./dist/styles.css --minify",
+    "build:html": "node ./scripts/build.mjs",
+    "build:inline": "node ./scripts/inline.mjs",
+    "build": "npm run clean && npm run build:css && npm run build:html && npm run build:inline",
+    "dev": "tailwindcss -i ./src/app.css -o ./dist/styles.css --watch",
+    "validate": "node ./scripts/validate.mjs"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.0.0-alpha.25",
+    "tailwindcss": "^4.0.0-alpha.25"
+  },
+  "dependencies": {
+    "daisyui": "^5.0.0",
+    "juice": "^10.0.0"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "tailwindcss",
+    "daisyui",
+    "theme",
+    "builder",
+    "components"
+  ],
+  "author": "Evolution Team",
+  "license": "MIT"
+}
+
