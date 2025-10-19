@@ -137,11 +137,20 @@ try {
     hasErrors = true;
   }
   
-  if (css.includes('name: "evo"')) {
-    console.log('  ✓ Custom theme "evo" found');
+  const hasLegacyEvoTheme = css.includes('name: "evo"');
+  const hasSplitEvoThemes =
+    css.includes('name: "light-evo"') && css.includes('name: "dark-evo"');
+
+  if (hasSplitEvoThemes) {
+    console.log('  ✓ Custom themes "light-evo"/"dark-evo" found');
   } else {
-    console.warn('  ⚠ Custom theme "evo" not found');
-    hasWarnings = true;
+    console.error('  ✗ Missing custom themes "light-evo" and "dark-evo"');
+    hasErrors = true;
+  }
+
+  if (hasLegacyEvoTheme) {
+    console.error('  ✗ Legacy custom theme "evo" found. Remove legacy definition.');
+    hasErrors = true;
   }
 } catch (e) {
   console.error(`  ✗ Failed to read app.css: ${e.message}`);
