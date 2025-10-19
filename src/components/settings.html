@@ -290,9 +290,9 @@
     const langSel = document.getElementById('settings_lang');
     const backgroundSel = document.getElementById('settings_background');
     
-    const curTheme = document.documentElement.getAttribute('data-theme') || 'light';
+    const curTheme = document.documentElement.getAttribute('data-theme') || '[[THEME]]';
     const curLang = document.documentElement.getAttribute('lang') || 'uk';
-    const curBackground = localStorage.getItem('evo-background') || 'none';
+    const curBackground = localStorage.getItem('evo-background') || 'magic';
     
     if (themeSel) themeSel.value = curTheme;
     if (langSel) langSel.value = curLang;

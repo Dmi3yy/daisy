@@ -22,7 +22,7 @@ function arg(name, def) {
 }
 
 // Get CLI/ENV arguments with defaults
-const theme = arg("theme", process.env.THEME || "light");
+const theme = arg("theme", process.env.THEME || "light-evo");
 const lang = arg("lang", process.env.LANG || "uk");
 const keepCss = (arg("keep-css", process.env.KEEP_CSS || "false") || "false") === "true";
 
@@ -183,6 +183,7 @@ console.log(`[build] ✓ Loaded ${lightThemes.length} light themes and ${darkThe
 const backgrounds = [
   { id: "none", name: "None", icon: "⬜" },
   { id: "gradient-spheres", name: "Gradient Spheres", icon: "🌈" },
+  { id: "magic", name: "Magic Aurora", icon: "🪄" },
   { id: "colorful-dots", name: "Colorful Dots", icon: "✨" },
   { id: "cosmic-dream", name: "Cosmic Dream", icon: "🌌" }
 ];

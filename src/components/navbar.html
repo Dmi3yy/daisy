@@ -121,9 +121,9 @@
                 <div class="text-xs font-bold text-base-content/50 uppercase tracking-wider mb-2">Theme Rotation</div>
                 <div class="space-y-2">
                   <div class="flex items-center justify-between mb-2">
-                    <span class="text-xs font-mono badge badge-ghost badge-sm" id="evo-speed-display">0s (Off)</span>
+                    <span class="text-xs font-mono badge badge-ghost badge-sm" id="evo-speed-display">3s</span>
                   </div>
-                  <input type="range" min="0" max="10" value="0" step="0.1" class="range range-primary range-xs" id="evo-speed-slider" oninput="__updateEvoSpeed(this.value)" />
+                  <input type="range" min="0" max="10" value="3" step="0.1" class="range range-primary range-xs" id="evo-speed-slider" oninput="__updateEvoSpeed(this.value)" />
                   <div class="flex justify-between text-xs opacity-50 px-1">
                     <span>Off</span>
                     <span>2.5s</span>
@@ -208,6 +208,15 @@
                 <button onclick="__setBackground('gradient-spheres')" class="flex w-full items-center gap-2 px-3 py-1.5 rounded-lg transition-all hover:shadow-sm bg-item" data-bg="gradient-spheres">
                   <span class="text-lg">🌈</span>
                   <span class="flex-1 text-left text-sm">Gradient Spheres</span>
+                  <svg class="h-3.5 w-3.5 flex-shrink-0 opacity-0 bg-checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                  </svg>
+                </button>
+              </li>
+              <li>
+                <button onclick="__setBackground('magic')" class="flex w-full items-center gap-2 px-3 py-1.5 rounded-lg transition-all hover:shadow-sm bg-item" data-bg="magic">
+                  <span class="text-lg">🪄</span>
+                  <span class="flex-1 text-left text-sm">Magic Aurora</span>
                   <svg class="h-3.5 w-3.5 flex-shrink-0 opacity-0 bg-checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                     <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
                   </svg>
@@ -450,23 +459,30 @@
   
   // Theme Rotation Speed Update - independent of custom settings
   window.__updateEvoSpeed = function(speed) {
-    const speedNum = parseFloat(speed);
+    let speedNum = parseFloat(speed);
+    if (!Number.isFinite(speedNum)) {
+      speedNum = 0;
+    }
     const display = document.getElementById('evo-speed-display');
     if (display) {
-      display.textContent = speedNum === 0 ? 'Off' : `${speedNum.toFixed(1)}s`;
+      const label = speedNum === 0 ? 'Off' : `${Number.isInteger(speedNum) ? speedNum : speedNum.toFixed(1)}s`;
+      display.textContent = label;
     }
-    
+
     // Save speed
-    localStorage.setItem('evo-rotation-speed', speedNum);
-    
+    localStorage.setItem('evo-rotation-speed', String(speedNum));
+    localStorage.setItem('evo-speed', String(speedNum));
+
     // Stop any existing rotation
     window.__stopEvoAuto && window.__stopEvoAuto();
-    
+
     // Start rotation if speed > 0
     if (speedNum > 0) {
       window.__startEvoAuto && window.__startEvoAuto(speedNum);
     }
-    
+
+    window.__updateEvoUI && window.__updateEvoUI(speedNum);
+
     // Update transition duration
     window.__updateTransitionDuration && window.__updateTransitionDuration(speedNum);
   };
@@ -508,7 +524,7 @@
     }
     
     function updateThemeIcon() {
-      const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+      const currentTheme = document.documentElement.getAttribute('data-theme') || '[[THEME]]';
       const lightIcon = document.getElementById('theme-icon-light');
       const darkIcon = document.getElementById('theme-icon-dark');
 
@@ -523,8 +539,8 @@
     }
     
     function updateActiveIndicators() {
-      const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
-      const currentBackground = localStorage.getItem('evo-background') || 'none';
+      const currentTheme = document.documentElement.getAttribute('data-theme') || '[[THEME]]';
+      const currentBackground = localStorage.getItem('evo-background') || 'magic';
 
       // Update theme checkmarks
       document.querySelectorAll('[data-set-theme]').forEach(btn => {
@@ -595,20 +611,42 @@
       }
       
       // Initialize Theme Rotation Speed
-      const savedSpeed = parseFloat(localStorage.getItem('evo-rotation-speed') || '0');
+      const defaultRotationSpeed = 3;
+      const storedRotationSpeed = localStorage.getItem('evo-rotation-speed');
+      const storedEvoSpeed = localStorage.getItem('evo-speed');
+      let savedSpeed = defaultRotationSpeed;
+
+      if (storedRotationSpeed !== null) {
+        savedSpeed = parseFloat(storedRotationSpeed);
+      } else if (storedEvoSpeed !== null) {
+        savedSpeed = parseFloat(storedEvoSpeed);
+        localStorage.setItem('evo-rotation-speed', storedEvoSpeed);
+      }
+
+      if (!Number.isFinite(savedSpeed)) {
+        savedSpeed = defaultRotationSpeed;
+      }
+
+      localStorage.setItem('evo-rotation-speed', String(savedSpeed));
+      localStorage.setItem('evo-speed', String(savedSpeed));
       const speedSlider = document.getElementById('evo-speed-slider');
       const speedDisplay = document.getElementById('evo-speed-display');
-      
+
       if (speedSlider) {
         speedSlider.value = savedSpeed;
       }
       if (speedDisplay) {
-        speedDisplay.textContent = savedSpeed === 0 ? 'Off' : `${savedSpeed.toFixed(1)}s`;
+        const label = savedSpeed === 0 ? 'Off' : `${Number.isInteger(savedSpeed) ? savedSpeed : savedSpeed.toFixed(1)}s`;
+        speedDisplay.textContent = label;
       }
-      
+
+      window.__updateEvoUI && window.__updateEvoUI(savedSpeed);
+
       // Start rotation if speed > 0
       if (savedSpeed > 0) {
         window.__startEvoAuto && window.__startEvoAuto(savedSpeed);
+      } else {
+        window.__stopEvoAuto && window.__stopEvoAuto();
       }
       
       // Initialize Depth and Noise from localStorage

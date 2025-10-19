@@ -38,10 +38,14 @@
       }
       if (storedLang) document.documentElement.setAttribute("lang", storedLang);
       
-      // Apply saved background after DOM is loaded
-      const storedBackground = localStorage.getItem(backgroundKey) || 'none';
+      const savedBackground = localStorage.getItem(backgroundKey);
+      const defaultBackground = 'magic';
+      const storedBackground = savedBackground || defaultBackground;
       window.addEventListener('DOMContentLoaded', function() {
         const evoButton = document.getElementById('evo-button');
+        if (!savedBackground) {
+          localStorage.setItem(backgroundKey, defaultBackground);
+        }
         window.__applyBackground(storedBackground);
 
         // Initialize background checkmarks
@@ -99,19 +103,38 @@
       
       // Start Evo Auto Mode if it was active
       window.addEventListener('DOMContentLoaded', function() {
-        const evoSpeed = parseFloat(localStorage.getItem('evo-speed') || '0');
-        
+        const defaultSpeed = 3;
+        const storedSpeed = localStorage.getItem('evo-speed');
+        const legacySpeed = localStorage.getItem('evo-rotation-speed');
+        let evoSpeed = defaultSpeed;
+
+        if (storedSpeed !== null) {
+          evoSpeed = parseFloat(storedSpeed);
+        } else if (legacySpeed !== null) {
+          evoSpeed = parseFloat(legacySpeed);
+        }
+
+        if (!Number.isFinite(evoSpeed)) {
+          evoSpeed = defaultSpeed;
+        }
+
+        localStorage.setItem('evo-speed', String(evoSpeed));
+        localStorage.setItem('evo-rotation-speed', String(evoSpeed));
+
         // Update slider and display
         const slider = document.getElementById('evo-speed-slider');
         const speedDisplay = document.getElementById('evo-speed-display');
-        
+
         if (slider) {
           slider.value = evoSpeed;
         }
-        
+
         if (speedDisplay) {
-          speedDisplay.textContent = evoSpeed === 0 ? 'OFF' : `${evoSpeed.toFixed(1)}s`;
+          const label = evoSpeed === 0 ? 'Off' : `${Number.isInteger(evoSpeed) ? evoSpeed : evoSpeed.toFixed(1)}s`;
+          speedDisplay.textContent = label;
         }
+
+        window.__updateEvoUI && window.__updateEvoUI(evoSpeed);
         
         // Initialize system effect toggles
         const depthToggle = document.getElementById('system-depth-toggle');
@@ -151,6 +174,8 @@
         if (evoSpeed > 0 && window.__startEvoAuto) {
           window.__startEvoAuto(evoSpeed);
           if (evoButton) evoButton.classList.add('btn-primary');
+        } else if (evoButton) {
+          evoButton.classList.remove('btn-primary');
         }
       });
 
@@ -237,11 +262,11 @@
       
       window.__getLastThemeForMode = function(mode) {
         if (mode === 'light') {
-          return localStorage.getItem(lightThemeKey) || 'light';
+          return localStorage.getItem(lightThemeKey) || 'light-evo';
         } else if (mode === 'dark') {
-          return localStorage.getItem(darkThemeKey) || 'dark';
+          return localStorage.getItem(darkThemeKey) || 'dark-evo';
         }
-        return 'light';
+        return '[[THEME]]';
       };
 
       window.__setLang = function (l) {
@@ -309,7 +334,7 @@
         }
 
         // Save last animated background for transparent mode
-        const animatedBackgrounds = ['gradient-spheres', 'colorful-dots', 'cosmic-dream'];
+        const animatedBackgrounds = ['gradient-spheres', 'magic', 'colorful-dots', 'cosmic-dream'];
         if (animatedBackgrounds.includes(bgId)) {
           localStorage.setItem('evo-last-animated-bg', bgId);
         }
@@ -360,6 +385,16 @@
             <div class="particles-container" id="particles-container"></div>
           `;
           __initGradientSpheresParticles();
+        } else if (bgId === 'magic') {
+          solidLayer.style.background = '';
+          animatedLayer.className = 'animated-layer bg-magic';
+          animatedLayer.innerHTML = `
+            <div class="magic-overlay"></div>
+            <div class="magic-aurora aurora-1"></div>
+            <div class="magic-aurora aurora-2"></div>
+            <div class="magic-aurora aurora-3"></div>
+            <div class="magic-stars"></div>
+          `;
         } else if (bgId === 'colorful-dots') {
           // Clear solid layer, apply animated
           solidLayer.style.background = '';
@@ -571,7 +606,7 @@
         let evoInterval = null;
         
         function getCurrentModeThemes() {
-          const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+          const currentTheme = document.documentElement.getAttribute('data-theme') || '[[THEME]]';
           return darkThemes.includes(currentTheme) ? darkThemes : lightThemes;
         }
 
@@ -599,7 +634,7 @@
           console.log(`🎨 Evo Auto Mode: ON - switching themes every ${speedSeconds}s`);
           
           // Switch theme immediately
-          const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+          const currentTheme = document.documentElement.getAttribute('data-theme') || '[[THEME]]';
           const nextTheme = pickNextTheme(currentTheme);
           window.__setTheme(nextTheme);
           
@@ -651,13 +686,15 @@
           const slider = document.getElementById('evo-speed-slider');
           if (slider) {
             slider.addEventListener('input', function(e) {
-              const speed = parseInt(e.target.value, 10);
-              localStorage.setItem('evo-speed', speed);
-              window.__updateEvoUI(speed);
-              
+              const speed = parseFloat(e.target.value);
+              const normalizedSpeed = Number.isFinite(speed) ? speed : 0;
+              localStorage.setItem('evo-speed', String(normalizedSpeed));
+              localStorage.setItem('evo-rotation-speed', String(normalizedSpeed));
+              window.__updateEvoUI(normalizedSpeed);
+
               // Restart Evo Auto with new speed
-              if (speed > 0) {
-                window.__startEvoAuto(speed);
+              if (normalizedSpeed > 0) {
+                window.__startEvoAuto(normalizedSpeed);
               } else {
                 window.__stopEvoAuto();
               }
