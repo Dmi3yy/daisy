@@ -1,7 +1,101 @@
 @import "tailwindcss";
 @plugin "daisyui" {
-  themes: light --default, dark --prefersdark;
+  themes: light, dark, cupcake, bumblebee, emerald, corporate, synthwave, retro, cyberpunk, valentine, halloween, garden, forest, aqua, lofi, pastel, fantasy, wireframe, black, luxury, dracula, cmyk, autumn, business, acid, lemonade, night, coffee, winter, dim, nord, sunset;
   logs: true;
+}
+
+/* Custom EVO Light Theme */
+@plugin "daisyui/theme" {
+  name: "light-evo";
+  default: true;
+  prefersdark: false;
+  color-scheme: light;
+  
+  --color-base-100: oklch(100% 0 0);
+  --color-base-200: oklch(95% 0 0);
+  --color-base-300: oklch(90.5% 0.004 286);
+  --color-base-content: oklch(24% 0.052 272);
+  
+  --color-primary: oklch(51% 0.267 271);
+  --color-primary-content: oklch(89% 0.062 272);
+  
+  --color-secondary: oklch(69% 0.198 328);
+  --color-secondary-content: oklch(100% 0 0);
+  
+  --color-accent: oklch(64% 0.183 186);
+  --color-accent-content: oklch(16% 0.041 192);
+  
+  --color-neutral: oklch(31% 0.041 257);
+  --color-neutral-content: oklch(85% 0.018 258);
+  
+  --color-info: oklch(70% 0.175 231);
+  --color-info-content: oklch(17% 0.042 232);
+  
+  --color-success: oklch(72% 0.183 161);
+  --color-success-content: oklch(15% 0.046 163);
+  
+  --color-warning: oklch(78% 0.194 83);
+  --color-warning-content: oklch(24% 0.049 85);
+  
+  --color-error: oklch(71% 0.199 22);
+  --color-error-content: oklch(29% 0.050 23);
+  
+  --radius-selector: 1rem;
+  --radius-field: 0.5rem;
+  --radius-box: 1rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 1px;
+  --depth: 1;
+  --noise: 0;
+  --glass: 1;
+}
+
+/* Custom EVO Dark Theme */
+@plugin "daisyui/theme" {
+  name: "dark-evo";
+  default: false;
+  prefersdark: true;
+  color-scheme: dark;
+  
+  --color-base-100: oklch(29% 0.028 255);
+  --color-base-200: oklch(26% 0.024 255);
+  --color-base-300: oklch(23% 0.022 256);
+  --color-base-content: oklch(68% 0.014 256);
+  
+  --color-primary: oklch(70% 0.146 221);
+  --color-primary-content: oklch(17% 0.035 221);
+  
+  --color-secondary: oklch(68% 0.148 274);
+  --color-secondary-content: oklch(14% 0.037 274);
+  
+  --color-accent: oklch(72% 0.183 350);
+  --color-accent-content: oklch(30% 0.046 351);
+  
+  --color-neutral: oklch(23% 0.032 253);
+  --color-neutral-content: oklch(81% 0.012 253);
+  
+  --color-info: oklch(70% 0.175 231);
+  --color-info-content: oklch(17% 0.042 232);
+  
+  --color-success: oklch(72% 0.183 161);
+  --color-success-content: oklch(15% 0.046 163);
+  
+  --color-warning: oklch(78% 0.194 83);
+  --color-warning-content: oklch(24% 0.049 85);
+  
+  --color-error: oklch(71% 0.199 22);
+  --color-error-content: oklch(29% 0.050 23);
+  
+  --radius-selector: 1rem;
+  --radius-field: 0.5rem;
+  --radius-box: 1rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 1px;
+  --depth: 1;
+  --noise: 0;
+  --glass: 1;
 }
 
 /* Remove body margin/padding for full-width navbar */
@@ -87,6 +181,12 @@ body {
 }
 
 /* Register CSS custom properties for smooth numeric interpolation */
+@property --glass {
+  syntax: '<integer>';
+  inherits: true;
+  initial-value: 1;
+}
+
 @property --radius-selector {
   syntax: '<length>';
   inherits: true;
@@ -280,10 +380,10 @@ body {
   }
 }
 
-/* Custom theme 'light-evo' - Light Evolution Theme */
+/* Custom theme 'light-evo' - Light Evolution Theme (Light Mode Default) */
 @plugin "daisyui/theme" {
   name: "light-evo";
-  default: false;
+  default: true;
   prefersdark: false;
   color-scheme: light;
 
@@ -320,42 +420,41 @@ body {
   --border: 1px;
   --depth: 1;
   --noise: 0;
+  --glass: 1;
 }
 
-/* Custom theme 'dark-evo' - Dark Evolution Theme */
+/* Custom theme 'dark-evo' - Dark Evolution Theme (Dark Mode Default) */
 @plugin "daisyui/theme" {
   name: "dark-evo";
+  default: true;
   prefersdark: true;
   color-scheme: dark;
-  default: false;
-  prefersdark: false;
-  color-scheme: light;
 
-  /* Base colors - ultra clean white with subtle blue tint like iOS */
-  --color-base-100: oklch(99% 0.005 240);
-  --color-base-200: oklch(97% 0.008 240);
-  --color-base-300: oklch(94% 0.01 240);
-  --color-base-content: oklch(25% 0.01 240);
+  /* Base colors - dark */
+  --color-base-100: oklch(20% 0.02 240);
+  --color-base-200: oklch(25% 0.03 240);
+  --color-base-300: oklch(30% 0.04 240);
+  --color-base-content: oklch(95% 0.05 240);
 
   /* Brand colors - Apple's iconic blues and greens */
-  --color-primary: oklch(55% 0.20 240);
-  --color-primary-content: oklch(20% 0.01 240);
+  --color-primary: oklch(60% 0.20 240);
+  --color-primary-content: oklch(20% 0.02 240);
   --color-secondary: oklch(70% 0.18 200);
-  --color-secondary-content: oklch(20% 0.01 200);
-  --color-accent: oklch(70% 0.17 160);
-  --color-accent-content: oklch(20% 0.01 160);
+  --color-secondary-content: oklch(20% 0.02 200);
+  --color-accent: oklch(75% 0.17 160);
+  --color-accent-content: oklch(20% 0.02 160);
   --color-neutral: oklch(60% 0.01 240);
-  --color-neutral-content: oklch(20% 0.01 240);
-  --color-info: oklch(70% 0.18 220);
-  --color-info-content: oklch(20% 0.01 220);
+  --color-neutral-content: oklch(20% 0.02 240);
+  --color-info: oklch(65% 0.18 220);
+  --color-info-content: oklch(20% 0.02 220);
   --color-success: oklch(65% 0.20 145);
-  --color-success-content: oklch(20% 0.01 145);
+  --color-success-content: oklch(20% 0.02 145);
   --color-warning: oklch(80% 0.18 60);
-  --color-warning-content: oklch(20% 0.01 60);
+  --color-warning-content: oklch(20% 0.02 60);
   --color-error: oklch(65% 0.22 25);
-  --color-error-content: oklch(20% 0.01 25);
+  --color-error-content: oklch(20% 0.02 25);
 
-  /* Apple-style rounded corners - very smooth */
+  /* Apple-style rounded corners */
   --radius-selector: 1.25rem;
   --radius-field: 0.75rem;
   --radius-box: 1.125rem;
@@ -368,6 +467,7 @@ body {
   --border: 0.5px;
   --depth: 1;
   --noise: 0;
+  --glass: 1;
 }
 
 /* Custom variant for dark mode mapping */

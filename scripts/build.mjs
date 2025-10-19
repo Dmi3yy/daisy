@@ -36,11 +36,43 @@ function loadThemesFromDirectory(dirPath) {
   
   const files = fs.readdirSync(dirPath);
   for (const file of files) {
-    if (file.endsWith('.json')) {
-      const filePath = path.join(dirPath, file);
+    const filePath = path.join(dirPath, file);
+    const stat = fs.statSync(filePath);
+    
+    // Якщо це папка, шукаємо теми всередині (наприклад themes/evo/light.json)
+    if (stat.isDirectory()) {
+      const subFiles = fs.readdirSync(filePath);
+      for (const subFile of subFiles) {
+        if (subFile.endsWith('.json')) {
+          const subFilePath = path.join(filePath, subFile);
+          try {
+            const themeData = JSON.parse(fs.readFileSync(subFilePath, 'utf8'));
+            const colors = themeData.colors || {};
+            const themeColors = [
+              colors['--color-base-100'] || 'oklch(100% 0 0)',
+              colors['--color-primary'] || 'oklch(70% 0.15 220)',
+              colors['--color-secondary'] || 'oklch(70% 0.15 280)',
+              colors['--color-accent'] || 'oklch(70% 0.15 160)',
+              colors['--color-base-200'] || 'oklch(95% 0 0)'
+            ];
+            themes.push({
+              id: themeData.name,
+              name: themeData.name,
+              mode: themeData.mode,
+              colors: themeColors,
+              primaryColor: colors['--color-primary'] || 'oklch(70% 0.15 220)',
+              navbar: themeData.navbar || { light: '#ffffff', dark: '#1e1e1e' },
+              file: `${file}/${subFile}`
+            });
+          } catch (err) {
+            console.warn(`[build] Warning: Could not parse ${file}/${subFile}: ${err.message}`);
+          }
+        }
+      }
+    } else if (file.endsWith('.json')) {
+      // Звичайний JSON файл
       try {
         const themeData = JSON.parse(fs.readFileSync(filePath, 'utf8'));
-        // Extract real theme colors from JSON (OKLCH format supported by modern browsers)
         const colors = themeData.colors || {};
         const themeColors = [
           colors['--color-base-100'] || 'oklch(100% 0 0)',
@@ -70,9 +102,77 @@ function loadThemesFromDirectory(dirPath) {
 console.log("[build] Loading themes from JSON files...");
 const lightThemesPath = path.join(root, "themes/light");
 const darkThemesPath = path.join(root, "themes/dark");
+const evoThemesPath = path.join(root, "themes/evo");
 
-const lightThemes = loadThemesFromDirectory(lightThemesPath);
-const darkThemes = loadThemesFromDirectory(darkThemesPath);
+let lightThemes = loadThemesFromDirectory(lightThemesPath);
+let darkThemes = loadThemesFromDirectory(darkThemesPath);
+
+// Load EVO themes from themes/evo folder
+const evoThemes = loadThemesFromDirectory(evoThemesPath);
+for (const theme of evoThemes) {
+  if (theme.name === 'light-evo') {
+    lightThemes.unshift(theme); // Додаємо на початок
+  } else if (theme.name === 'dark-evo') {
+    darkThemes.unshift(theme); // Додаємо на початок
+  }
+}
+
+// Sort: EVO themes first, then alphabetically
+const sortThemes = (themes) => {
+  return themes.sort((a, b) => {
+    const aIsEvo = a.id.includes('evo');
+    const bIsEvo = b.id.includes('evo');
+    if (aIsEvo && !bIsEvo) return -1;
+    if (!aIsEvo && bIsEvo) return 1;
+    return a.id.localeCompare(b.id);
+  });
+};
+
+sortThemes(lightThemes);
+sortThemes(darkThemes);
+
+// Add built-in daisyUI themes
+const builtInLightThemes = [
+  { id: 'light', name: 'light', colors: ['#ffffff', '#570df8', '#f000b8', '#1dcdbc', '#f2f2f2'] },
+  { id: 'cupcake', name: 'cupcake', colors: ['#faf7f5', '#65c3c8', '#ef9fbc', '#eeaf3a', '#e7e7e8'] },
+  { id: 'bumblebee', name: 'bumblebee', colors: ['#fffbeb', '#f59e0b', '#facc15', '#0ea5e9', '#fef3c7'] },
+  { id: 'emerald', name: 'emerald', colors: ['#ffffff', '#10b981', '#8b5cf6', '#06b6d4', '#f3f4f6'] },
+  { id: 'corporate', name: 'corporate', colors: ['#ffffff', '#1f2937', '#4b5563', '#3b82f6', '#e5e7eb'] },
+  { id: 'retro', name: 'retro', colors: ['#f9f7f3', '#ef9995', '#a4cbb4', '#e4d8b4', '#e6e4da'] },
+  { id: 'valentine', name: 'valentine', colors: ['#fef2f2', '#e96d7b', '#f8b4d9', '#67cba0', '#fce7f3'] },
+  { id: 'garden', name: 'garden', colors: ['#ffffff', '#16a34a', '#f59e0b', '#06b6d4', '#f3f4f6'] },
+  { id: 'pastel', name: 'pastel', colors: ['#ffffff', '#a991f7', '#f6d860', '#37cdbe', '#f3f4f6'] },
+  { id: 'fantasy', name: 'fantasy', colors: ['#ffffff', '#6e0b75', '#007ebd', '#d82222', '#f3f4f6'] },
+  { id: 'wireframe', name: 'wireframe', colors: ['#ffffff', '#000000', '#000000', '#000000', '#f3f4f6'] },
+  { id: 'cmyk', name: 'cmyk', colors: ['#ffffff', '#45AEEE', '#E8488A', '#FFF232', '#f3f4f6'] },
+  { id: 'autumn', name: 'autumn', colors: ['#ffffff', '#8C0327', '#d97706', '#16a34a', '#f3f4f6'] },
+  { id: 'acid', name: 'acid', colors: ['#fafafa', '#d9f99d', '#facc15', '#ec4899', '#f5f5f5'] },
+  { id: 'lemonade', name: 'lemonade', colors: ['#ffffff', '#16a34a', '#a3e635', '#facc15', '#f3f4f6'] },
+  { id: 'winter', name: 'winter', colors: ['#ffffff', '#047AFF', '#463AA2', '#5390D9', '#f3f4f6'] },
+  { id: 'nord', name: 'nord', colors: ['#ffffff', '#5E81AC', '#81A1C1', '#8FBCBB', '#f3f4f6'] },
+  { id: 'lofi', name: 'lofi', colors: ['#ffffff', '#000000', '#808080', '#000000', '#f3f4f6'] }
+];
+
+const builtInDarkThemes = [
+  { id: 'dark', name: 'dark', colors: ['#2a303c', '#38bdf8', '#818cf8', '#f471b5', '#242933'] },
+  { id: 'synthwave', name: 'synthwave', colors: ['#1a103d', '#e779c1', '#58c7f3', '#f6d860', '#261754'] },
+  { id: 'cyberpunk', name: 'cyberpunk', colors: ['#1a103d', '#ff7598', '#ffee00', '#79f2c0', '#261754'] },
+  { id: 'halloween', name: 'halloween', colors: ['#1f2029', '#ff9f1c', '#8b5cf6', '#ec4899', '#25252d'] },
+  { id: 'forest', name: 'forest', colors: ['#171212', '#06b6d4', '#8b5cf6', '#059669', '#1e1e1e'] },
+  { id: 'aqua', name: 'aqua', colors: ['#09161d', '#00b4d8', '#8b5cf6', '#ec4899', '#0d2633'] },
+  { id: 'black', name: 'black', colors: ['#000000', '#cccccc', '#ffffff', '#ffffff', '#1a1a1a'] },
+  { id: 'luxury', name: 'luxury', colors: ['#09090b', '#ffffff', '#d4af37', '#14b8a6', '#18181b'] },
+  { id: 'dracula', name: 'dracula', colors: ['#282a36', '#ff79c6', '#bd93f9', '#ffb86c', '#1e1f29'] },
+  { id: 'business', name: 'business', colors: ['#1f2937', '#3b82f6', '#6366f1', '#06b6d4', '#1a202c'] },
+  { id: 'night', name: 'night', colors: ['#0f172a', '#3b82f6', '#8b5cf6', '#ec4899', '#0a0f1f'] },
+  { id: 'coffee', name: 'coffee', colors: ['#282828', '#db924b', '#e25c3b', '#20282c', '#32302f'] },
+  { id: 'dim', name: 'dim', colors: ['#1e2837', '#9fdf9f', '#6699cc', '#ff9999', '#15202b'] },
+  { id: 'sunset', name: 'sunset', colors: ['#1b1d28', '#ff865b', '#ff6b6b', '#ffc845', '#1f222e'] }
+];
+
+// Merge with JSON themes, EVO themes first
+lightThemes.push(...builtInLightThemes.filter(t => !lightThemes.find(lt => lt.id === t.id)));
+darkThemes.push(...builtInDarkThemes.filter(t => !darkThemes.find(dt => dt.id === t.id)));
 
 const builtInThemes = [...lightThemes, ...darkThemes];
 

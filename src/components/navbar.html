@@ -42,26 +42,26 @@
           <path d="M21.64,13a1,1,0,0,0-1.05-.14,8.05,8.05,0,0,1-3.37.73A8.15,8.15,0,0,1,9.08,5.49a8.59,8.59,0,0,1,.25-2A1,1,0,0,0,8,2.36,10.14,10.14,0,1,0,22,14.05,1,1,0,0,0,21.64,13Zm-9.5,6.69A8.14,8.14,0,0,1,7.08,5.22v.27A10.15,10.15,0,0,0,17.22,15.63a9.79,9.79,0,0,0,2.1-.22A8.11,8.11,0,0,1,12.14,19.73Z"/>
         </svg>
       </div>
-      <div tabindex="0" class="dropdown-content bg-base-100 rounded-box z-[1] w-80 p-4 shadow-2xl border border-base-300 mt-3 max-h-[80vh] overflow-y-auto">
+      <div tabindex="0" class="dropdown-content bg-base-100 text-base-content rounded-box z-[1] w-80 p-4 shadow-2xl border border-base-300 mt-3 max-h-[80vh] overflow-y-auto">
         
         <!-- 1. Theme Mode Selector: System / Light / Dark -->
         <div class="mb-4 pb-4 border-b border-base-300">
           <div class="text-xs font-bold text-base-content/50 uppercase tracking-wider mb-3">Theme Mode</div>
           <div class="flex gap-2">
-            <button onclick="__setThemeMode('system')" class="btn btn-sm flex-1" id="mode-system">
+            <button onclick="__setThemeMode('system'); __filterThemesByMode('system');" class="btn btn-sm flex-1" id="mode-system">
               <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                 <rect x="2" y="3" width="20" height="14" rx="2" stroke-width="2"/>
                 <path d="M8 21h8M12 17v4" stroke-width="2"/>
               </svg>
               System
             </button>
-            <button onclick="__setThemeMode('light')" class="btn btn-sm flex-1" id="mode-light">
+            <button onclick="__setThemeMode('light'); __filterThemesByMode('light');" class="btn btn-sm flex-1" id="mode-light">
               <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12,6.5A5.5,5.5,0,1,0,17.5,12,5.51,5.51,0,0,0,12,6.5Zm0,9A3.5,3.5,0,1,1,15.5,12,3.5,3.5,0,0,1,12,15.5Z"/>
+                <path d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.894 6.166a.75.75 0 00-1.06-1.06l-1.591 1.59a.75.75 0 101.06 1.061l1.591-1.59zM21.75 12a.75.75 0 01-.75.75h-2.25a.75.75 0 010-1.5H21a.75.75 0 01.75.75zM17.834 18.894a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 10-1.061 1.06l1.59 1.591zM12 18a.75.75 0 01.75.75V21a.75.75 0 01-1.5 0v-2.25A.75.75 0 0112 18zM7.758 17.303a.75.75 0 00-1.061-1.06l-1.591 1.59a.75.75 0 001.06 1.061l1.591-1.59zM6 12a.75.75 0 01-.75.75H3a.75.75 0 010-1.5h2.25A.75.75 0 016 12zM6.697 7.757a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 00-1.061 1.06l1.59 1.591z"/>
               </svg>
               Light
             </button>
-            <button onclick="__setThemeMode('dark')" class="btn btn-sm flex-1" id="mode-dark">
+            <button onclick="__setThemeMode('dark'); __filterThemesByMode('dark');" class="btn btn-sm flex-1" id="mode-dark">
               <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M21.64,13a1,1,0,0,0-1.05-.14,8.05,8.05,0,0,1-3.37.73A8.15,8.15,0,0,1,9.08,5.49a8.59,8.59,0,0,1,.25-2A1,1,0,0,0,8,2.36,10.14,10.14,0,1,0,22,14.05,1,1,0,0,0,21.64,13Z"/>
               </svg>
@@ -459,7 +459,7 @@
   // Theme management - simplified
   (function() {
     function getThemeMode(theme) {
-      const lightThemes = ['light', 'light-evo'];
+      const lightThemes = ['light', 'cupcake', 'bumblebee', 'emerald', 'corporate', 'retro', 'valentine', 'garden', 'pastel', 'fantasy', 'wireframe', 'cmyk', 'autumn', 'acid', 'lemonade', 'winter', 'nord', 'lofi', 'cyberpunk', 'light-evo'];
       return lightThemes.includes(theme) ? 'light' : 'dark';
     }
     
@@ -595,6 +595,84 @@
       };
     }
   })();
+
+  // Filter themes based on selected mode
+  window.__filterThemesByMode = function(mode) {
+    console.log('🔍 Filter themes by mode:', mode);
+    console.log('📋 Available light themes:', window.__lightThemes);
+    console.log('📋 Available dark themes:', window.__darkThemes);
+    
+    const themeMenu = document.getElementById('themeMenu');
+    if (!themeMenu) {
+      console.error('❌ Theme menu not found!');
+      return;
+    }
+    
+    const allThemeItems = themeMenu.querySelectorAll('li.theme-item');
+    console.log('🎨 Total theme items found:', allThemeItems.length);
+    
+    let shownCount = 0;
+    
+    allThemeItems.forEach(item => {
+      const button = item.querySelector('[data-set-theme]');
+      if (!button) return;
+      
+      const themeName = button.getAttribute('data-set-theme');
+      const themeMode = window.__getThemeModeByName(themeName);
+      let shouldShow = false;
+      
+      if (mode === 'system') {
+        // System mode: показуємо тільки одну Evo тему (в залежності від поточного режиму системи)
+        const isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (isDark) {
+          shouldShow = themeName === 'dark-evo';
+        } else {
+          shouldShow = themeName === 'light-evo';
+        }
+        console.log(`  ${themeName} -> isDark: ${isDark}, shouldShow: ${shouldShow}`);
+      } else if (mode === 'light') {
+        // Light mode: показуємо всі light теми
+        shouldShow = (themeMode === 'light');
+        console.log(`  ${themeName} -> ${themeMode} -> ${shouldShow}`);
+      } else if (mode === 'dark') {
+        // Dark mode: показуємо всі dark теми
+        shouldShow = (themeMode === 'dark');
+        console.log(`  ${themeName} -> ${themeMode} -> ${shouldShow}`);
+      }
+      
+      if (shouldShow) {
+        item.style.display = '';
+        shownCount++;
+      } else {
+        item.style.display = 'none';
+      }
+    });
+    
+    console.log(`✅ Shown ${shownCount} themes in ${mode} mode`);
+  };
+  
+  // Helper function to determine theme mode
+  window.__getThemeModeByName = function(themeName) {
+    const lightThemes = ['light-evo', 'light', 'cupcake', 'bumblebee', 'emerald', 'corporate', 'retro', 'valentine', 'garden', 'lofi', 'pastel', 'fantasy', 'wireframe', 'cmyk', 'autumn', 'acid', 'lemonade', 'winter', 'nord'];
+    return lightThemes.includes(themeName) ? 'light' : 'dark';
+  };
+
+  // Initialize theme filter on page load
+  if (typeof window !== 'undefined') {
+    // Run after DOM is ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', function() {
+        const currentMode = localStorage.getItem('theme-mode') || 'system';
+        window.__filterThemesByMode && window.__filterThemesByMode(currentMode);
+      });
+    } else {
+      setTimeout(function() {
+        const currentMode = localStorage.getItem('theme-mode') || 'system';
+        window.__filterThemesByMode && window.__filterThemesByMode(currentMode);
+      }, 100);
+    }
+  }
+
 </script>
 
 <style>

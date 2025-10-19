@@ -44,8 +44,8 @@
         "description": "Subtle grain texture",
         "default": false
       },
-      "glassEffect": {
-        "id": "system-glass-effect-toggle",
+      "glass": {
+        "id": "system-glass-toggle",
         "label": "Glass Effect",
         "description": "Apply a subtle glass effect to the background",
         "default": false

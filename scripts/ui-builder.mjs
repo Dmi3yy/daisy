@@ -79,7 +79,7 @@ export function buildBackgroundsList() {
  * Generate Theme Parameters section
  */
 export function buildThemeParametersSection() {
-  const { customSettings, rotation, depth, noise, glassEffect } = uiConfig.navbar.themeParameters;
+  const { customSettings, rotation, depth, noise, glass } = uiConfig.navbar.themeParameters;
   
   return `
     <!-- Custom Settings Toggle -->
@@ -136,10 +136,10 @@ export function buildThemeParametersSection() {
     <!-- Glass Effect -->
     <div class="flex items-center justify-between">
       <div class="flex items-center gap-2">
-        <span class="text-sm">${glassEffect.label}</span>
-        <span class="text-xs opacity-50">${glassEffect.description}</span>
+        <span class="text-sm">${glass.label}</span>
+        <span class="text-xs opacity-50">${glass.description}</span>
       </div>
-      <input type="checkbox" class="toggle toggle-sm toggle-primary" id="${glassEffect.id}" ${glassEffect.default ? 'checked' : ''} onchange="__toggleGlass(this.checked)" />
+      <input type="checkbox" class="toggle toggle-sm toggle-primary" id="${glass.id}" ${glass.default ? 'checked' : ''} onchange="__toggleGlass(this.checked)" />
     </div>
   `;
 }
