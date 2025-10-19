@@ -221,6 +221,9 @@
                 localStorage.setItem(darkThemeKey, newTheme);
               }
               localStorage.setItem(themeKey, newTheme);
+              if (typeof window.__syncThemeUI === 'function') {
+                window.__syncThemeUI();
+              }
             }
           }
         });
@@ -862,20 +865,20 @@
         <div class="mb-4 pb-4 border-b border-base-300" style="transition-property: color,background-color,border-color,text-decoration-color,fill,stroke,box-shadow,--radius-selector,--radius-field,--radius-box,--size-selector,--size-field,--border,--depth,--noise; transition-timing-function: cubic-bezier(.4,0,.2,1); transition-duration: var(--theme-transition-duration);">
           <div class="text-xs font-bold text-base-content/50 uppercase tracking-wider mb-3" style="transition-property: color,background-color,border-color,text-decoration-color,fill,stroke,box-shadow,--radius-selector,--radius-field,--radius-box,--size-selector,--size-field,--border,--depth,--noise; transition-timing-function: cubic-bezier(.4,0,.2,1); transition-duration: var(--theme-transition-duration);">Theme Mode</div>
           <div class="flex gap-2" style="transition-property: color,background-color,border-color,text-decoration-color,fill,stroke,box-shadow,--radius-selector,--radius-field,--radius-box,--size-selector,--size-field,--border,--depth,--noise; transition-timing-function: cubic-bezier(.4,0,.2,1); transition-duration: var(--theme-transition-duration);">
-            <button onclick="__setThemeMode('system'); __filterThemesByMode('system');" class="btn btn-sm flex-1" id="mode-system" style="font: inherit; font-feature-settings: inherit; font-variation-settings: inherit; letter-spacing: inherit; opacity: 1; border-radius: 0; appearance: button; width: unset; cursor: pointer; text-align: center; vertical-align: middle; outline-offset: 2px; webkit-user-select: none; -webkit-user-select: none; user-select: none; padding-inline: var(--btn-p); color: var(--btn-fg); --tw-prose-links: var(--btn-fg); height: var(--size); font-size: var(--fontsize,.875rem); outline-color: var(--btn-color,var(--color-base-content)); background-color: var(--btn-bg); background-size: auto,calc(var(--noise)*100%); background-image: none,var(--btn-noise); border-width: var(--border); border-style: solid; border-color: var(--btn-border); text-shadow: 0 .5px oklch(100% 0 0/calc(var(--depth)*.15)); touch-action: manipulation; box-shadow: 0 .5px 0 .5px oklch(100% 0 0/calc(var(--depth)*6%))inset,var(--btn-shadow); --size: calc(var(--size-field,.25rem)*10); --btn-bg: var(--btn-color,var(--color-base-200)); --btn-fg: var(--color-base-content); --btn-p: 1rem; --btn-border: var(--btn-bg); border-start-start-radius: var(--join-ss,var(--radius-field)); border-start-end-radius: var(--join-se,var(--radius-field)); border-end-end-radius: var(--join-ee,var(--radius-field)); border-end-start-radius: var(--join-es,var(--radius-field)); flex-wrap: nowrap; flex-shrink: 0; justify-content: center; align-items: center; gap: .375rem; font-weight: 600; transition-property: color,background-color,border-color,box-shadow; transition-duration: .2s; transition-timing-function: cubic-bezier(0,0,.2,1); display: inline-flex; --btn-shadow: 0 3px 2px -2px var(--btn-bg),0 4px 3px -2px var(--btn-bg); --btn-noise: var(--fx-noise);">
+            <button onclick="__setThemeMode('system');" class="btn btn-sm flex-1" id="mode-system" style="font: inherit; font-feature-settings: inherit; font-variation-settings: inherit; letter-spacing: inherit; opacity: 1; border-radius: 0; appearance: button; width: unset; cursor: pointer; text-align: center; vertical-align: middle; outline-offset: 2px; webkit-user-select: none; -webkit-user-select: none; user-select: none; padding-inline: var(--btn-p); color: var(--btn-fg); --tw-prose-links: var(--btn-fg); height: var(--size); font-size: var(--fontsize,.875rem); outline-color: var(--btn-color,var(--color-base-content)); background-color: var(--btn-bg); background-size: auto,calc(var(--noise)*100%); background-image: none,var(--btn-noise); border-width: var(--border); border-style: solid; border-color: var(--btn-border); text-shadow: 0 .5px oklch(100% 0 0/calc(var(--depth)*.15)); touch-action: manipulation; box-shadow: 0 .5px 0 .5px oklch(100% 0 0/calc(var(--depth)*6%))inset,var(--btn-shadow); --size: calc(var(--size-field,.25rem)*10); --btn-bg: var(--btn-color,var(--color-base-200)); --btn-fg: var(--color-base-content); --btn-p: 1rem; --btn-border: var(--btn-bg); border-start-start-radius: var(--join-ss,var(--radius-field)); border-start-end-radius: var(--join-se,var(--radius-field)); border-end-end-radius: var(--join-ee,var(--radius-field)); border-end-start-radius: var(--join-es,var(--radius-field)); flex-wrap: nowrap; flex-shrink: 0; justify-content: center; align-items: center; gap: .375rem; font-weight: 600; transition-property: color,background-color,border-color,box-shadow; transition-duration: .2s; transition-timing-function: cubic-bezier(0,0,.2,1); display: inline-flex; --btn-shadow: 0 3px 2px -2px var(--btn-bg),0 4px 3px -2px var(--btn-bg); --btn-noise: var(--fx-noise);">
               <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="transition-property: color,background-color,border-color,text-decoration-color,fill,stroke,box-shadow,--radius-selector,--radius-field,--radius-box,--size-selector,--size-field,--border,--depth,--noise; transition-timing-function: cubic-bezier(.4,0,.2,1); transition-duration: var(--theme-transition-duration); vertical-align: middle; display: block;">
                 <rect x="2" y="3" width="20" height="14" rx="2" stroke-width="2" style="transition-property: color,background-color,border-color,text-decoration-color,fill,stroke,box-shadow,--radius-selector,--radius-field,--radius-box,--size-selector,--size-field,--border,--depth,--noise; transition-timing-function: cubic-bezier(.4,0,.2,1); transition-duration: var(--theme-transition-duration);"/>
                 <path d="M8 21h8M12 17v4" stroke-width="2" style="transition-property: color,background-color,border-color,text-decoration-color,fill,stroke,box-shadow,--radius-selector,--radius-field,--radius-box,--size-selector,--size-field,--border,--depth,--noise; transition-timing-function: cubic-bezier(.4,0,.2,1); transition-duration: var(--theme-transition-duration);"/>
               </svg>
               System
             </button>
-            <button onclick="__setThemeMode('light'); __filterThemesByMode('light');" class="btn btn-sm flex-1" id="mode-light" style="font: inherit; font-feature-settings: inherit; font-variation-settings: inherit; letter-spacing: inherit; opacity: 1; border-radius: 0; appearance: button; width: unset; cursor: pointer; text-align: center; vertical-align: middle; outline-offset: 2px; webkit-user-select: none; -webkit-user-select: none; user-select: none; padding-inline: var(--btn-p); color: var(--btn-fg); --tw-prose-links: var(--btn-fg); height: var(--size); font-size: var(--fontsize,.875rem); outline-color: var(--btn-color,var(--color-base-content)); background-color: var(--btn-bg); background-size: auto,calc(var(--noise)*100%); background-image: none,var(--btn-noise); border-width: var(--border); border-style: solid; border-color: var(--btn-border); text-shadow: 0 .5px oklch(100% 0 0/calc(var(--depth)*.15)); touch-action: manipulation; box-shadow: 0 .5px 0 .5px oklch(100% 0 0/calc(var(--depth)*6%))inset,var(--btn-shadow); --size: calc(var(--size-field,.25rem)*10); --btn-bg: var(--btn-color,var(--color-base-200)); --btn-fg: var(--color-base-content); --btn-p: 1rem; --btn-border: var(--btn-bg); border-start-start-radius: var(--join-ss,var(--radius-field)); border-start-end-radius: var(--join-se,var(--radius-field)); border-end-end-radius: var(--join-ee,var(--radius-field)); border-end-start-radius: var(--join-es,var(--radius-field)); flex-wrap: nowrap; flex-shrink: 0; justify-content: center; align-items: center; gap: .375rem; font-weight: 600; transition-property: color,background-color,border-color,box-shadow; transition-duration: .2s; transition-timing-function: cubic-bezier(0,0,.2,1); display: inline-flex; --btn-shadow: 0 3px 2px -2px var(--btn-bg),0 4px 3px -2px var(--btn-bg); --btn-noise: var(--fx-noise);">
+            <button onclick="__setThemeMode('light');" class="btn btn-sm flex-1" id="mode-light" style="font: inherit; font-feature-settings: inherit; font-variation-settings: inherit; letter-spacing: inherit; opacity: 1; border-radius: 0; appearance: button; width: unset; cursor: pointer; text-align: center; vertical-align: middle; outline-offset: 2px; webkit-user-select: none; -webkit-user-select: none; user-select: none; padding-inline: var(--btn-p); color: var(--btn-fg); --tw-prose-links: var(--btn-fg); height: var(--size); font-size: var(--fontsize,.875rem); outline-color: var(--btn-color,var(--color-base-content)); background-color: var(--btn-bg); background-size: auto,calc(var(--noise)*100%); background-image: none,var(--btn-noise); border-width: var(--border); border-style: solid; border-color: var(--btn-border); text-shadow: 0 .5px oklch(100% 0 0/calc(var(--depth)*.15)); touch-action: manipulation; box-shadow: 0 .5px 0 .5px oklch(100% 0 0/calc(var(--depth)*6%))inset,var(--btn-shadow); --size: calc(var(--size-field,.25rem)*10); --btn-bg: var(--btn-color,var(--color-base-200)); --btn-fg: var(--color-base-content); --btn-p: 1rem; --btn-border: var(--btn-bg); border-start-start-radius: var(--join-ss,var(--radius-field)); border-start-end-radius: var(--join-se,var(--radius-field)); border-end-end-radius: var(--join-ee,var(--radius-field)); border-end-start-radius: var(--join-es,var(--radius-field)); flex-wrap: nowrap; flex-shrink: 0; justify-content: center; align-items: center; gap: .375rem; font-weight: 600; transition-property: color,background-color,border-color,box-shadow; transition-duration: .2s; transition-timing-function: cubic-bezier(0,0,.2,1); display: inline-flex; --btn-shadow: 0 3px 2px -2px var(--btn-bg),0 4px 3px -2px var(--btn-bg); --btn-noise: var(--fx-noise);">
               <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" style="transition-property: color,background-color,border-color,text-decoration-color,fill,stroke,box-shadow,--radius-selector,--radius-field,--radius-box,--size-selector,--size-field,--border,--depth,--noise; transition-timing-function: cubic-bezier(.4,0,.2,1); transition-duration: var(--theme-transition-duration); vertical-align: middle; display: block;">
                 <path d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.894 6.166a.75.75 0 00-1.06-1.06l-1.591 1.59a.75.75 0 101.06 1.061l1.591-1.59zM21.75 12a.75.75 0 01-.75.75h-2.25a.75.75 0 010-1.5H21a.75.75 0 01.75.75zM17.834 18.894a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 10-1.061 1.06l1.59 1.591zM12 18a.75.75 0 01.75.75V21a.75.75 0 01-1.5 0v-2.25A.75.75 0 0112 18zM7.758 17.303a.75.75 0 00-1.061-1.06l-1.591 1.59a.75.75 0 001.06 1.061l1.591-1.59zM6 12a.75.75 0 01-.75.75H3a.75.75 0 010-1.5h2.25A.75.75 0 016 12zM6.697 7.757a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 00-1.061 1.06l1.59 1.591z" style="transition-property: color,background-color,border-color,text-decoration-color,fill,stroke,box-shadow,--radius-selector,--radius-field,--radius-box,--size-selector,--size-field,--border,--depth,--noise; transition-timing-function: cubic-bezier(.4,0,.2,1); transition-duration: var(--theme-transition-duration);"/>
               </svg>
               Light
             </button>
-            <button onclick="__setThemeMode('dark'); __filterThemesByMode('dark');" class="btn btn-sm flex-1" id="mode-dark" style="font: inherit; font-feature-settings: inherit; font-variation-settings: inherit; letter-spacing: inherit; opacity: 1; border-radius: 0; appearance: button; width: unset; cursor: pointer; text-align: center; vertical-align: middle; outline-offset: 2px; webkit-user-select: none; -webkit-user-select: none; user-select: none; padding-inline: var(--btn-p); color: var(--btn-fg); --tw-prose-links: var(--btn-fg); height: var(--size); font-size: var(--fontsize,.875rem); outline-color: var(--btn-color,var(--color-base-content)); background-color: var(--btn-bg); background-size: auto,calc(var(--noise)*100%); background-image: none,var(--btn-noise); border-width: var(--border); border-style: solid; border-color: var(--btn-border); text-shadow: 0 .5px oklch(100% 0 0/calc(var(--depth)*.15)); touch-action: manipulation; box-shadow: 0 .5px 0 .5px oklch(100% 0 0/calc(var(--depth)*6%))inset,var(--btn-shadow); --size: calc(var(--size-field,.25rem)*10); --btn-bg: var(--btn-color,var(--color-base-200)); --btn-fg: var(--color-base-content); --btn-p: 1rem; --btn-border: var(--btn-bg); border-start-start-radius: var(--join-ss,var(--radius-field)); border-start-end-radius: var(--join-se,var(--radius-field)); border-end-end-radius: var(--join-ee,var(--radius-field)); border-end-start-radius: var(--join-es,var(--radius-field)); flex-wrap: nowrap; flex-shrink: 0; justify-content: center; align-items: center; gap: .375rem; font-weight: 600; transition-property: color,background-color,border-color,box-shadow; transition-duration: .2s; transition-timing-function: cubic-bezier(0,0,.2,1); display: inline-flex; --btn-shadow: 0 3px 2px -2px var(--btn-bg),0 4px 3px -2px var(--btn-bg); --btn-noise: var(--fx-noise);">
+            <button onclick="__setThemeMode('dark');" class="btn btn-sm flex-1" id="mode-dark" style="font: inherit; font-feature-settings: inherit; font-variation-settings: inherit; letter-spacing: inherit; opacity: 1; border-radius: 0; appearance: button; width: unset; cursor: pointer; text-align: center; vertical-align: middle; outline-offset: 2px; webkit-user-select: none; -webkit-user-select: none; user-select: none; padding-inline: var(--btn-p); color: var(--btn-fg); --tw-prose-links: var(--btn-fg); height: var(--size); font-size: var(--fontsize,.875rem); outline-color: var(--btn-color,var(--color-base-content)); background-color: var(--btn-bg); background-size: auto,calc(var(--noise)*100%); background-image: none,var(--btn-noise); border-width: var(--border); border-style: solid; border-color: var(--btn-border); text-shadow: 0 .5px oklch(100% 0 0/calc(var(--depth)*.15)); touch-action: manipulation; box-shadow: 0 .5px 0 .5px oklch(100% 0 0/calc(var(--depth)*6%))inset,var(--btn-shadow); --size: calc(var(--size-field,.25rem)*10); --btn-bg: var(--btn-color,var(--color-base-200)); --btn-fg: var(--color-base-content); --btn-p: 1rem; --btn-border: var(--btn-bg); border-start-start-radius: var(--join-ss,var(--radius-field)); border-start-end-radius: var(--join-se,var(--radius-field)); border-end-end-radius: var(--join-ee,var(--radius-field)); border-end-start-radius: var(--join-es,var(--radius-field)); flex-wrap: nowrap; flex-shrink: 0; justify-content: center; align-items: center; gap: .375rem; font-weight: 600; transition-property: color,background-color,border-color,box-shadow; transition-duration: .2s; transition-timing-function: cubic-bezier(0,0,.2,1); display: inline-flex; --btn-shadow: 0 3px 2px -2px var(--btn-bg),0 4px 3px -2px var(--btn-bg); --btn-noise: var(--fx-noise);">
               <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" style="transition-property: color,background-color,border-color,text-decoration-color,fill,stroke,box-shadow,--radius-selector,--radius-field,--radius-box,--size-selector,--size-field,--border,--depth,--noise; transition-timing-function: cubic-bezier(.4,0,.2,1); transition-duration: var(--theme-transition-duration); vertical-align: middle; display: block;">
                 <path d="M21.64,13a1,1,0,0,0-1.05-.14,8.05,8.05,0,0,1-3.37.73A8.15,8.15,0,0,1,9.08,5.49a8.59,8.59,0,0,1,.25-2A1,1,0,0,0,8,2.36,10.14,10.14,0,1,0,22,14.05,1,1,0,0,0,21.64,13Z" style="transition-property: color,background-color,border-color,text-decoration-color,fill,stroke,box-shadow,--radius-selector,--radius-field,--radius-box,--size-selector,--size-field,--border,--depth,--noise; transition-timing-function: cubic-bezier(.4,0,.2,1); transition-duration: var(--theme-transition-duration);"/>
               </svg>
@@ -1679,9 +1682,31 @@
 
 <script>
   // Theme Mode Selector
+  let __themeModeMediaQuery;
+
+  function __resolveThemeForMode(mode) {
+    if (typeof window.__getLastThemeForMode === 'function') {
+      return window.__getLastThemeForMode(mode);
+    }
+    return mode === 'dark' ? 'dark' : 'light';
+  }
+
+  function __handleSystemModeChange(event) {
+    if ((localStorage.getItem('evo-theme-mode') || 'system') !== 'system') {
+      return;
+    }
+    const resolvedMode = event.matches ? 'dark' : 'light';
+    const theme = __resolveThemeForMode(resolvedMode);
+    if (theme) {
+      window.__setTheme(theme);
+    }
+    window.__filterThemesByMode && window.__filterThemesByMode('system');
+  }
+
   window.__setThemeMode = function(mode) {
     localStorage.setItem('evo-theme-mode', mode);
-    
+    localStorage.setItem('theme-mode', mode);
+
     // Update active button
     ['system', 'light', 'dark'].forEach(m => {
       const btn = document.getElementById(`mode-${m}`);
@@ -1693,17 +1718,39 @@
         }
       }
     });
-    
-    // Apply theme based on mode
-    if (mode === 'system') {
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      const theme = prefersDark ? 'dark' : 'light';
-      window.__setTheme(theme);
-    } else if (mode === 'light') {
-      window.__setTheme('light');
-    } else if (mode === 'dark') {
-      window.__setTheme('dark');
+
+    if (__themeModeMediaQuery) {
+      if (typeof __themeModeMediaQuery.removeEventListener === 'function') {
+        __themeModeMediaQuery.removeEventListener('change', __handleSystemModeChange);
+      } else if (typeof __themeModeMediaQuery.removeListener === 'function') {
+        __themeModeMediaQuery.removeListener(__handleSystemModeChange);
+      }
+      __themeModeMediaQuery = null;
     }
+
+    let themeToApply = null;
+
+    if (mode === 'system') {
+      __themeModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+      const prefersDark = __themeModeMediaQuery.matches;
+      themeToApply = __resolveThemeForMode(prefersDark ? 'dark' : 'light');
+
+      if (__themeModeMediaQuery) {
+        if (typeof __themeModeMediaQuery.addEventListener === 'function') {
+          __themeModeMediaQuery.addEventListener('change', __handleSystemModeChange);
+        } else if (typeof __themeModeMediaQuery.addListener === 'function') {
+          __themeModeMediaQuery.addListener(__handleSystemModeChange);
+        }
+      }
+    } else if (mode === 'light' || mode === 'dark') {
+      themeToApply = __resolveThemeForMode(mode);
+    }
+
+    if (themeToApply) {
+      window.__setTheme(themeToApply);
+    }
+
+    window.__filterThemesByMode && window.__filterThemesByMode(mode);
   };
   
   // Evo Custom Settings Toggle - apply/remove custom theme settings
@@ -1800,7 +1847,7 @@
       const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
       const lightIcon = document.getElementById('theme-icon-light');
       const darkIcon = document.getElementById('theme-icon-dark');
-      
+
       const themeMode = getThemeMode(currentTheme);
       if (themeMode === 'dark') {
         if (lightIcon) lightIcon.classList.add('hidden');
@@ -1814,7 +1861,7 @@
     function updateActiveIndicators() {
       const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
       const currentBackground = localStorage.getItem('evo-background') || 'none';
-      
+
       // Update theme checkmarks
       document.querySelectorAll('[data-set-theme]').forEach(btn => {
         const checkmark = btn.querySelector('.theme-checkmark');
@@ -1828,7 +1875,15 @@
           }
         }
       });
-      
+
+      const themeSelect = document.getElementById('settings_theme');
+      if (themeSelect) {
+        const option = themeSelect.querySelector(`option[value="${currentTheme}"]`);
+        if (option) {
+          themeSelect.value = currentTheme;
+        }
+      }
+
       // Update background buttons
       document.querySelectorAll('[data-bg]').forEach(btn => {
         if (btn.dataset.bg === currentBackground) {
@@ -1837,13 +1892,25 @@
           btn.classList.remove('btn-active');
         }
       });
+
+      const backgroundSelect = document.getElementById('settings_background');
+      if (backgroundSelect) {
+        const option = backgroundSelect.querySelector(`option[value="${currentBackground}"]`);
+        if (option) {
+          backgroundSelect.value = currentBackground;
+        }
+      }
     }
-    
-    // Initialize
-    document.addEventListener('DOMContentLoaded', function() {
+
+    window.__syncThemeUI = function() {
       updateThemeIcon();
       updateActiveIndicators();
-      
+    };
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', function() {
+      window.__syncThemeUI && window.__syncThemeUI();
+
       // Initialize theme mode
       const savedMode = localStorage.getItem('evo-theme-mode') || 'system';
       window.__setThemeMode(savedMode);
@@ -1915,8 +1982,7 @@
       window.__setTheme = function(theme) {
         originalSetTheme(theme);
         setTimeout(() => {
-          updateActiveIndicators();
-          updateThemeIcon();
+          window.__syncThemeUI && window.__syncThemeUI();
         }, 100);
       };
     }
@@ -1931,29 +1997,23 @@
 
   // Filter themes based on selected mode
   window.__filterThemesByMode = function(mode) {
-    console.log('🔍 Filter themes by mode:', mode);
-    console.log('📋 Available light themes:', window.__lightThemes);
-    console.log('📋 Available dark themes:', window.__darkThemes);
-    
     const themeMenu = document.getElementById('themeMenu');
     if (!themeMenu) {
       console.error('❌ Theme menu not found!');
       return;
     }
-    
+
     const allThemeItems = themeMenu.querySelectorAll('li.theme-item');
-    console.log('🎨 Total theme items found:', allThemeItems.length);
-    
     let shownCount = 0;
-    
+
     allThemeItems.forEach(item => {
       const button = item.querySelector('[data-set-theme]');
       if (!button) return;
-      
+
       const themeName = button.getAttribute('data-set-theme');
       const themeMode = window.__getThemeModeByName(themeName);
       let shouldShow = false;
-      
+
       if (mode === 'system') {
         // System mode: показуємо тільки одну Evo тему (в залежності від поточного режиму системи)
         const isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -1962,17 +2022,14 @@
         } else {
           shouldShow = themeName === 'light-evo';
         }
-        console.log(`  ${themeName} -> isDark: ${isDark}, shouldShow: ${shouldShow}`);
       } else if (mode === 'light') {
         // Light mode: показуємо всі light теми
         shouldShow = (themeMode === 'light');
-        console.log(`  ${themeName} -> ${themeMode} -> ${shouldShow}`);
       } else if (mode === 'dark') {
         // Dark mode: показуємо всі dark теми
         shouldShow = (themeMode === 'dark');
-        console.log(`  ${themeName} -> ${themeMode} -> ${shouldShow}`);
       }
-      
+
       if (shouldShow) {
         item.style.display = '';
         shownCount++;
@@ -1981,7 +2038,9 @@
       }
     });
     
-    console.log(`✅ Shown ${shownCount} themes in ${mode} mode`);
+    if (shownCount === 0) {
+      console.warn(`⚠️ No themes available for mode "${mode}"`);
+    }
   };
   
   // Helper function to determine theme mode
@@ -1995,12 +2054,12 @@
     // Run after DOM is ready
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', function() {
-        const currentMode = localStorage.getItem('theme-mode') || 'system';
+        const currentMode = localStorage.getItem('evo-theme-mode') || 'system';
         window.__filterThemesByMode && window.__filterThemesByMode(currentMode);
       });
     } else {
       setTimeout(function() {
-        const currentMode = localStorage.getItem('theme-mode') || 'system';
+        const currentMode = localStorage.getItem('evo-theme-mode') || 'system';
         window.__filterThemesByMode && window.__filterThemesByMode(currentMode);
       }, 100);
     }

@@ -220,6 +220,9 @@
                 localStorage.setItem(darkThemeKey, newTheme);
               }
               localStorage.setItem(themeKey, newTheme);
+              if (typeof window.__syncThemeUI === 'function') {
+                window.__syncThemeUI();
+              }
             }
           }
         });
