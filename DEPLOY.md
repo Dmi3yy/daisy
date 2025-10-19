@@ -37,48 +37,22 @@ dist/
 .DS_Store
 ```
 
-### 2. Додай GitHub Actions для автодеплою
+### 2. Налаштований GitHub Actions (вже в репозиторії)
 
-Створи файл `.github/workflows/deploy.yml`:
+У репозиторії вже є файл `.github/workflows/deploy.yml`, який використовує **нативні GitHub Pages Actions**:
 
-```yaml
-name: Build and Deploy
+- `actions/configure-pages`
+- `actions/upload-pages-artifact`
+- `actions/deploy-pages`
 
-on:
-  push:
-    branches: [ main ]
-  workflow_dispatch:
+Ніяких сторонніх бібліотек або кастомних GitHub Actions не потрібно — все на офіційних інструментах GitHub.
 
-jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest
-    
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-      
-      - name: Install dependencies
-        run: npm ci
-      
-      - name: Build
-        run: npm run build
-      
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
-```
-
-### 3. Налаштуй GitHub Pages
-1. Іди в Settings → Pages
-2. Source: `gh-pages` branch
+### 3. Увімкни GitHub Pages
+1. Зайди в Settings → Pages
+2. **Source:** обери `GitHub Actions`
 3. Збережи
+
+Після цього кожен push у `main` запустить workflow `Build and Deploy to GitHub Pages`, який збере проект (`npm run build`) і завантажить артефакти у Pages.
 
 ### 4. Або підключи Cloudflare Pages
 1. Cloudflare Dashboard → Pages → Create project

@@ -17,10 +17,7 @@
 На сторінці GitHub Pages:
 
 ### Source (Джерело)
-Вибери: **Deploy from a branch**
-
-### Branch (Гілка)
-Вибери: `gh-pages` → `/ (root)`
+Вибери: **GitHub Actions**
 
 ### Натисни: **Save**
 
@@ -63,7 +60,7 @@ git push
 
 2. **Сторінка 404?**
    - Почекай 5 хвилин після першого деплою
-   - Перевір що вибрано `gh-pages` branch в Settings → Pages
+   - Переконайся, що в Settings → Pages обрано `GitHub Actions` як Source
 
 3. **Build fails?**
    - Подивись логи на https://github.com/Dmi3yy/daisy/actions

@@ -17,9 +17,8 @@
 
 1. Іди на https://github.com/Dmi3yy/daisy/settings/pages
 
-2. **Source:** Deploy from a branch
-3. **Branch:** `gh-pages` / `(root)`
-4. **Save**
+2. **Source:** GitHub Actions
+3. **Save**
 
 5. Іди на https://github.com/Dmi3yy/daisy/actions
 6. Дозволь Actions якщо потрібно
