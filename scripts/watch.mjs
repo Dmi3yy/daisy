@@ -30,7 +30,7 @@ function triggerRebuild() {
   clearTimeout(rebuildTimeout);
   rebuildTimeout = setTimeout(() => {
     console.log('[watch] Changes detected, rebuilding HTML...');
-    const build = spawn('node', [path.join(root, 'scripts/build.mjs'), '--keep-css=true'], {
+    const build = spawn('node', [path.join(root, 'scripts/build.mjs'), '--inline-css=false', '--keep-css=true'], {
       stdio: 'inherit',
       cwd: root
     });

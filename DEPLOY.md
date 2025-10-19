@@ -24,6 +24,8 @@ dist/
 **Завантажуй на сервер:**
 - `dist/index.inline.html` → `/public_html/index.html`
 
+> ℹ️ Команда `npm run build` автоматично створює обидві версії (окремі файли та inline). Якщо потрібен лише inline-варіант, виконайте `npm run build:html -- --inline-css=true --keep-css=false`, а потім `npm run build:inline` — після цього можна видалити `dist/styles.css`.
+
 ---
 
 ## 🔄 GitHub + Cloudflare Pages / Vercel
