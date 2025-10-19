@@ -1,0 +1,3011 @@
+<!DOCTYPE html>
+<html lang="C.UTF-8" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="theme-color" content="rgba(236, 236, 236, 0)" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="rgba(30, 30, 30, 0)" media="(prefers-color-scheme: dark)" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>Evolution + DaisyUI 5.7</title>
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/theme-change@2.0.2/index.js"></script>
+  <script>
+    (function () {
+      // Storage keys
+      const themeKey = "evo-theme";
+      const lightThemeKey = "evo-light-theme";
+      const darkThemeKey = "evo-dark-theme";
+      const langKey = "evo-lang";
+      const paletteKey = "evo-palette";
+      const themeVarsKey = "evo-theme-variables";
+      const backgroundKey = "evo-background";
+      const backgroundColorKey = "evo-background-color";
+
+      // Load saved preferences
+      // theme-change uses "theme" key, but we also check our legacy key
+      const storedTheme = localStorage.getItem("theme") || localStorage.getItem(themeKey);
+      const storedLang = localStorage.getItem(langKey);
+      const storedVars = localStorage.getItem(themeVarsKey);
+
+      // Apply saved theme and language
+      if (storedTheme) {
+        document.documentElement.setAttribute("data-theme", storedTheme);
+        // Sync both storage keys
+        localStorage.setItem("theme", storedTheme);
+        localStorage.setItem(themeKey, storedTheme);
+      }
+      if (storedLang) document.documentElement.setAttribute("lang", storedLang);
+      
+      // Apply saved background after DOM is loaded
+      const storedBackground = localStorage.getItem(backgroundKey) || 'none';
+      window.addEventListener('DOMContentLoaded', function() {
+        window.__applyBackground(storedBackground);
+        
+        // Initialize background checkmarks
+        document.querySelectorAll('.bg-item').forEach(btn => {
+          const checkmark = btn.querySelector('.bg-checkmark');
+          if (checkmark) {
+            if (btn.getAttribute('data-bg') === storedBackground) {
+              checkmark.style.opacity = '1';
+            } else {
+              checkmark.style.opacity = '0';
+            }
+          }
+        });
+        
+        // Initialize HSL sliders with saved values
+        const savedHue = localStorage.getItem('evo-solid-hue') || 220;
+        const savedOpacity = localStorage.getItem('evo-solid-opacity') || 100;
+        
+        const hueSlider = document.getElementById('hue-slider');
+        const opacitySlider = document.getElementById('opacity-slider');
+        
+        if (hueSlider) hueSlider.value = savedHue;
+        if (opacitySlider) opacitySlider.value = savedOpacity;
+        
+        // Update displays and slider colors
+        if (window.__applySolidColorRealtime) {
+          window.__applySolidColorRealtime();
+        }
+      });
+      
+      // Evo Theme Effects Management
+      const evoDepthKey = 'evo-depth';
+      const evoNoiseKey = 'evo-noise';
+      
+      // Apply theme effects
+      window.__applyEvoEffects = function() {
+        const depth = localStorage.getItem(evoDepthKey) === 'true' ? '1' : '0';
+        const noise = localStorage.getItem(evoNoiseKey) === 'true' ? '1' : '0';
+        
+        // Create or update style element for Evo effects
+        let style = document.getElementById('evo-effects-style');
+        if (!style) {
+          style = document.createElement('style');
+          style.id = 'evo-effects-style';
+          document.head.appendChild(style);
+        }
+        
+        style.textContent = `:root {
+          --depth: ${depth} !important;
+          --noise: ${noise} !important;
+        }`;
+        
+        console.log(`🎨 Evo Effects: depth=${depth}, noise=${noise}`);
+      };
+      
+      // Start Evo Auto Mode if it was active
+      window.addEventListener('DOMContentLoaded', function() {
+        const evoSpeed = parseFloat(localStorage.getItem('evo-speed') || '0');
+        
+        // Update slider and display
+        const slider = document.getElementById('evo-speed-slider');
+        const speedDisplay = document.getElementById('evo-speed-display');
+        
+        if (slider) {
+          slider.value = evoSpeed;
+        }
+        
+        if (speedDisplay) {
+          speedDisplay.textContent = evoSpeed === 0 ? 'OFF' : `${evoSpeed.toFixed(1)}s`;
+        }
+        
+        // Initialize system effect toggles
+        const depthToggle = document.getElementById('system-depth-toggle');
+        const noiseToggle = document.getElementById('system-noise-toggle');
+        
+        if (depthToggle) {
+          const depth = localStorage.getItem(evoDepthKey) !== 'false'; // Default true
+          depthToggle.checked = depth;
+          localStorage.setItem(evoDepthKey, depth);
+        }
+        
+        if (noiseToggle) {
+          const noise = localStorage.getItem(evoNoiseKey) === 'true'; // Default false
+          noiseToggle.checked = noise;
+          localStorage.setItem(evoNoiseKey, noise);
+        }
+        
+        // Apply effects
+        window.__applyEvoEffects();
+        
+        // Add event listeners for effect toggles
+        if (depthToggle) {
+          depthToggle.addEventListener('change', function(e) {
+            localStorage.setItem(evoDepthKey, e.target.checked);
+            window.__applyEvoEffects();
+          });
+        }
+        
+        if (noiseToggle) {
+          noiseToggle.addEventListener('change', function(e) {
+            localStorage.setItem(evoNoiseKey, e.target.checked);
+            window.__applyEvoEffects();
+          });
+        }
+        
+        // Start Evo Auto if speed > 0
+        if (evoSpeed > 0 && window.__startEvoAuto) {
+          window.__startEvoAuto(evoSpeed);
+          if (evoButton) evoButton.classList.add('btn-primary');
+        }
+      });
+
+      // Apply custom theme variables
+      if (storedVars) {
+        try {
+          const vars = JSON.parse(storedVars);
+          const style = document.createElement('style');
+          style.id = 'evo-custom-vars';
+          let css = ':root[data-theme="' + (storedTheme || 'light') + '"] {';
+          Object.keys(vars).forEach(key => {
+            css += key + ':' + vars[key] + ';';
+          });
+          css += '}';
+          style.textContent = css;
+          document.head.appendChild(style);
+        } catch (e) {
+          console.error('Failed to parse theme variables:', e);
+        }
+      }
+
+      // Theme modes mapping - dynamically loaded from theme files
+      const __lightThemes = ["light-evo","light","cupcake","bumblebee","emerald","corporate","retro","valentine","garden","pastel","fantasy","wireframe","cmyk","autumn","acid","lemonade","winter","nord","lofi"];
+      const __darkThemes = ["dark-evo","dark-evo","dark","synthwave","cyberpunk","halloween","forest","aqua","black","luxury","dracula","business","night","coffee","dim","sunset"];
+      const lightThemes = __lightThemes || [];
+      const darkThemes = __darkThemes || [];
+
+      // Global functions for theme/lang switching
+      // theme-change library handles the actual theme switching, but we need to track light/dark preferences
+      window.__setTheme = function (t) {
+        // Let theme-change handle the actual setting
+        document.documentElement.setAttribute("data-theme", t);
+        localStorage.setItem("theme", t); // theme-change uses "theme" key
+        localStorage.setItem(themeKey, t); // Keep our legacy key too
+        
+        // Save theme based on mode for light/dark memory
+        if (lightThemes.includes(t)) {
+          localStorage.setItem(lightThemeKey, t);
+        } else if (darkThemes.includes(t)) {
+          localStorage.setItem(darkThemeKey, t);
+        }
+        
+        // Reapply custom variables for new theme
+        const vars = localStorage.getItem(themeVarsKey);
+        if (vars) {
+          const style = document.getElementById('evo-custom-vars');
+          if (style) {
+            const varsObj = JSON.parse(vars);
+            let css = ':root[data-theme="' + t + '"] {';
+            Object.keys(varsObj).forEach(key => {
+              css += key + ':' + varsObj[key] + ';';
+            });
+            css += '}';
+            style.textContent = css;
+          }
+        }
+      };
+      
+      // Watch for theme changes from theme-change library
+      const themeObserver = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+          if (mutation.attributeName === 'data-theme') {
+            const newTheme = document.documentElement.getAttribute('data-theme');
+            if (newTheme) {
+              // Save last theme for light/dark mode
+              if (lightThemes.includes(newTheme)) {
+                localStorage.setItem(lightThemeKey, newTheme);
+              } else if (darkThemes.includes(newTheme)) {
+                localStorage.setItem(darkThemeKey, newTheme);
+              }
+              localStorage.setItem(themeKey, newTheme);
+            }
+          }
+        });
+      });
+      
+      // Start observing theme changes
+      themeObserver.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['data-theme']
+      });
+      
+      window.__getLastThemeForMode = function(mode) {
+        if (mode === 'light') {
+          return localStorage.getItem(lightThemeKey) || 'light';
+        } else if (mode === 'dark') {
+          return localStorage.getItem(darkThemeKey) || 'dark';
+        }
+        return 'light';
+      };
+
+      window.__setLang = function (l) {
+        document.documentElement.setAttribute("lang", l);
+        localStorage.setItem(langKey, l);
+      };
+
+      window.__setBackground = function (bg) {
+        localStorage.setItem(backgroundKey, bg);
+        __applyBackground(bg);
+        
+        // Update background checkmarks
+        document.querySelectorAll('.bg-item').forEach(btn => {
+          const checkmark = btn.querySelector('.bg-checkmark');
+          if (checkmark) {
+            if (btn.getAttribute('data-bg') === bg) {
+              checkmark.style.opacity = '1';
+            } else {
+              checkmark.style.opacity = '0';
+            }
+          }
+        });
+      };
+
+      window.__applyBackground = function(bgId) {
+        const container = document.getElementById('app-background');
+        if (!container) return;
+        
+        // Update navbar glass effect based on background
+        const navbar = document.getElementById('main-navbar');
+        if (navbar) {
+          if (bgId && bgId !== 'none') {
+            navbar.classList.add('has-background');
+          } else {
+            navbar.classList.remove('has-background');
+          }
+        }
+
+        // Stop cosmic dream if it was active
+        if (window.__stopCosmicDream) {
+          window.__stopCosmicDream();
+        }
+
+        // Create layer structure if it doesn't exist
+        let layersContainer = container.querySelector('.background-layers');
+        let animatedLayer = container.querySelector('.animated-layer');
+        let solidLayer = container.querySelector('.solid-layer');
+        
+        if (!layersContainer) {
+          layersContainer = document.createElement('div');
+          layersContainer.className = 'background-layers';
+          container.appendChild(layersContainer);
+        }
+        
+        if (!animatedLayer) {
+          animatedLayer = document.createElement('div');
+          animatedLayer.className = 'animated-layer';
+          layersContainer.appendChild(animatedLayer);
+        }
+        
+        if (!solidLayer) {
+          solidLayer = document.createElement('div');
+          solidLayer.className = 'solid-layer';
+          layersContainer.appendChild(solidLayer);
+        }
+
+        // Save last animated background for transparent mode
+        const animatedBackgrounds = ['gradient-spheres', 'colorful-dots', 'cosmic-dream'];
+        if (animatedBackgrounds.includes(bgId)) {
+          localStorage.setItem('evo-last-animated-bg', bgId);
+        }
+
+        if (bgId === 'none' || !bgId) {
+          // Clear both layers
+          animatedLayer.innerHTML = '';
+          animatedLayer.className = 'animated-layer';
+          solidLayer.style.background = '';
+          // Disable glass surfaces when no dynamic background
+          document.body.classList.remove('has-dynamic-bg');
+          return;
+        }
+
+        // Mark page as having a dynamic background (enables glass UI surfaces)
+        document.body.classList.add('has-dynamic-bg');
+
+        if (bgId === 'transparent') {
+          // Clear solid layer, keep animated
+          solidLayer.style.background = '';
+          document.body.classList.add('has-dynamic-bg');
+        } else if (bgId === 'solid-color') {
+          // Apply solid color layer on top
+          const hue = localStorage.getItem('evo-solid-hue') || 220;
+          const opacity = localStorage.getItem('evo-solid-opacity') || 100;
+          const alpha = opacity / 100;
+          const color = `hsla(${hue}, 80%, 60%, ${alpha})`;
+          
+          solidLayer.style.background = color;
+          
+          // Enable glass effects if opacity < 100 (semi-transparent)
+          if (alpha < 1) {
+            document.body.classList.add('has-dynamic-bg');
+          } else {
+            document.body.classList.remove('has-dynamic-bg');
+          }
+        } else if (bgId === 'gradient-spheres') {
+          // Clear solid layer, apply animated
+          solidLayer.style.background = '';
+          animatedLayer.className = 'animated-layer bg-gradient-spheres';
+          animatedLayer.innerHTML = `
+            <div class="gradient-sphere sphere-1"></div>
+            <div class="gradient-sphere sphere-2"></div>
+            <div class="gradient-sphere sphere-3"></div>
+            <div class="glow"></div>
+            <div class="grid-overlay"></div>
+            <div class="noise-overlay"></div>
+            <div class="particles-container" id="particles-container"></div>
+          `;
+          __initGradientSpheresParticles();
+        } else if (bgId === 'colorful-dots') {
+          // Clear solid layer, apply animated
+          solidLayer.style.background = '';
+          animatedLayer.className = 'animated-layer bg-colorful-dots';
+          animatedLayer.innerHTML = `
+            <div class="dots-layer dots-layer-1">.</div>
+            <div class="dots-layer dots-layer-2">.</div>
+            <div class="dots-layer dots-layer-3">.</div>
+            <div class="dots-layer dots-layer-4">.</div>
+          `;
+        } else if (bgId === 'cosmic-dream') {
+          // Clear solid layer, apply animated
+          solidLayer.style.background = '';
+          animatedLayer.className = 'animated-layer bg-cosmic-dream';
+          animatedLayer.innerHTML = `
+            <div class="cosmic-spheres">
+              <div class="cosmic-sphere cosmic-sphere-1"></div>
+              <div class="cosmic-sphere cosmic-sphere-2"></div>
+              <div class="cosmic-sphere cosmic-sphere-3"></div>
+            </div>
+            <div class="cosmic-dots cosmic-dots-1">.</div>
+            <div class="cosmic-dots cosmic-dots-2">.</div>
+          `;
+          __initCosmicDream();
+        }
+        
+        // Add glass effect to hero when background is active
+        const hero = document.querySelector('.hero');
+        if (hero && bgId && bgId !== 'none') {
+          hero.classList.add('hero-glass');
+        } else if (hero) {
+          hero.classList.remove('hero-glass');
+        }
+      };
+
+      // Apply solid color in real-time (without saving to localStorage)
+      window.__applySolidColorRealtime = function() {
+        const hue = document.getElementById('hue-slider')?.value || 220;
+        const opacity = document.getElementById('opacity-slider')?.value || 100;
+        const alpha = opacity / 100;
+        
+        // Update display values (main and mini)
+        const hueDisplay = document.getElementById('hue-value');
+        const hueDisplayMini = document.getElementById('hue-value-mini');
+        const opacityDisplay = document.getElementById('opacity-value');
+        const hueSlider = document.getElementById('hue-slider');
+        const opacitySlider = document.getElementById('opacity-slider');
+        
+        if (hueDisplay) hueDisplay.textContent = `${hue}°`;
+        if (hueDisplayMini) hueDisplayMini.textContent = `${hue}°`;
+        if (opacityDisplay) opacityDisplay.textContent = `${opacity}%`;
+        
+        // Update both sliders with current color
+        const color = `hsl(${hue}, 80%, 60%)`;
+        
+        // Hue slider thumb
+        if (hueSlider) {
+          hueSlider.style.setProperty('--thumb-color', color);
+        }
+        
+        // Opacity slider - thumb (full color) and background gradient
+        if (opacitySlider) {
+          opacitySlider.style.setProperty('--thumb-color', color);
+          opacitySlider.style.setProperty('--gradient-color', color);
+        }
+        
+        // Get solid layer
+        const container = document.getElementById('app-background');
+        if (!container) return;
+        
+        let solidLayer = container.querySelector('.solid-layer');
+        if (!solidLayer) {
+          // Create layer structure if needed
+          __applyBackground('none');
+          solidLayer = container.querySelector('.solid-layer');
+        }
+        
+        // Apply color to solid layer
+        const colorWithAlpha = `hsla(${hue}, 80%, 60%, ${alpha})`;
+        if (solidLayer) {
+          solidLayer.style.background = colorWithAlpha;
+        }
+        
+        // Enable glass effects if opacity < 100
+        if (alpha < 1) {
+          document.body.classList.add('has-dynamic-bg');
+        } else {
+          document.body.classList.remove('has-dynamic-bg');
+        }
+      };
+      
+      // Save solid color settings to localStorage
+      window.__saveSolidColorToStorage = function() {
+        const hue = document.getElementById('hue-slider')?.value || 220;
+        const opacity = document.getElementById('opacity-slider')?.value || 100;
+        
+        localStorage.setItem('evo-solid-hue', hue);
+        localStorage.setItem('evo-solid-opacity', opacity);
+        localStorage.setItem(backgroundKey, 'solid-color-layer');
+        
+        console.log(`💾 Saved: H${hue}° O${opacity}%`);
+        
+        // Visual feedback
+        const btn = event?.target;
+        if (btn) {
+          const originalText = btn.innerHTML;
+          btn.innerHTML = '✅ Saved!';
+          btn.classList.add('btn-success');
+          setTimeout(() => {
+            btn.innerHTML = originalText;
+            btn.classList.remove('btn-success');
+          }, 1500);
+        }
+      };
+      
+      // Legacy function for backward compatibility
+      window.__setBackgroundColor = function(hex) {
+        try {
+          localStorage.setItem(backgroundColorKey, hex);
+          const active = localStorage.getItem(backgroundKey);
+          if (active === 'solid-color') {
+            __applyBackground('solid-color');
+          }
+        } catch (e) {
+          console.error('Failed to save background color', e);
+        }
+      }
+
+      window.__initCosmicDream = function() {
+        function getRandomColor() {
+          return Math.floor(Math.random() * 360);
+        }
+        
+        function updateCosmicColors() {
+          const root = document.documentElement;
+          const spheres = document.querySelectorAll('.cosmic-sphere');
+          
+          // Update sphere colors
+          if (spheres[0]) {
+            const c1 = getRandomColor();
+            spheres[0].style.background = `radial-gradient(circle, hsla(${c1}, 80%, 60%, 0.8), hsla(${c1 + 30}, 80%, 50%, 0.4))`;
+          }
+          if (spheres[1]) {
+            const c2 = getRandomColor();
+            spheres[1].style.background = `radial-gradient(circle, hsla(${c2}, 80%, 60%, 0.8), hsla(${c2 + 30}, 80%, 50%, 0.4))`;
+          }
+          if (spheres[2]) {
+            const c3 = getRandomColor();
+            spheres[2].style.background = `radial-gradient(circle, hsla(${c3}, 80%, 60%, 0.8), hsla(${c3 + 30}, 80%, 50%, 0.4))`;
+          }
+          
+          // Update dots colors via CSS variables
+          for (let i = 1; i <= 10; i++) {
+            root.style.setProperty(`--cosmic-hue-${i}`, getRandomColor());
+          }
+          
+          // Change background color
+          const bgContainer = document.querySelector('.bg-cosmic-dream');
+          if (bgContainer) {
+            const bgHue = getRandomColor();
+            bgContainer.style.background = `linear-gradient(135deg, 
+              hsla(${bgHue}, 60%, 12%, 1) 0%, 
+              hsla(${bgHue + 60}, 50%, 15%, 1) 50%, 
+              hsla(${bgHue + 120}, 60%, 10%, 1) 100%)`;
+          }
+        }
+        
+        // Initial colors
+        updateCosmicColors();
+        
+        // Change colors every 8 seconds
+        const colorInterval = setInterval(updateCosmicColors, 8000);
+        
+        // Store interval ID to stop it later
+        window.__cosmicColorInterval = colorInterval;
+      };
+      
+      window.__stopCosmicDream = function() {
+        if (window.__cosmicColorInterval) {
+          clearInterval(window.__cosmicColorInterval);
+          window.__cosmicColorInterval = null;
+        }
+        if (window.__evoAutoInterval) {
+          clearInterval(window.__evoAutoInterval);
+          window.__evoAutoInterval = null;
+        }
+        document.documentElement.style.transition = '';
+      };
+
+      // Update transition duration based on Evo speed
+      window.__updateTransitionDuration = function(speedSeconds) {
+        // Calculate transition duration to be 80% of rotation time
+        // 20% static + 80% smooth transition to next theme
+        let duration;
+        if (speedSeconds === 0) {
+          duration = 500; // Default when Evo is off (0.5s)
+        } else {
+          // Use 80% of the rotation speed for smooth transition
+          // e.g., 1s = 800ms, 3s = 2400ms, 6s = 4800ms, 10s = 8000ms
+          duration = Math.round(speedSeconds * 800);
+        }
+        
+        document.documentElement.style.setProperty('--theme-transition-duration', `${duration}ms`);
+        console.log(`⏱️ Transition: ${(duration/1000).toFixed(1)}s (80% of ${speedSeconds}s rotation)`);
+      };
+      
+      // Evo Auto Mode - Theme switching with configurable speed
+      (function() {
+        let evoInterval = null;
+        
+        function getCurrentModeThemes() {
+          const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+          return darkThemes.includes(currentTheme) ? darkThemes : lightThemes;
+        }
+
+        function pickNextTheme(current) {
+          const themeList = getCurrentModeThemes();
+          let next;
+          do {
+            next = themeList[Math.floor(Math.random() * themeList.length)];
+          } while (next === current && themeList.length > 1);
+          return next;
+        }
+        
+        window.__startEvoAuto = function(speedSeconds) {
+          window.__stopEvoAuto(); // Stop if already running
+          
+          if (!speedSeconds || speedSeconds === 0) {
+            console.log('🎨 Evo Auto Mode: Speed is 0, not starting');
+            window.__updateTransitionDuration(0); // Reset to default
+            return;
+          }
+          
+          // Update transition duration based on speed
+          window.__updateTransitionDuration(speedSeconds);
+          
+          console.log(`🎨 Evo Auto Mode: ON - switching themes every ${speedSeconds}s`);
+          
+          // Switch theme immediately
+          const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+          const nextTheme = pickNextTheme(currentTheme);
+          window.__setTheme(nextTheme);
+          
+          // Then switch at specified interval
+          evoInterval = setInterval(() => {
+            const current = document.documentElement.getAttribute('data-theme');
+            const next = pickNextTheme(current);
+            window.__setTheme(next);
+            console.log(`🎨 Evo Auto: Switched to ${next}`);
+          }, speedSeconds * 1000); // Convert to milliseconds
+        };
+        
+        window.__stopEvoAuto = function() {
+          if (evoInterval) {
+            clearInterval(evoInterval);
+            evoInterval = null;
+            window.__updateTransitionDuration(0); // Reset to default
+            console.log("🎨 Evo Auto Mode: OFF");
+          }
+        };
+        
+        // Handle speed slider changes
+        window.__updateEvoUI = function(speed) {
+          const speedValue = document.getElementById('evo-speed-value');
+          const statusBadge = document.getElementById('evo-status-badge');
+          const evoButton = document.getElementById('evo-button');
+          
+          if (speed === 0) {
+            if (speedValue) speedValue.textContent = '0s (OFF)';
+            if (statusBadge) {
+              statusBadge.textContent = 'OFF';
+              statusBadge.classList.remove('badge-success');
+              statusBadge.classList.add('badge-primary');
+            }
+            if (evoButton) evoButton.classList.remove('btn-primary');
+          } else {
+            if (speedValue) speedValue.textContent = `${speed}s`;
+            if (statusBadge) {
+              statusBadge.textContent = 'ON';
+              statusBadge.classList.remove('badge-primary');
+              statusBadge.classList.add('badge-success');
+            }
+            if (evoButton) evoButton.classList.add('btn-primary');
+          }
+        };
+        
+        // Speed slider handler
+        window.addEventListener('DOMContentLoaded', function() {
+          const slider = document.getElementById('evo-speed-slider');
+          if (slider) {
+            slider.addEventListener('input', function(e) {
+              const speed = parseInt(e.target.value, 10);
+              localStorage.setItem('evo-speed', speed);
+              window.__updateEvoUI(speed);
+              
+              // Restart Evo Auto with new speed
+              if (speed > 0) {
+                window.__startEvoAuto(speed);
+              } else {
+                window.__stopEvoAuto();
+              }
+            });
+          }
+        });
+      })();
+
+      window.__initGradientSpheresParticles = function() {
+        const particlesContainer = document.getElementById('particles-container');
+        if (!particlesContainer) return;
+        
+        const particleCount = 80;
+        
+        // Create particles
+        for (let i = 0; i < particleCount; i++) {
+          createParticle();
+        }
+        
+        function createParticle() {
+          const particle = document.createElement('div');
+          particle.className = 'particle';
+          
+          const size = Math.random() * 3 + 1;
+          particle.style.width = size + 'px';
+          particle.style.height = size + 'px';
+          
+          resetParticle(particle);
+          particlesContainer.appendChild(particle);
+          animateParticle(particle);
+        }
+        
+        function resetParticle(particle) {
+          const posX = Math.random() * 100;
+          const posY = Math.random() * 100;
+          
+          particle.style.left = posX + '%';
+          particle.style.top = posY + '%';
+          particle.style.opacity = '0';
+          
+          return { x: posX, y: posY };
+        }
+        
+        function animateParticle(particle) {
+          const pos = resetParticle(particle);
+          const duration = Math.random() * 10 + 10;
+          const delay = Math.random() * 5;
+          
+          setTimeout(() => {
+            particle.style.transition = 'all ' + duration + 's linear';
+            particle.style.opacity = Math.random() * 0.3 + 0.1;
+            
+            const moveX = pos.x + (Math.random() * 20 - 10);
+            const moveY = pos.y - Math.random() * 30;
+            
+            particle.style.left = moveX + '%';
+            particle.style.top = moveY + '%';
+            
+            setTimeout(() => animateParticle(particle), duration * 1000);
+          }, delay * 1000);
+        }
+        
+        // Mouse interaction
+        document.addEventListener('mousemove', function(e) {
+          const mouseX = (e.clientX / window.innerWidth) * 100;
+          const mouseY = (e.clientY / window.innerHeight) * 100;
+          
+          const particle = document.createElement('div');
+          particle.className = 'particle';
+          
+          const size = Math.random() * 4 + 2;
+          particle.style.width = size + 'px';
+          particle.style.height = size + 'px';
+          particle.style.left = mouseX + '%';
+          particle.style.top = mouseY + '%';
+          particle.style.opacity = '0.6';
+          
+          particlesContainer.appendChild(particle);
+          
+          setTimeout(() => {
+            particle.style.transition = 'all 2s ease-out';
+            particle.style.left = (mouseX + (Math.random() * 10 - 5)) + '%';
+            particle.style.top = (mouseY + (Math.random() * 10 - 5)) + '%';
+            particle.style.opacity = '0';
+            
+            setTimeout(() => particle.remove(), 2000);
+          }, 10);
+        });
+      };
+
+      window.__setThemeVar = function (key, value) {
+        const vars = JSON.parse(localStorage.getItem(themeVarsKey) || '{}');
+        vars[key] = value;
+        localStorage.setItem(themeVarsKey, JSON.stringify(vars));
+        
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        const style = document.getElementById('evo-custom-vars') || document.createElement('style');
+        style.id = 'evo-custom-vars';
+        let css = ':root[data-theme="' + currentTheme + '"] {';
+        Object.keys(vars).forEach(k => {
+          css += k + ':' + vars[k] + ';';
+        });
+        css += '}';
+        style.textContent = css;
+        if (!style.parentNode) document.head.appendChild(style);
+      };
+
+      window.__exportTheme = function () {
+        const theme = localStorage.getItem(themeKey) || 'light';
+        const palette = localStorage.getItem(paletteKey) || 'default';
+        const vars = JSON.parse(localStorage.getItem(themeVarsKey) || '{}');
+        const exportData = {
+          name: theme,
+          palette: palette,
+          vars: vars
+        };
+        const dataStr = JSON.stringify(exportData, null, 2);
+        const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
+        const exportFileDefaultName = 'evo-theme-' + theme + '.json';
+        const linkElement = document.createElement('a');
+        linkElement.setAttribute('href', dataUri);
+        linkElement.setAttribute('download', exportFileDefaultName);
+        linkElement.click();
+      };
+
+      window.__importTheme = function (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          try {
+            const data = JSON.parse(e.target.result);
+            if (data.name) __setTheme(data.name);
+            if (data.palette) __setPalette(data.palette);
+            if (data.vars) {
+              localStorage.setItem(themeVarsKey, JSON.stringify(data.vars));
+              Object.keys(data.vars).forEach(key => {
+                __setThemeVar(key, data.vars[key]);
+              });
+            }
+            alert('Theme imported successfully!');
+            location.reload();
+          } catch (err) {
+            alert('Failed to import theme: ' + err.message);
+          }
+        };
+        reader.readAsText(file);
+      };
+    })();
+  </script>
+</head>
+<body class="min-h-screen">
+  <!-- Animated Background Container -->
+  <div id="app-background"></div>
+  
+  <div class="drawer drawer-end">
+    <input id="settings-drawer" type="checkbox" class="drawer-toggle" />
+    
+    <div class="drawer-content">
+      <div class="navbar shadow-sm" id="main-navbar">
+  <!-- Logo and brand (glows when Evo is active) -->
+  <div class="flex-1">
+    <a class="btn btn-ghost text-xl gap-2 transition-all duration-300" id="evo-logo">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 94 90" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 transition-all duration-300">
+        <path d="m37.361 37.392 6.783 16.393 6.792-16.393M32.017 45.49h-7.908M33.161 37.392h-9.3v16.393h9.293M61.732 37.392c4.239 0 7.675 3.51 7.675 8.097 0 4.588-3.437 8.296-7.676 8.296-4.239 0-7.675-3.708-7.675-8.296 0-4.587 3.435-8.097 7.674-8.097h.002z"/>
+        <path d="M45.829 8.807c19.573.002 35.44 15.174 35.439 35.01-.001 19.834-15.87 35.868-35.443 35.868-19.574 0-35.443-16.034-35.444-35.869 0-19.835 15.865-35.007 35.439-35.009h.009z"/>
+        <path d="M22.837 71.115C10.95 65.332 2.745 53.035 2.744 38.773c0-19.835 15.865-35.007 35.439-35.01h.009c9.046.002 17.3 3.243 23.562 8.687"/>
+        <path d="M34.652 10.59c5.906-4.288 13.233-6.782 21.168-6.783h.009c19.573.002 35.44 15.175 35.439 35.01 0 10.025-4.055 19.08-10.593 25.583"/>
+        <path d="M68.538 16.749c10.126 6.054 16.73 17.13 16.73 30.067-.001 19.835-15.87 35.869-35.444 35.869-8.814 0-16.878-3.252-23.079-8.638M68.392 16.87"/>
+        <path d="M60.448 81.004a34.999 34.999 0 0 1-19.626 5.99c-19.574 0-35.443-16.033-35.444-35.868 0-9.088 3.33-17.198 8.824-23.318m58.13 39.768"/>
+      </svg>
+      <span class="font-bold hidden sm:inline">EVO</span>
+    </a>
+  </div>
+
+  <!-- Desktop menu -->
+  <div class="flex-none hidden lg:flex">
+    <ul class="menu menu-horizontal px-1">
+      <li><a>About</a></li>
+      <li><a>Docs</a></li>
+      <li><a>Forum</a></li>
+      <li><a>Community</a></li>
+      <li><a>Extras</a></li>
+      <li><a>GitHub</a></li>
+    </ul>
+  </div>
+
+  <!-- Right side controls -->
+  <div class="flex-none">
+    <div class="flex items-center gap-2">
+    
+    <!-- Theme Panel -->
+    <div class="dropdown dropdown-end">
+      <div tabindex="0" role="button" class="btn btn-ghost btn-circle" id="theme-button">
+        <!-- Sun icon (light mode) - shown by default -->
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 fill-current" viewBox="0 0 24 24" id="theme-icon-light">
+          <path d="M5.64,17l-.71.71a1,1,0,0,0,0,1.41,1,1,0,0,0,1.41,0l.71-.71A1,1,0,0,0,5.64,17ZM5,12a1,1,0,0,0-1-1H3a1,1,0,0,0,0,2H4A1,1,0,0,0,5,12Zm7-7a1,1,0,0,0,1-1V3a1,1,0,0,0-2,0V4A1,1,0,0,0,12,5ZM5.64,7.05a1,1,0,0,0,.7.29,1,1,0,0,0,.71-.29,1,1,0,0,0,0-1.41l-.71-.71A1,1,0,0,0,4.93,6.34Zm12,.29a1,1,0,0,0,.7-.29l.71-.71a1,1,0,1,0-1.41-1.41L17,5.64a1,1,0,0,0,0,1.41A1,1,0,0,0,17.66,7.34ZM21,11H20a1,1,0,0,0,0,2h1a1,1,0,0,0,0-2Zm-9,8a1,1,0,0,0-1,1v1a1,1,0,0,0,2,0V20A1,1,0,0,0,12,19ZM18.36,17A1,1,0,0,0,17,18.36l.71.71a1,1,0,0,0,1.41,0,1,1,0,0,0,0-1.41ZM12,6.5A5.5,5.5,0,1,0,17.5,12,5.51,5.51,0,0,0,12,6.5Zm0,9A3.5,3.5,0,1,1,15.5,12,3.5,3.5,0,0,1,12,15.5Z"/>
+        </svg>
+        <!-- Moon icon (dark mode) - hidden by default -->
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 fill-current hidden" viewBox="0 0 24 24" id="theme-icon-dark">
+          <path d="M21.64,13a1,1,0,0,0-1.05-.14,8.05,8.05,0,0,1-3.37.73A8.15,8.15,0,0,1,9.08,5.49a8.59,8.59,0,0,1,.25-2A1,1,0,0,0,8,2.36,10.14,10.14,0,1,0,22,14.05,1,1,0,0,0,21.64,13Zm-9.5,6.69A8.14,8.14,0,0,1,7.08,5.22v.27A10.15,10.15,0,0,0,17.22,15.63a9.79,9.79,0,0,0,2.1-.22A8.11,8.11,0,0,1,12.14,19.73Z"/>
+        </svg>
+      </div>
+      <div tabindex="0" class="dropdown-content bg-base-100 text-base-content rounded-box z-[1] w-80 p-4 shadow-2xl border border-base-300 mt-3 max-h-[80vh] overflow-y-auto">
+        
+        <!-- 1. Theme Mode Selector: System / Light / Dark -->
+        <div class="mb-4 pb-4 border-b border-base-300">
+          <div class="text-xs font-bold text-base-content/50 uppercase tracking-wider mb-3">Theme Mode</div>
+          <div class="flex gap-2">
+            <button onclick="__setThemeMode('system'); __filterThemesByMode('system');" class="btn btn-sm flex-1" id="mode-system">
+              <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <rect x="2" y="3" width="20" height="14" rx="2" stroke-width="2"/>
+                <path d="M8 21h8M12 17v4" stroke-width="2"/>
+              </svg>
+              System
+            </button>
+            <button onclick="__setThemeMode('light'); __filterThemesByMode('light');" class="btn btn-sm flex-1" id="mode-light">
+              <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.894 6.166a.75.75 0 00-1.06-1.06l-1.591 1.59a.75.75 0 101.06 1.061l1.591-1.59zM21.75 12a.75.75 0 01-.75.75h-2.25a.75.75 0 010-1.5H21a.75.75 0 01.75.75zM17.834 18.894a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 10-1.061 1.06l1.59 1.591zM12 18a.75.75 0 01.75.75V21a.75.75 0 01-1.5 0v-2.25A.75.75 0 0112 18zM7.758 17.303a.75.75 0 00-1.061-1.06l-1.591 1.59a.75.75 0 001.06 1.061l1.591-1.59zM6 12a.75.75 0 01-.75.75H3a.75.75 0 010-1.5h2.25A.75.75 0 016 12zM6.697 7.757a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 00-1.061 1.06l1.59 1.591z"/>
+              </svg>
+              Light
+            </button>
+            <button onclick="__setThemeMode('dark'); __filterThemesByMode('dark');" class="btn btn-sm flex-1" id="mode-dark">
+              <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M21.64,13a1,1,0,0,0-1.05-.14,8.05,8.05,0,0,1-3.37.73A8.15,8.15,0,0,1,9.08,5.49a8.59,8.59,0,0,1,.25-2A1,1,0,0,0,8,2.36,10.14,10.14,0,1,0,22,14.05,1,1,0,0,0,21.64,13Z"/>
+              </svg>
+              Dark
+            </button>
+          </div>
+        </div>
+
+        <!-- 2. Themes Accordion (Open by default) -->
+        <div class="collapse collapse-arrow border-b border-base-300 rounded-none">
+          <input type="checkbox" id="themes-accordion" checked />
+          <div class="collapse-title px-0 py-3 min-h-0">
+            <div class="flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+              </svg>
+              <span class="text-sm font-semibold">Themes</span>
+            </div>
+          </div>
+          <div class="collapse-content px-0 pb-3">
+            <ul class="max-h-60 overflow-y-auto space-y-1" id="themeMenu">
+              <li><!-- Will be filled by build.mjs with theme options --></li>
+        <li data-mode="undefined" class="theme-item">
+          <button data-set-theme="light-evo" data-act-class="active" class="flex w-full items-center gap-2 px-3 py-1.5 rounded-lg transition-all hover:shadow-sm">
+            <svg class="h-6 w-6 flex-shrink-0 rounded-md overflow-hidden shadow-sm" viewBox="0 0 80 80">
+              <rect width="80" height="80" fill="oklch(100% 0 0)"/>
+              <circle cx="28" cy="28" r="9" fill="oklch(70% 0.15 220)"/>
+              <circle cx="52" cy="28" r="9" fill="oklch(70% 0.15 280)"/>
+              <circle cx="28" cy="52" r="9" fill="oklch(70% 0.15 160)"/>
+              <circle cx="52" cy="52" r="9" fill="oklch(95% 0 0)"/>
+            </svg>
+            <span class="flex-1 text-left text-sm capitalize theme-name" style="color: oklch(70% 0.15 220)">light-evo</span>
+            <svg class="h-3.5 w-3.5 flex-shrink-0 opacity-0 theme-checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+            </svg>
+          </button>
+        </li>
+        <li data-mode="undefined" class="theme-item">
+          <button data-set-theme="light" data-act-class="active" class="flex w-full items-center gap-2 px-3 py-1.5 rounded-lg transition-all hover:shadow-sm">
+            <svg class="h-6 w-6 flex-shrink-0 rounded-md overflow-hidden shadow-sm" viewBox="0 0 80 80">
+              <rect width="80" height="80" fill="#ffffff"/>
+              <circle cx="28" cy="28" r="9" fill="#570df8"/>
+              <circle cx="52" cy="28" r="9" fill="#f000b8"/>
+              <circle cx="28" cy="52" r="9" fill="#1dcdbc"/>
+              <circle cx="52" cy="52" r="9" fill="#f2f2f2"/>
+            </svg>
+            <span class="flex-1 text-left text-sm capitalize theme-name" style="color: undefined">light</span>
+            <svg class="h-3.5 w-3.5 flex-shrink-0 opacity-0 theme-checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+            </svg>
+          </button>
+        </li>
+        <li data-mode="undefined" class="theme-item">
+          <button data-set-theme="cupcake" data-act-class="active" class="flex w-full items-center gap-2 px-3 py-1.5 rounded-lg transition-all hover:shadow-sm">
+            <svg class="h-6 w-6 flex-shrink-0 rounded-md overflow-hidden shadow-sm" viewBox="0 0 80 80">
+              <rect width="80" height="80" fill="#faf7f5"/>
+              <circle cx="28" cy="28" r="9" fill="#65c3c8"/>
+              <circle cx="52" cy="28" r="9" fill="#ef9fbc"/>
+              <circle cx="28" cy="52" r="9" fill="#eeaf3a"/>
+              <circle cx="52" cy="52" r="9" fill="#e7e7e8"/>
+            </svg>
+            <span class="flex-1 text-left text-sm capitalize theme-name" style="color: undefined">cupcake</span>
+            <svg class="h-3.5 w-3.5 flex-shrink-0 opacity-0 theme-checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+            </svg>
+          </button>
+        </li>
+        <li data-mode="undefined" class="theme-item">
+          <button data-set-theme="bumblebee" data-act-class="active" class="flex w-full items-center gap-2 px-3 py-1.5 rounded-lg transition-all hover:shadow-sm">
+            <svg class="h-6 w-6 flex-shrink-0 rounded-md overflow-hidden shadow-sm" viewBox="0 0 80 80">
+              <rect width="80" height="80" fill="#fffbeb"/>
+              <circle cx="28" cy="28" r="9" fill="#f59e0b"/>
+              <circle cx="52" cy="28" r="9" fill="#facc15"/>
+              <circle cx="28" cy="52" r="9" fill="#0ea5e9"/>
+              <circle cx="52" cy="52" r="9" fill="#fef3c7"/>
+            </svg>
+            <span class="flex-1 text-left text-sm capitalize theme-name" style="color: undefined">bumblebee</span>
+            <svg class="h-3.5 w-3.5 flex-shrink-0 opacity-0 theme-checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+            </svg>
+          </button>
+        </li>
+        <li data-mode="undefined" class="theme-item">
+          <button data-set-theme="emerald" data-act-class="active" class="flex w-full items-center gap-2 px-3 py-1.5 rounded-lg transition-all hover:shadow-sm">
+            <svg class="h-6 w-6 flex-shrink-0 rounded-md overflow-hidden shadow-sm" viewBox="0 0 80 80">
+              <rect width="80" height="80" fill="#ffffff"/>
+              <circle cx="28" cy="28" r="9" fill="#10b981"/>
+              <circle cx="52" cy="28" r="9" fill="#8b5cf6"/>
+              <circle cx="28" cy="52" r="9" fill="#06b6d4"/>
+              <circle cx="52" cy="52" r="9" fill="#f3f4f6"/>
+            </svg>
+            <span class="flex-1 text-left text-sm capitalize theme-name" style="color: undefined">emerald</span>
+            <svg class="h-3.5 w-3.5 flex-shrink-0 opacity-0 theme-checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+            </svg>
+          </button>
+        </li>
+        <li data-mode="undefined" class="theme-item">
+          <button data-set-theme="corporate" data-act-class="active" class="flex w-full items-center gap-2 px-3 py-1.5 rounded-lg transition-all hover:shadow-sm">
+            <svg class="h-6 w-6 flex-shrink-0 rounded-md overflow-hidden shadow-sm" viewBox="0 0 80 80">
+              <rect width="80" height="80" fill="#ffffff"/>
+              <circle cx="28" cy="28" r="9" fill="#1f2937"/>
+              <circle cx="52" cy="28" r="9" fill="#4b5563"/>
+              <circle cx="28" cy="52" r="9" fill="#3b82f6"/>
+              <circle cx="52" cy="52" r="9" fill="#e5e7eb"/>
+            </svg>
+            <span class="flex-1 text-left text-sm capitalize theme-name" style="color: undefined">corporate</span>
+            <svg class="h-3.5 w-3.5 flex-shrink-0 opacity-0 theme-checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+            </svg>
+          </button>
+        </li>
+        <li data-mode="undefined" class="theme-item">
+          <button data-set-theme="retro" data-act-class="active" class="flex w-full items-center gap-2 px-3 py-1.5 rounded-lg transition-all hover:shadow-sm">
+            <svg class="h-6 w-6 flex-shrink-0 rounded-md overflow-hidden shadow-sm" viewBox="0 0 80 80">
+              <rect width="80" height="80" fill="#f9f7f3"/>
+              <circle cx="28" cy="28" r="9" fill="#ef9995"/>
+              <circle cx="52" cy="28" r="9" fill="#a4cbb4"/>
+              <circle cx="28" cy="52" r="9" fill="#e4d8b4"/>
+              <circle cx="52" cy="52" r="9" fill="#e6e4da"/>
+            </svg>
+            <span class="flex-1 text-left text-sm capitalize theme-name" style="color: undefined">retro</span>
+            <svg class="h-3.5 w-3.5 flex-shrink-0 opacity-0 theme-checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+            </svg>
+          </button>
+        </li>
+        <li data-mode="undefined" class="theme-item">
+          <button data-set-theme="valentine" data-act-class="active" class="flex w-full items-center gap-2 px-3 py-1.5 rounded-lg transition-all hover:shadow-sm">
+            <svg class="h-6 w-6 flex-shrink-0 rounded-md overflow-hidden shadow-sm" viewBox="0 0 80 80">
+              <rect width="80" height="80" fill="#fef2f2"/>
+              <circle cx="28" cy="28" r="9" fill="#e96d7b"/>
+              <circle cx="52" cy="28" r="9" fill="#f8b4d9"/>
+              <circle cx="28" cy="52" r="9" fill="#67cba0"/>
+              <circle cx="52" cy="52" r="9" fill="#fce7f3"/>
+            </svg>
+            <span class="flex-1 text-left text-sm capitalize theme-name" style="color: undefined">valentine</span>
+            <svg class="h-3.5 w-3.5 flex-shrink-0 opacity-0 theme-checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+            </svg>
+          </button>
+        </li>
+        <li data-mode="undefined" class="theme-item">
+          <button data-set-theme="garden" data-act-class="active" class="flex w-full items-center gap-2 px-3 py-1.5 rounded-lg transition-all hover:shadow-sm">
+            <svg class="h-6 w-6 flex-shrink-0 rounded-md overflow-hidden shadow-sm" viewBox="0 0 80 80">
+              <rect width="80" height="80" fill="#ffffff"/>
+              <circle cx="28" cy="28" r="9" fill="#16a34a"/>
+              <circle cx="52" cy="28" r="9" fill="#f59e0b"/>
+              <circle cx="28" cy="52" r="9" fill="#06b6d4"/>
+              <circle cx="52" cy="52" r="9" fill="#f3f4f6"/>
+            </svg>
+            <span class="flex-1 text-left text-sm capitalize theme-name" style="color: undefined">garden</span>
+            <svg class="h-3.5 w-3.5 flex-shrink-0 opacity-0 theme-checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+            </svg>
+          </button>
+        </li>
+        <li data-mode="undefined" class="theme-item">
+          <button data-set-theme="pastel" data-act-class="active" class="flex w-full items-center gap-2 px-3 py-1.5 rounded-lg transition-all hover:shadow-sm">
+            <svg class="h-6 w-6 flex-shrink-0 rounded-md overflow-hidden shadow-sm" viewBox="0 0 80 80">
+              <rect width="80" height="80" fill="#ffffff"/>
+              <circle cx="28" cy="28" r="9" fill="#a991f7"/>
+              <circle cx="52" cy="28" r="9" fill="#f6d860"/>
+              <circle cx="28" cy="52" r="9" fill="#37cdbe"/>
+              <circle cx="52" cy="52" r="9" fill="#f3f4f6"/>
+            </svg>
+            <span class="flex-1 text-left text-sm capitalize theme-name" style="color: undefined">pastel</span>
+            <svg class="h-3.5 w-3.5 flex-shrink-0 opacity-0 theme-checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+            </svg>
+          </button>
+        </li>
+        <li data-mode="undefined" class="theme-item">
+          <button data-set-theme="fantasy" data-act-class="active" class="flex w-full items-center gap-2 px-3 py-1.5 rounded-lg transition-all hover:shadow-sm">
+            <svg class="h-6 w-6 flex-shrink-0 rounded-md overflow-hidden shadow-sm" viewBox="0 0 80 80">
+              <rect width="80" height="80" fill="#ffffff"/>
+              <circle cx="28" cy="28" r="9" fill="#6e0b75"/>
+              <circle cx="52" cy="28" r="9" fill="#007ebd"/>
+              <circle cx="28" cy="52" r="9" fill="#d82222"/>
+              <circle cx="52" cy="52" r="9" fill="#f3f4f6"/>
+            </svg>
+            <span class="flex-1 text-left text-sm capitalize theme-name" style="color: undefined">fantasy</span>
+            <svg class="h-3.5 w-3.5 flex-shrink-0 opacity-0 theme-checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+            </svg>
+          </button>
+        </li>
+        <li data-mode="undefined" class="theme-item">
+          <button data-set-theme="wireframe" data-act-class="active" class="flex w-full items-center gap-2 px-3 py-1.5 rounded-lg transition-all hover:shadow-sm">
+            <svg class="h-6 w-6 flex-shrink-0 rounded-md overflow-hidden shadow-sm" viewBox="0 0 80 80">
+              <rect width="80" height="80" fill="#ffffff"/>
+              <circle cx="28" cy="28" r="9" fill="#000000"/>
+              <circle cx="52" cy="28" r="9" fill="#000000"/>
+              <circle cx="28" cy="52" r="9" fill="#000000"/>
+              <circle cx="52" cy="52" r="9" fill="#f3f4f6"/>
+            </svg>
+            <span class="flex-1 text-left text-sm capitalize theme-name" style="color: undefined">wireframe</span>
+            <svg class="h-3.5 w-3.5 flex-shrink-0 opacity-0 theme-checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+            </svg>
+          </button>
+        </li>
+        <li data-mode="undefined" class="theme-item">
+          <button data-set-theme="cmyk" data-act-class="active" class="flex w-full items-center gap-2 px-3 py-1.5 rounded-lg transition-all hover:shadow-sm">
+            <svg class="h-6 w-6 flex-shrink-0 rounded-md overflow-hidden shadow-sm" viewBox="0 0 80 80">
+              <rect width="80" height="80" fill="#ffffff"/>
+              <circle cx="28" cy="28" r="9" fill="#45AEEE"/>
+              <circle cx="52" cy="28" r="9" fill="#E8488A"/>
+              <circle cx="28" cy="52" r="9" fill="#FFF232"/>
+              <circle cx="52" cy="52" r="9" fill="#f3f4f6"/>
+            </svg>
+            <span class="flex-1 text-left text-sm capitalize theme-name" style="color: undefined">cmyk</span>
+            <svg class="h-3.5 w-3.5 flex-shrink-0 opacity-0 theme-checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+            </svg>
+          </button>
+        </li>
+        <li data-mode="undefined" class="theme-item">
+          <button data-set-theme="autumn" data-act-class="active" class="flex w-full items-center gap-2 px-3 py-1.5 rounded-lg transition-all hover:shadow-sm">
+            <svg class="h-6 w-6 flex-shrink-0 rounded-md overflow-hidden shadow-sm" viewBox="0 0 80 80">
+              <rect width="80" height="80" fill="#ffffff"/>
+              <circle cx="28" cy="28" r="9" fill="#8C0327"/>
+              <circle cx="52" cy="28" r="9" fill="#d97706"/>
+              <circle cx="28" cy="52" r="9" fill="#16a34a"/>
+              <circle cx="52" cy="52" r="9" fill="#f3f4f6"/>
+            </svg>
+            <span class="flex-1 text-left text-sm capitalize theme-name" style="color: undefined">autumn</span>
+            <svg class="h-3.5 w-3.5 flex-shrink-0 opacity-0 theme-checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+            </svg>
+          </button>
+        </li>
+        <li data-mode="undefined" class="theme-item">
+          <button data-set-theme="acid" data-act-class="active" class="flex w-full items-center gap-2 px-3 py-1.5 rounded-lg transition-all hover:shadow-sm">
+            <svg class="h-6 w-6 flex-shrink-0 rounded-md overflow-hidden shadow-sm" viewBox="0 0 80 80">
+              <rect width="80" height="80" fill="#fafafa"/>
+              <circle cx="28" cy="28" r="9" fill="#d9f99d"/>
+              <circle cx="52" cy="28" r="9" fill="#facc15"/>
+              <circle cx="28" cy="52" r="9" fill="#ec4899"/>
+              <circle cx="52" cy="52" r="9" fill="#f5f5f5"/>
+            </svg>
+            <span class="flex-1 text-left text-sm capitalize theme-name" style="color: undefined">acid</span>
+            <svg class="h-3.5 w-3.5 flex-shrink-0 opacity-0 theme-checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+            </svg>
+          </button>
+        </li>
+        <li data-mode="undefined" class="theme-item">
+          <button data-set-theme="lemonade" data-act-class="active" class="flex w-full items-center gap-2 px-3 py-1.5 rounded-lg transition-all hover:shadow-sm">
+            <svg class="h-6 w-6 flex-shrink-0 rounded-md overflow-hidden shadow-sm" viewBox="0 0 80 80">
+              <rect width="80" height="80" fill="#ffffff"/>
+              <circle cx="28" cy="28" r="9" fill="#16a34a"/>
+              <circle cx="52" cy="28" r="9" fill="#a3e635"/>
+              <circle cx="28" cy="52" r="9" fill="#facc15"/>
+              <circle cx="52" cy="52" r="9" fill="#f3f4f6"/>
+            </svg>
+            <span class="flex-1 text-left text-sm capitalize theme-name" style="color: undefined">lemonade</span>
+            <svg class="h-3.5 w-3.5 flex-shrink-0 opacity-0 theme-checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+            </svg>
+          </button>
+        </li>
+        <li data-mode="undefined" class="theme-item">
+          <button data-set-theme="winter" data-act-class="active" class="flex w-full items-center gap-2 px-3 py-1.5 rounded-lg transition-all hover:shadow-sm">
+            <svg class="h-6 w-6 flex-shrink-0 rounded-md overflow-hidden shadow-sm" viewBox="0 0 80 80">
+              <rect width="80" height="80" fill="#ffffff"/>
+              <circle cx="28" cy="28" r="9" fill="#047AFF"/>
+              <circle cx="52" cy="28" r="9" fill="#463AA2"/>
+              <circle cx="28" cy="52" r="9" fill="#5390D9"/>
+              <circle cx="52" cy="52" r="9" fill="#f3f4f6"/>
+            </svg>
+            <span class="flex-1 text-left text-sm capitalize theme-name" style="color: undefined">winter</span>
+            <svg class="h-3.5 w-3.5 flex-shrink-0 opacity-0 theme-checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+            </svg>
+          </button>
+        </li>
+        <li data-mode="undefined" class="theme-item">
+          <button data-set-theme="nord" data-act-class="active" class="flex w-full items-center gap-2 px-3 py-1.5 rounded-lg transition-all hover:shadow-sm">
+            <svg class="h-6 w-6 flex-shrink-0 rounded-md overflow-hidden shadow-sm" viewBox="0 0 80 80">
+              <rect width="80" height="80" fill="#ffffff"/>
+              <circle cx="28" cy="28" r="9" fill="#5E81AC"/>
+              <circle cx="52" cy="28" r="9" fill="#81A1C1"/>
+              <circle cx="28" cy="52" r="9" fill="#8FBCBB"/>
+              <circle cx="52" cy="52" r="9" fill="#f3f4f6"/>
+            </svg>
+            <span class="flex-1 text-left text-sm capitalize theme-name" style="color: undefined">nord</span>
+            <svg class="h-3.5 w-3.5 flex-shrink-0 opacity-0 theme-checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+            </svg>
+          </button>
+        </li>
+        <li data-mode="undefined" class="theme-item">
+          <button data-set-theme="lofi" data-act-class="active" class="flex w-full items-center gap-2 px-3 py-1.5 rounded-lg transition-all hover:shadow-sm">
+            <svg class="h-6 w-6 flex-shrink-0 rounded-md overflow-hidden shadow-sm" viewBox="0 0 80 80">
+              <rect width="80" height="80" fill="#ffffff"/>
+              <circle cx="28" cy="28" r="9" fill="#000000"/>
+              <circle cx="52" cy="28" r="9" fill="#808080"/>
+              <circle cx="28" cy="52" r="9" fill="#000000"/>
+              <circle cx="52" cy="52" r="9" fill="#f3f4f6"/>
+            </svg>
+            <span class="flex-1 text-left text-sm capitalize theme-name" style="color: undefined">lofi</span>
+            <svg class="h-3.5 w-3.5 flex-shrink-0 opacity-0 theme-checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+            </svg>
+          </button>
+        </li>
+        <li data-mode="undefined" class="theme-item">
+          <button data-set-theme="dark-evo" data-act-class="active" class="flex w-full items-center gap-2 px-3 py-1.5 rounded-lg transition-all hover:shadow-sm">
+            <svg class="h-6 w-6 flex-shrink-0 rounded-md overflow-hidden shadow-sm" viewBox="0 0 80 80">
+              <rect width="80" height="80" fill="oklch(100% 0 0)"/>
+              <circle cx="28" cy="28" r="9" fill="oklch(70% 0.15 220)"/>
+              <circle cx="52" cy="28" r="9" fill="oklch(70% 0.15 280)"/>
+              <circle cx="28" cy="52" r="9" fill="oklch(70% 0.15 160)"/>
+              <circle cx="52" cy="52" r="9" fill="oklch(95% 0 0)"/>
+            </svg>
+            <span class="flex-1 text-left text-sm capitalize theme-name" style="color: oklch(70% 0.15 220)">dark-evo</span>
+            <svg class="h-3.5 w-3.5 flex-shrink-0 opacity-0 theme-checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+            </svg>
+          </button>
+        </li>
+        <li data-mode="undefined" class="theme-item">
+          <button data-set-theme="dark-evo" data-act-class="active" class="flex w-full items-center gap-2 px-3 py-1.5 rounded-lg transition-all hover:shadow-sm">
+            <svg class="h-6 w-6 flex-shrink-0 rounded-md overflow-hidden shadow-sm" viewBox="0 0 80 80">
+              <rect width="80" height="80" fill="oklch(100% 0 0)"/>
+              <circle cx="28" cy="28" r="9" fill="oklch(70% 0.15 220)"/>
+              <circle cx="52" cy="28" r="9" fill="oklch(70% 0.15 280)"/>
+              <circle cx="28" cy="52" r="9" fill="oklch(70% 0.15 160)"/>
+              <circle cx="52" cy="52" r="9" fill="oklch(95% 0 0)"/>
+            </svg>
+            <span class="flex-1 text-left text-sm capitalize theme-name" style="color: oklch(70% 0.15 220)">dark-evo</span>
+            <svg class="h-3.5 w-3.5 flex-shrink-0 opacity-0 theme-checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+            </svg>
+          </button>
+        </li>
+        <li data-mode="undefined" class="theme-item">
+          <button data-set-theme="dark" data-act-class="active" class="flex w-full items-center gap-2 px-3 py-1.5 rounded-lg transition-all hover:shadow-sm">
+            <svg class="h-6 w-6 flex-shrink-0 rounded-md overflow-hidden shadow-sm" viewBox="0 0 80 80">
+              <rect width="80" height="80" fill="#2a303c"/>
+              <circle cx="28" cy="28" r="9" fill="#38bdf8"/>
+              <circle cx="52" cy="28" r="9" fill="#818cf8"/>
+              <circle cx="28" cy="52" r="9" fill="#f471b5"/>
+              <circle cx="52" cy="52" r="9" fill="#242933"/>
+            </svg>
+            <span class="flex-1 text-left text-sm capitalize theme-name" style="color: undefined">dark</span>
+            <svg class="h-3.5 w-3.5 flex-shrink-0 opacity-0 theme-checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+            </svg>
+          </button>
+        </li>
+        <li data-mode="undefined" class="theme-item">
+          <button data-set-theme="synthwave" data-act-class="active" class="flex w-full items-center gap-2 px-3 py-1.5 rounded-lg transition-all hover:shadow-sm">
+            <svg class="h-6 w-6 flex-shrink-0 rounded-md overflow-hidden shadow-sm" viewBox="0 0 80 80">
+              <rect width="80" height="80" fill="#1a103d"/>
+              <circle cx="28" cy="28" r="9" fill="#e779c1"/>
+              <circle cx="52" cy="28" r="9" fill="#58c7f3"/>
+              <circle cx="28" cy="52" r="9" fill="#f6d860"/>
+              <circle cx="52" cy="52" r="9" fill="#261754"/>
+            </svg>
+            <span class="flex-1 text-left text-sm capitalize theme-name" style="color: undefined">synthwave</span>
+            <svg class="h-3.5 w-3.5 flex-shrink-0 opacity-0 theme-checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+            </svg>
+          </button>
+        </li>
+        <li data-mode="undefined" class="theme-item">
+          <button data-set-theme="cyberpunk" data-act-class="active" class="flex w-full items-center gap-2 px-3 py-1.5 rounded-lg transition-all hover:shadow-sm">
+            <svg class="h-6 w-6 flex-shrink-0 rounded-md overflow-hidden shadow-sm" viewBox="0 0 80 80">
+              <rect width="80" height="80" fill="#1a103d"/>
+              <circle cx="28" cy="28" r="9" fill="#ff7598"/>
+              <circle cx="52" cy="28" r="9" fill="#ffee00"/>
+              <circle cx="28" cy="52" r="9" fill="#79f2c0"/>
+              <circle cx="52" cy="52" r="9" fill="#261754"/>
+            </svg>
+            <span class="flex-1 text-left text-sm capitalize theme-name" style="color: undefined">cyberpunk</span>
+            <svg class="h-3.5 w-3.5 flex-shrink-0 opacity-0 theme-checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+            </svg>
+          </button>
+        </li>
+        <li data-mode="undefined" class="theme-item">
+          <button data-set-theme="halloween" data-act-class="active" class="flex w-full items-center gap-2 px-3 py-1.5 rounded-lg transition-all hover:shadow-sm">
+            <svg class="h-6 w-6 flex-shrink-0 rounded-md overflow-hidden shadow-sm" viewBox="0 0 80 80">
+              <rect width="80" height="80" fill="#1f2029"/>
+              <circle cx="28" cy="28" r="9" fill="#ff9f1c"/>
+              <circle cx="52" cy="28" r="9" fill="#8b5cf6"/>
+              <circle cx="28" cy="52" r="9" fill="#ec4899"/>
+              <circle cx="52" cy="52" r="9" fill="#25252d"/>
+            </svg>
+            <span class="flex-1 text-left text-sm capitalize theme-name" style="color: undefined">halloween</span>
+            <svg class="h-3.5 w-3.5 flex-shrink-0 opacity-0 theme-checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+            </svg>
+          </button>
+        </li>
+        <li data-mode="undefined" class="theme-item">
+          <button data-set-theme="forest" data-act-class="active" class="flex w-full items-center gap-2 px-3 py-1.5 rounded-lg transition-all hover:shadow-sm">
+            <svg class="h-6 w-6 flex-shrink-0 rounded-md overflow-hidden shadow-sm" viewBox="0 0 80 80">
+              <rect width="80" height="80" fill="#171212"/>
+              <circle cx="28" cy="28" r="9" fill="#06b6d4"/>
+              <circle cx="52" cy="28" r="9" fill="#8b5cf6"/>
+              <circle cx="28" cy="52" r="9" fill="#059669"/>
+              <circle cx="52" cy="52" r="9" fill="#1e1e1e"/>
+            </svg>
+            <span class="flex-1 text-left text-sm capitalize theme-name" style="color: undefined">forest</span>
+            <svg class="h-3.5 w-3.5 flex-shrink-0 opacity-0 theme-checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+            </svg>
+          </button>
+        </li>
+        <li data-mode="undefined" class="theme-item">
+          <button data-set-theme="aqua" data-act-class="active" class="flex w-full items-center gap-2 px-3 py-1.5 rounded-lg transition-all hover:shadow-sm">
+            <svg class="h-6 w-6 flex-shrink-0 rounded-md overflow-hidden shadow-sm" viewBox="0 0 80 80">
+              <rect width="80" height="80" fill="#09161d"/>
+              <circle cx="28" cy="28" r="9" fill="#00b4d8"/>
+              <circle cx="52" cy="28" r="9" fill="#8b5cf6"/>
+              <circle cx="28" cy="52" r="9" fill="#ec4899"/>
+              <circle cx="52" cy="52" r="9" fill="#0d2633"/>
+            </svg>
+            <span class="flex-1 text-left text-sm capitalize theme-name" style="color: undefined">aqua</span>
+            <svg class="h-3.5 w-3.5 flex-shrink-0 opacity-0 theme-checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+            </svg>
+          </button>
+        </li>
+        <li data-mode="undefined" class="theme-item">
+          <button data-set-theme="black" data-act-class="active" class="flex w-full items-center gap-2 px-3 py-1.5 rounded-lg transition-all hover:shadow-sm">
+            <svg class="h-6 w-6 flex-shrink-0 rounded-md overflow-hidden shadow-sm" viewBox="0 0 80 80">
+              <rect width="80" height="80" fill="#000000"/>
+              <circle cx="28" cy="28" r="9" fill="#cccccc"/>
+              <circle cx="52" cy="28" r="9" fill="#ffffff"/>
+              <circle cx="28" cy="52" r="9" fill="#ffffff"/>
+              <circle cx="52" cy="52" r="9" fill="#1a1a1a"/>
+            </svg>
+            <span class="flex-1 text-left text-sm capitalize theme-name" style="color: undefined">black</span>
+            <svg class="h-3.5 w-3.5 flex-shrink-0 opacity-0 theme-checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+            </svg>
+          </button>
+        </li>
+        <li data-mode="undefined" class="theme-item">
+          <button data-set-theme="luxury" data-act-class="active" class="flex w-full items-center gap-2 px-3 py-1.5 rounded-lg transition-all hover:shadow-sm">
+            <svg class="h-6 w-6 flex-shrink-0 rounded-md overflow-hidden shadow-sm" viewBox="0 0 80 80">
+              <rect width="80" height="80" fill="#09090b"/>
+              <circle cx="28" cy="28" r="9" fill="#ffffff"/>
+              <circle cx="52" cy="28" r="9" fill="#d4af37"/>
+              <circle cx="28" cy="52" r="9" fill="#14b8a6"/>
+              <circle cx="52" cy="52" r="9" fill="#18181b"/>
+            </svg>
+            <span class="flex-1 text-left text-sm capitalize theme-name" style="color: undefined">luxury</span>
+            <svg class="h-3.5 w-3.5 flex-shrink-0 opacity-0 theme-checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+            </svg>
+          </button>
+        </li>
+        <li data-mode="undefined" class="theme-item">
+          <button data-set-theme="dracula" data-act-class="active" class="flex w-full items-center gap-2 px-3 py-1.5 rounded-lg transition-all hover:shadow-sm">
+            <svg class="h-6 w-6 flex-shrink-0 rounded-md overflow-hidden shadow-sm" viewBox="0 0 80 80">
+              <rect width="80" height="80" fill="#282a36"/>
+              <circle cx="28" cy="28" r="9" fill="#ff79c6"/>
+              <circle cx="52" cy="28" r="9" fill="#bd93f9"/>
+              <circle cx="28" cy="52" r="9" fill="#ffb86c"/>
+              <circle cx="52" cy="52" r="9" fill="#1e1f29"/>
+            </svg>
+            <span class="flex-1 text-left text-sm capitalize theme-name" style="color: undefined">dracula</span>
+            <svg class="h-3.5 w-3.5 flex-shrink-0 opacity-0 theme-checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+            </svg>
+          </button>
+        </li>
+        <li data-mode="undefined" class="theme-item">
+          <button data-set-theme="business" data-act-class="active" class="flex w-full items-center gap-2 px-3 py-1.5 rounded-lg transition-all hover:shadow-sm">
+            <svg class="h-6 w-6 flex-shrink-0 rounded-md overflow-hidden shadow-sm" viewBox="0 0 80 80">
+              <rect width="80" height="80" fill="#1f2937"/>
+              <circle cx="28" cy="28" r="9" fill="#3b82f6"/>
+              <circle cx="52" cy="28" r="9" fill="#6366f1"/>
+              <circle cx="28" cy="52" r="9" fill="#06b6d4"/>
+              <circle cx="52" cy="52" r="9" fill="#1a202c"/>
+            </svg>
+            <span class="flex-1 text-left text-sm capitalize theme-name" style="color: undefined">business</span>
+            <svg class="h-3.5 w-3.5 flex-shrink-0 opacity-0 theme-checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+            </svg>
+          </button>
+        </li>
+        <li data-mode="undefined" class="theme-item">
+          <button data-set-theme="night" data-act-class="active" class="flex w-full items-center gap-2 px-3 py-1.5 rounded-lg transition-all hover:shadow-sm">
+            <svg class="h-6 w-6 flex-shrink-0 rounded-md overflow-hidden shadow-sm" viewBox="0 0 80 80">
+              <rect width="80" height="80" fill="#0f172a"/>
+              <circle cx="28" cy="28" r="9" fill="#3b82f6"/>
+              <circle cx="52" cy="28" r="9" fill="#8b5cf6"/>
+              <circle cx="28" cy="52" r="9" fill="#ec4899"/>
+              <circle cx="52" cy="52" r="9" fill="#0a0f1f"/>
+            </svg>
+            <span class="flex-1 text-left text-sm capitalize theme-name" style="color: undefined">night</span>
+            <svg class="h-3.5 w-3.5 flex-shrink-0 opacity-0 theme-checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+            </svg>
+          </button>
+        </li>
+        <li data-mode="undefined" class="theme-item">
+          <button data-set-theme="coffee" data-act-class="active" class="flex w-full items-center gap-2 px-3 py-1.5 rounded-lg transition-all hover:shadow-sm">
+            <svg class="h-6 w-6 flex-shrink-0 rounded-md overflow-hidden shadow-sm" viewBox="0 0 80 80">
+              <rect width="80" height="80" fill="#282828"/>
+              <circle cx="28" cy="28" r="9" fill="#db924b"/>
+              <circle cx="52" cy="28" r="9" fill="#e25c3b"/>
+              <circle cx="28" cy="52" r="9" fill="#20282c"/>
+              <circle cx="52" cy="52" r="9" fill="#32302f"/>
+            </svg>
+            <span class="flex-1 text-left text-sm capitalize theme-name" style="color: undefined">coffee</span>
+            <svg class="h-3.5 w-3.5 flex-shrink-0 opacity-0 theme-checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+            </svg>
+          </button>
+        </li>
+        <li data-mode="undefined" class="theme-item">
+          <button data-set-theme="dim" data-act-class="active" class="flex w-full items-center gap-2 px-3 py-1.5 rounded-lg transition-all hover:shadow-sm">
+            <svg class="h-6 w-6 flex-shrink-0 rounded-md overflow-hidden shadow-sm" viewBox="0 0 80 80">
+              <rect width="80" height="80" fill="#1e2837"/>
+              <circle cx="28" cy="28" r="9" fill="#9fdf9f"/>
+              <circle cx="52" cy="28" r="9" fill="#6699cc"/>
+              <circle cx="28" cy="52" r="9" fill="#ff9999"/>
+              <circle cx="52" cy="52" r="9" fill="#15202b"/>
+            </svg>
+            <span class="flex-1 text-left text-sm capitalize theme-name" style="color: undefined">dim</span>
+            <svg class="h-3.5 w-3.5 flex-shrink-0 opacity-0 theme-checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+            </svg>
+          </button>
+        </li>
+        <li data-mode="undefined" class="theme-item">
+          <button data-set-theme="sunset" data-act-class="active" class="flex w-full items-center gap-2 px-3 py-1.5 rounded-lg transition-all hover:shadow-sm">
+            <svg class="h-6 w-6 flex-shrink-0 rounded-md overflow-hidden shadow-sm" viewBox="0 0 80 80">
+              <rect width="80" height="80" fill="#1b1d28"/>
+              <circle cx="28" cy="28" r="9" fill="#ff865b"/>
+              <circle cx="52" cy="28" r="9" fill="#ff6b6b"/>
+              <circle cx="28" cy="52" r="9" fill="#ffc845"/>
+              <circle cx="52" cy="52" r="9" fill="#1f222e"/>
+            </svg>
+            <span class="flex-1 text-left text-sm capitalize theme-name" style="color: undefined">sunset</span>
+            <svg class="h-3.5 w-3.5 flex-shrink-0 opacity-0 theme-checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+            </svg>
+          </button>
+        </li>
+      </ul>
+          </div>
+        </div>
+
+        <!-- 3. Theme Parameters -->
+        <div class="collapse collapse-arrow border-b border-base-300 rounded-none">
+          <input type="checkbox" id="theme-params-accordion" />
+          <div class="collapse-title px-0 py-3 min-h-0">
+            <div class="flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+              </svg>
+              <span class="text-sm font-semibold">Theme Parameters</span>
+            </div>
+          </div>
+          <div class="collapse-content px-0 pb-3">
+            <div class="space-y-4">
+              
+              <!-- Custom Settings Toggle -->
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 94 90" fill="none" stroke="currentColor" stroke-width="2" class="w-5 h-5 evo-logo" id="evo-logo-mini">
+                    <path d="m37.361 37.392 6.783 16.393 6.792-16.393M32.017 45.49h-7.908M33.161 37.392h-9.3v16.393h9.293M61.732 37.392c4.239 0 7.675 3.51 7.675 8.097 0 4.588-3.437 8.296-7.676 8.296-4.239 0-7.675-3.708-7.675-8.296 0-4.587 3.435-8.097 7.674-8.097h.002z"/>
+                  </svg>
+                  <div>
+                    <div class="text-sm font-medium">Custom Settings</div>
+                    <div class="text-xs opacity-60">Apply my customization</div>
+                  </div>
+                </div>
+                <input type="checkbox" class="toggle toggle-primary toggle-sm" id="evo-toggle" onchange="__toggleEvoCustom()" />
+              </div>
+
+              <!-- Theme Rotation Speed -->
+              <div id="evo-speed-section" class="pt-3 border-t border-base-300">
+                <div class="text-xs font-bold text-base-content/50 uppercase tracking-wider mb-2">Theme Rotation</div>
+                <div class="space-y-2">
+                  <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs font-mono badge badge-ghost badge-sm" id="evo-speed-display">0s (Off)</span>
+                  </div>
+                  <input type="range" min="0" max="10" value="0" step="0.1" class="range range-primary range-xs" id="evo-speed-slider" oninput="__updateEvoSpeed(this.value)" />
+                  <div class="flex justify-between text-xs opacity-50 px-1">
+                    <span>Off</span>
+                    <span>2.5s</span>
+                    <span>5s</span>
+                    <span>7.5s</span>
+                    <span>10s</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 3D Depth -->
+              <div class="flex items-center justify-between pt-3 border-t border-base-300">
+                <div class="flex items-center gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                  </svg>
+                  <div>
+                    <div class="text-sm font-medium">3D Depth</div>
+                    <div class="text-xs opacity-60">Shadows and depth</div>
+                  </div>
+                </div>
+                <input type="checkbox" class="toggle toggle-sm toggle-primary" id="system-depth-toggle" checked />
+              </div>
+              
+              <!-- Film Grain -->
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+                  </svg>
+                  <div>
+                    <div class="text-sm font-medium">Film Grain</div>
+                    <div class="text-xs opacity-60">Texture overlay</div>
+                  </div>
+                </div>
+                <input type="checkbox" class="toggle toggle-sm toggle-primary" id="system-noise-toggle" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. Background -->
+        <div class="collapse collapse-arrow border-b border-base-300 rounded-none">
+          <input type="checkbox" id="background-accordion" />
+          <div class="collapse-title px-0 py-3 min-h-0">
+            <div class="flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              <span class="text-sm font-semibold">Background</span>
+            </div>
+          </div>
+          <div class="collapse-content px-0 pb-3">
+            <ul class="space-y-1">
+              <!-- None -->
+              <li>
+                <button onclick="__setBackground('none')" class="flex w-full items-center gap-2 px-3 py-1.5 rounded-lg transition-all hover:shadow-sm bg-item" data-bg="none">
+                  <span class="text-lg">⬜</span>
+                  <span class="flex-1 text-left text-sm">None</span>
+                  <svg class="h-3.5 w-3.5 flex-shrink-0 opacity-0 bg-checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                  </svg>
+                </button>
+              </li>
+              
+              <!-- Transparent -->
+              <li>
+                <button onclick="__setBackground('transparent')" class="flex w-full items-center gap-2 px-3 py-1.5 rounded-lg transition-all hover:shadow-sm bg-item" data-bg="transparent">
+                  <span class="text-lg">💎</span>
+                  <span class="flex-1 text-left text-sm">Transparent (Glass)</span>
+                  <svg class="h-3.5 w-3.5 flex-shrink-0 opacity-0 bg-checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                  </svg>
+                </button>
+              </li>
+              
+              <!-- Animated Backgrounds -->
+              <li class="pt-2">
+                <div class="text-xs opacity-60 px-3 mb-1">Animated</div>
+              </li>
+              <li>
+                <button onclick="__setBackground('gradient-spheres')" class="flex w-full items-center gap-2 px-3 py-1.5 rounded-lg transition-all hover:shadow-sm bg-item" data-bg="gradient-spheres">
+                  <span class="text-lg">🌈</span>
+                  <span class="flex-1 text-left text-sm">Gradient Spheres</span>
+                  <svg class="h-3.5 w-3.5 flex-shrink-0 opacity-0 bg-checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                  </svg>
+                </button>
+              </li>
+              <li>
+                <button onclick="__setBackground('colorful-dots')" class="flex w-full items-center gap-2 px-3 py-1.5 rounded-lg transition-all hover:shadow-sm bg-item" data-bg="colorful-dots">
+                  <span class="text-lg">✨</span>
+                  <span class="flex-1 text-left text-sm">Colorful Dots</span>
+                  <svg class="h-3.5 w-3.5 flex-shrink-0 opacity-0 bg-checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                  </svg>
+                </button>
+              </li>
+              <li>
+                <button onclick="__setBackground('cosmic-dream')" class="flex w-full items-center gap-2 px-3 py-1.5 rounded-lg transition-all hover:shadow-sm bg-item" data-bg="cosmic-dream">
+                  <span class="text-lg">🌌</span>
+                  <span class="flex-1 text-left text-sm">Cosmic Dream</span>
+                  <svg class="h-3.5 w-3.5 flex-shrink-0 opacity-0 bg-checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                  </svg>
+                </button>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- 5. Solid Color Layer -->
+        <div class="collapse collapse-arrow rounded-none">
+          <input type="checkbox" id="solid-color-accordion" />
+          <div class="collapse-title px-0 py-3 min-h-0">
+            <div class="flex items-center gap-2">
+              <span class="text-lg">🎨</span>
+              <span class="text-sm font-semibold">Solid Color Layer</span>
+              <span id="hue-value-mini" class="text-xs font-mono badge badge-sm ml-auto">220°</span>
+            </div>
+          </div>
+          <div class="collapse-content px-0 pb-3">
+            <div class="space-y-3">
+              <!-- Hue Slider -->
+              <div>
+                <div class="text-xs opacity-60 mb-2 flex justify-between">
+                  <span>Hue</span>
+                  <span id="hue-value" class="font-mono">220°</span>
+                </div>
+                <input type="range" min="0" max="360" value="220" step="1" 
+                       class="rainbow-slider w-full h-8 rounded-lg cursor-pointer" 
+                       id="hue-slider" 
+                       oninput="__applySolidColorRealtime()" />
+              </div>
+              
+              <!-- Opacity Slider -->
+              <div>
+                <div class="text-xs opacity-60 mb-2 flex justify-between">
+                  <span>Opacity</span>
+                  <span id="opacity-value" class="font-mono">100%</span>
+                </div>
+                <input type="range" min="0" max="100" value="100" step="1" 
+                       class="opacity-slider w-full h-8 rounded-lg cursor-pointer" 
+                       id="opacity-slider" 
+                       oninput="__applySolidColorRealtime()" />
+              </div>
+              
+              <!-- Save Button -->
+              <button onclick="__saveSolidColorToStorage()" class="btn btn-sm btn-block btn-primary">
+                💾 Save to Storage
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+
+    <!-- Language dropdown -->
+    <div class="dropdown dropdown-end">
+      <div tabindex="0" role="button" class="btn btn-ghost btn-circle">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
+        </svg>
+      </div>
+      <ul tabindex="0" class="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow-lg">
+        <li><a onclick="__setLang('uk')">🇺🇦 Українська</a></li>
+        <li><a onclick="__setLang('en')">🇬🇧 English</a></li>
+        <li><a onclick="__setLang('pl')">🇵🇱 Polski</a></li>
+      </ul>
+    </div>
+
+    <!-- Settings dropdown -->
+    <div class="dropdown dropdown-end">
+      <div tabindex="0" role="button" class="btn btn-ghost btn-circle">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg>
+      </div>
+      <ul tabindex="0" class="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow-lg">
+        <li>
+          <a onclick="document.getElementById('settings_modal').showModal()" class="justify-between">
+            Theme Builder
+            <span class="badge badge-sm">⚙️</span>
+          </a>
+        </li>
+        <li><a onclick="__exportTheme()">Export Theme</a></li>
+        <li><a onclick="document.getElementById('theme_import').click()">Import Theme</a></li>
+        <li class="md:hidden"><a onclick="document.getElementById('settings_modal').showModal()">All Settings</a></li>
+      </ul>
+    </div>
+
+    <!-- Mobile menu -->
+    <div class="dropdown dropdown-end lg:hidden">
+      <div tabindex="0" role="button" class="btn btn-ghost btn-square">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-5 h-5" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+      </div>
+      <ul tabindex="0" class="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow-lg">
+          <li><a>About</a></li>
+          <li><a>Docs</a></li>
+          <li><a>Forum</a></li>
+          <li><a>Community</a></li>
+          <li><a>Extras</a></li>
+          <li><a>GitHub</a></li>
+          <li class="md:hidden"><a onclick="document.getElementById('settings_modal').showModal()">Settings</a></li>
+      </ul>
+    </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+<script>
+  // Theme Mode Selector
+  window.__setThemeMode = function(mode) {
+    localStorage.setItem('evo-theme-mode', mode);
+    
+    // Update active button
+    ['system', 'light', 'dark'].forEach(m => {
+      const btn = document.getElementById(`mode-${m}`);
+      if (btn) {
+        if (m === mode) {
+          btn.classList.add('btn-primary');
+        } else {
+          btn.classList.remove('btn-primary');
+        }
+      }
+    });
+    
+    // Apply theme based on mode
+    if (mode === 'system') {
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const theme = prefersDark ? 'dark' : 'light';
+      window.__setTheme(theme);
+    } else if (mode === 'light') {
+      window.__setTheme('light');
+    } else if (mode === 'dark') {
+      window.__setTheme('dark');
+    }
+  };
+  
+  // Evo Custom Settings Toggle - apply/remove custom theme settings
+  window.__toggleEvoCustom = function() {
+    const toggle = document.getElementById('evo-toggle');
+    const logo = document.getElementById('evo-logo');
+    const logoMini = document.getElementById('evo-logo-mini');
+    const isActive = toggle && toggle.checked;
+    
+    // Save state
+    localStorage.setItem('evo-custom-active', isActive);
+    
+    // Update logo glow (both main and mini)
+    [logo, logoMini].forEach(el => {
+      if (el) {
+        if (isActive) {
+          el.classList.add('evo-active');
+        } else {
+          el.classList.remove('evo-active');
+        }
+      }
+    });
+    
+    // Apply or remove custom theme variables
+    if (isActive) {
+      // Apply custom settings from localStorage
+      window.__applyCustomSettings && window.__applyCustomSettings();
+    } else {
+      // Remove custom settings, use theme defaults
+      window.__removeCustomSettings && window.__removeCustomSettings();
+    }
+  };
+  
+  // Theme Rotation Speed Update - independent of custom settings
+  window.__updateEvoSpeed = function(speed) {
+    const speedNum = parseFloat(speed);
+    const display = document.getElementById('evo-speed-display');
+    if (display) {
+      display.textContent = speedNum === 0 ? 'Off' : `${speedNum.toFixed(1)}s`;
+    }
+    
+    // Save speed
+    localStorage.setItem('evo-rotation-speed', speedNum);
+    
+    // Stop any existing rotation
+    window.__stopEvoAuto && window.__stopEvoAuto();
+    
+    // Start rotation if speed > 0
+    if (speedNum > 0) {
+      window.__startEvoAuto && window.__startEvoAuto(speedNum);
+    }
+    
+    // Update transition duration
+    window.__updateTransitionDuration && window.__updateTransitionDuration(speedNum);
+  };
+  
+  // Toggle 3D Depth effect
+  window.__toggleDepth = function(enabled) {
+    const value = enabled ? '1' : '0';
+    document.documentElement.style.setProperty('--depth', value);
+    localStorage.setItem('evo-depth', value);
+  };
+  
+  // Toggle Film Grain effect
+  window.__toggleNoise = function(enabled) {
+    const value = enabled ? '1' : '0';
+    document.documentElement.style.setProperty('--noise', value);
+    localStorage.setItem('evo-noise', value);
+  };
+  
+
+  // Toggle Glass Effect
+  window.__toggleGlass = function(enabled) {
+    const value = enabled ? '1' : '0';
+    document.documentElement.style.setProperty('--glass', value);
+    localStorage.setItem('evo-glass', value);
+    
+    // Apply glass effect to body if enabled
+    if (enabled) {
+      document.body.classList.add('glass-effect-enabled');
+    } else {
+      document.body.classList.remove('glass-effect-enabled');
+    }
+  };
+  
+  // Theme management - simplified
+  (function() {
+    function getThemeMode(theme) {
+      const lightThemes = ['light', 'cupcake', 'bumblebee', 'emerald', 'corporate', 'retro', 'valentine', 'garden', 'pastel', 'fantasy', 'wireframe', 'cmyk', 'autumn', 'acid', 'lemonade', 'winter', 'nord', 'lofi', 'cyberpunk', 'light-evo'];
+      return lightThemes.includes(theme) ? 'light' : 'dark';
+    }
+    
+    function updateThemeIcon() {
+      const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+      const lightIcon = document.getElementById('theme-icon-light');
+      const darkIcon = document.getElementById('theme-icon-dark');
+      
+      const themeMode = getThemeMode(currentTheme);
+      if (themeMode === 'dark') {
+        if (lightIcon) lightIcon.classList.add('hidden');
+        if (darkIcon) darkIcon.classList.remove('hidden');
+      } else {
+        if (lightIcon) lightIcon.classList.remove('hidden');
+        if (darkIcon) darkIcon.classList.add('hidden');
+      }
+    }
+    
+    function updateActiveIndicators() {
+      const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+      const currentBackground = localStorage.getItem('evo-background') || 'none';
+      
+      // Update theme checkmarks
+      document.querySelectorAll('[data-set-theme]').forEach(btn => {
+        const checkmark = btn.querySelector('.theme-checkmark');
+        if (checkmark) {
+          if (btn.dataset.setTheme === currentTheme) {
+            checkmark.style.opacity = '1';
+            btn.classList.add('active');
+          } else {
+            checkmark.style.opacity = '0';
+            btn.classList.remove('active');
+          }
+        }
+      });
+      
+      // Update background buttons
+      document.querySelectorAll('[data-bg]').forEach(btn => {
+        if (btn.dataset.bg === currentBackground) {
+          btn.classList.add('btn-active');
+        } else {
+          btn.classList.remove('btn-active');
+        }
+      });
+    }
+    
+    // Initialize
+    document.addEventListener('DOMContentLoaded', function() {
+      updateThemeIcon();
+      updateActiveIndicators();
+      
+      // Initialize theme mode
+      const savedMode = localStorage.getItem('evo-theme-mode') || 'system';
+      window.__setThemeMode(savedMode);
+      
+      // Initialize Evo Custom Settings state
+      const evoToggle = document.getElementById('evo-toggle');
+      const savedCustomState = localStorage.getItem('evo-custom-active') === 'true';
+      
+      if (evoToggle) {
+        evoToggle.checked = savedCustomState;
+        if (savedCustomState) {
+          // Update logos (both main and mini)
+          document.getElementById('evo-logo')?.classList.add('evo-active');
+          document.getElementById('evo-logo-mini')?.classList.add('evo-active');
+          // Apply custom settings
+          window.__applyCustomSettings && window.__applyCustomSettings();
+        }
+      }
+      
+      // Initialize Theme Rotation Speed
+      const savedSpeed = parseFloat(localStorage.getItem('evo-rotation-speed') || '0');
+      const speedSlider = document.getElementById('evo-speed-slider');
+      const speedDisplay = document.getElementById('evo-speed-display');
+      
+      if (speedSlider) {
+        speedSlider.value = savedSpeed;
+      }
+      if (speedDisplay) {
+        speedDisplay.textContent = savedSpeed === 0 ? 'Off' : `${savedSpeed.toFixed(1)}s`;
+      }
+      
+      // Start rotation if speed > 0
+      if (savedSpeed > 0) {
+        window.__startEvoAuto && window.__startEvoAuto(savedSpeed);
+      }
+      
+      // Initialize Depth and Noise from localStorage
+      const savedDepth = localStorage.getItem('evo-depth') || '1';
+      const savedNoise = localStorage.getItem('evo-noise') || '0';
+      
+      const depthToggle = document.getElementById('system-depth-toggle');
+      const noiseToggle = document.getElementById('system-noise-toggle');
+      
+      if (depthToggle) {
+        depthToggle.checked = savedDepth === '1';
+        document.documentElement.style.setProperty('--depth', savedDepth);
+      }
+      
+      if (noiseToggle) {
+        noiseToggle.checked = savedNoise === '1';
+        document.documentElement.style.setProperty('--noise', savedNoise);
+      }
+
+      // Initialize Glass Effect
+      const savedGlass = localStorage.getItem('evo-glass') || '0';
+      const glassToggle = document.getElementById('system-glass-toggle'); // Assuming this is the correct ID for the glass toggle
+
+      if (glassToggle) {
+        glassToggle.checked = savedGlass === '1';
+        window.__toggleGlass(savedGlass === '1');
+      }
+    });
+    
+    // Update when theme/background changes
+    const originalSetTheme = window.__setTheme;
+    const originalSetBackground = window.__setBackground;
+    
+    if (originalSetTheme) {
+      window.__setTheme = function(theme) {
+        originalSetTheme(theme);
+        setTimeout(() => {
+          updateActiveIndicators();
+          updateThemeIcon();
+        }, 100);
+      };
+    }
+    
+    if (originalSetBackground) {
+      window.__setBackground = function(bg) {
+        originalSetBackground(bg);
+        setTimeout(updateActiveIndicators, 100);
+      };
+    }
+  })();
+
+  // Filter themes based on selected mode
+  window.__filterThemesByMode = function(mode) {
+    console.log('🔍 Filter themes by mode:', mode);
+    console.log('📋 Available light themes:', window.__lightThemes);
+    console.log('📋 Available dark themes:', window.__darkThemes);
+    
+    const themeMenu = document.getElementById('themeMenu');
+    if (!themeMenu) {
+      console.error('❌ Theme menu not found!');
+      return;
+    }
+    
+    const allThemeItems = themeMenu.querySelectorAll('li.theme-item');
+    console.log('🎨 Total theme items found:', allThemeItems.length);
+    
+    let shownCount = 0;
+    
+    allThemeItems.forEach(item => {
+      const button = item.querySelector('[data-set-theme]');
+      if (!button) return;
+      
+      const themeName = button.getAttribute('data-set-theme');
+      const themeMode = window.__getThemeModeByName(themeName);
+      let shouldShow = false;
+      
+      if (mode === 'system') {
+        // System mode: показуємо тільки одну Evo тему (в залежності від поточного режиму системи)
+        const isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (isDark) {
+          shouldShow = themeName === 'dark-evo';
+        } else {
+          shouldShow = themeName === 'light-evo';
+        }
+        console.log(`  ${themeName} -> isDark: ${isDark}, shouldShow: ${shouldShow}`);
+      } else if (mode === 'light') {
+        // Light mode: показуємо всі light теми
+        shouldShow = (themeMode === 'light');
+        console.log(`  ${themeName} -> ${themeMode} -> ${shouldShow}`);
+      } else if (mode === 'dark') {
+        // Dark mode: показуємо всі dark теми
+        shouldShow = (themeMode === 'dark');
+        console.log(`  ${themeName} -> ${themeMode} -> ${shouldShow}`);
+      }
+      
+      if (shouldShow) {
+        item.style.display = '';
+        shownCount++;
+      } else {
+        item.style.display = 'none';
+      }
+    });
+    
+    console.log(`✅ Shown ${shownCount} themes in ${mode} mode`);
+  };
+  
+  // Helper function to determine theme mode
+  window.__getThemeModeByName = function(themeName) {
+    const lightThemes = ['light-evo', 'light', 'cupcake', 'bumblebee', 'emerald', 'corporate', 'retro', 'valentine', 'garden', 'lofi', 'pastel', 'fantasy', 'wireframe', 'cmyk', 'autumn', 'acid', 'lemonade', 'winter', 'nord'];
+    return lightThemes.includes(themeName) ? 'light' : 'dark';
+  };
+
+  // Initialize theme filter on page load
+  if (typeof window !== 'undefined') {
+    // Run after DOM is ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', function() {
+        const currentMode = localStorage.getItem('theme-mode') || 'system';
+        window.__filterThemesByMode && window.__filterThemesByMode(currentMode);
+      });
+    } else {
+      setTimeout(function() {
+        const currentMode = localStorage.getItem('theme-mode') || 'system';
+        window.__filterThemesByMode && window.__filterThemesByMode(currentMode);
+      }, 100);
+    }
+  }
+
+</script>
+
+<style>
+  /* Evo Logo Glow Effect */
+  #evo-logo.evo-active,
+  #evo-logo-mini.evo-active {
+    position: relative;
+  }
+  
+  #evo-logo.evo-active svg,
+  #evo-logo-mini.evo-active {
+    filter: drop-shadow(0 0 8px oklch(var(--p))) drop-shadow(0 0 16px oklch(var(--p) / 0.5));
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
+  
+  @keyframes pulse-glow {
+    0%, 100% {
+      filter: drop-shadow(0 0 8px oklch(var(--p))) drop-shadow(0 0 16px oklch(var(--p) / 0.5));
+    }
+    50% {
+      filter: drop-shadow(0 0 12px oklch(var(--p))) drop-shadow(0 0 24px oklch(var(--p) / 0.7));
+    }
+  }
+</style>
+
+
+      <main class="container mx-auto px-4 py-8">
+        <div class="hero bg-base-200 rounded-box p-10 mb-10">
+  <div class="hero-content text-center">
+    <div class="max-w-2xl">
+      <h1 class="text-5xl font-bold mb-4">EVO</h1>
+      <p class="text-lg mb-6">
+          AI CONTENT MANAGEMENT FRAMEWORK
+      </p>
+
+        <p class="text-lg mb-6">
+            The world’s fastest, most customizable Open Source PHP CMF. Your creative vision, no restrictions, no compromise.
+        </p>
+
+
+      <div class="flex gap-4 justify-center flex-wrap">
+        <button class="btn btn-primary btn-lg">Download 3.5</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Buttons Section -->
+<section class="mb-12">
+  <h2 class="text-3xl font-bold mb-6">Buttons</h2>
+  
+  <div class="space-y-6">
+    <div>
+      <h4 class="font-semibold mb-3 text-sm opacity-70">Colors</h4>
+      <div class="flex flex-wrap gap-2">
+        <button class="btn">Default</button>
+        <button class="btn btn-neutral">Neutral</button>
+        <button class="btn btn-primary">Primary</button>
+        <button class="btn btn-secondary">Secondary</button>
+        <button class="btn btn-accent">Accent</button>
+        <button class="btn btn-info">Info</button>
+        <button class="btn btn-success">Success</button>
+        <button class="btn btn-warning">Warning</button>
+        <button class="btn btn-error">Error</button>
+      </div>
+    </div>
+    
+    <div>
+      <h4 class="font-semibold mb-3 text-sm opacity-70">Styles</h4>
+      <div class="flex flex-wrap gap-2">
+        <button class="btn btn-outline">Outline</button>
+        <button class="btn btn-ghost">Ghost</button>
+        <button class="btn btn-link">Link</button>
+        <button class="btn btn-outline btn-primary">Outline Primary</button>
+      </div>
+    </div>
+    
+    <div>
+      <h4 class="font-semibold mb-3 text-sm opacity-70">Sizes</h4>
+      <div class="flex flex-wrap gap-2 items-center">
+        <button class="btn btn-xs">Tiny</button>
+        <button class="btn btn-sm">Small</button>
+        <button class="btn">Normal</button>
+        <button class="btn btn-lg">Large</button>
+        <button class="btn btn-xl">Extra Large</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Alerts Section -->
+<section class="mb-12">
+  <h2 class="text-3xl font-bold mb-6">Alerts</h2>
+  <div class="space-y-3">
+    <div role="alert" class="alert alert-info">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+      <span>New version has been released.</span>
+    </div>
+    <div role="alert" class="alert alert-success">
+      <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+      <span>Your purchase has been confirmed!</span>
+    </div>
+    <div role="alert" class="alert alert-warning">
+      <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+      <span>Warning: Invalid email address!</span>
+    </div>
+    <div role="alert" class="alert alert-error">
+      <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+      <span>Error! Task failed successfully.</span>
+    </div>
+  </div>
+</section>
+
+<!-- Badges Section -->
+<section class="mb-12">
+  <h2 class="text-3xl font-bold mb-6">Badges</h2>
+  <div class="space-y-3">
+    <div class="flex flex-wrap gap-2">
+      <span class="badge">Default</span>
+      <span class="badge badge-neutral">Neutral</span>
+      <span class="badge badge-primary">Primary</span>
+      <span class="badge badge-secondary">Secondary</span>
+      <span class="badge badge-accent">Accent</span>
+      <span class="badge badge-info">Info</span>
+      <span class="badge badge-success">Success</span>
+      <span class="badge badge-warning">Warning</span>
+      <span class="badge badge-error">Error</span>
+    </div>
+    <div class="flex flex-wrap gap-2">
+      <span class="badge badge-outline">Outline</span>
+      <span class="badge badge-ghost">Ghost</span>
+    </div>
+    <div class="flex flex-wrap gap-2 items-center">
+      <span class="badge badge-xs">Tiny</span>
+      <span class="badge badge-sm">Small</span>
+      <span class="badge">Normal</span>
+      <span class="badge badge-lg">Large</span>
+    </div>
+  </div>
+</section>
+
+<!-- Cards Section -->
+<section class="mb-12">
+  <h2 class="text-3xl font-bold mb-6">Cards</h2>
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    
+    <!-- Product Card -->
+    <div class="card bg-base-100 shadow">
+      <figure><img src="https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp" alt="Shoes" /></figure>
+      <div class="card-body">
+        <h2 class="card-title">
+          Shoes!
+          <div class="badge badge-secondary">NEW</div>
+        </h2>
+        <p>If a dog chews shoes whose shoes does he choose?</p>
+        <div class="card-actions justify-end">
+          <button class="btn btn-primary btn-sm">Buy Now</button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Hover Gallery Product Card -->
+    <div class="card bg-base-100 shadow">
+      <figure class="hover-gallery">
+        <img src="https://img.daisyui.com/images/stock/daisyui-hat-1.webp" alt="daisyUI Hat" />
+        <img src="https://img.daisyui.com/images/stock/daisyui-hat-2.webp" alt="daisyUI Hat" />
+        <img src="https://img.daisyui.com/images/stock/daisyui-hat-3.webp" alt="daisyUI Hat" />
+        <img src="https://img.daisyui.com/images/stock/daisyui-hat-4.webp" alt="daisyUI Hat" />
+      </figure>
+      <div class="card-body">
+        <h2 class="card-title flex justify-between">
+          daisyUI Hat
+          <span class="font-normal">$25</span>
+        </h2>
+        <p>High Quality classic cap</p>
+      </div>
+    </div>
+    
+    <!-- Stats Card -->
+    <div class="stats shadow">
+      <div class="stat">
+        <div class="stat-figure text-primary">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-8 h-8 stroke-current"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+        </div>
+        <div class="stat-title">Total Likes</div>
+        <div class="stat-value text-primary">25.6K</div>
+        <div class="stat-desc">21% more than last month</div>
+      </div>
+    </div>
+    
+  </div>
+</section>
+
+<!-- Countdown Section -->
+<section class="mb-12">
+  <h2 class="text-3xl font-bold mb-6">Countdown</h2>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div class="bg-base-200 rounded-box p-6">
+      <div class="grid grid-flow-col gap-5 text-center auto-cols-max">
+        <div class="flex flex-col">
+          <span class="countdown font-mono text-5xl">
+            <span id="countdown-days" style="--value:15;"></span>
+          </span>
+          days
+        </div> 
+        <div class="flex flex-col">
+          <span class="countdown font-mono text-5xl">
+            <span id="countdown-hours" style="--value:10;"></span>
+          </span>
+          hours
+        </div> 
+        <div class="flex flex-col">
+          <span class="countdown font-mono text-5xl">
+            <span id="countdown-minutes" style="--value:24;"></span>
+          </span>
+          min
+        </div> 
+        <div class="flex flex-col">
+          <span class="countdown font-mono text-5xl">
+            <span id="countdown-seconds" style="--value:58;"></span>
+          </span>
+          sec
+        </div>
+      </div>
+    </div>
+    
+    <div class="bg-base-200 rounded-box p-6 flex items-center justify-center">
+      <span class="countdown font-mono text-4xl">
+        <span id="countdown-h" style="--value:10;" aria-live="polite" aria-label="10">10</span>
+        :
+        <span id="countdown-m" style="--value:24;" aria-live="polite" aria-label="24">24</span>
+        :
+        <span id="countdown-s" style="--value:59;" aria-live="polite" aria-label="59">59</span>
+      </span>
+    </div>
+  </div>
+</section>
+
+<!-- Diff Comparison -->
+<section class="mb-12">
+  <h2 class="text-3xl font-bold mb-6">Diff Comparison</h2>
+  <figure class="diff aspect-16/9 rounded-box" tabindex="0">
+    <div class="diff-item-1" role="img" tabindex="0">
+      <img alt="daisy" src="https://img.daisyui.com/images/stock/photo-1560717789-0ac7c58ac90a.webp" />
+    </div>
+    <div class="diff-item-2" role="img">
+      <img alt="daisy" src="https://img.daisyui.com/images/stock/photo-1560717789-0ac7c58ac90a-blur.webp" />
+    </div>
+    <div class="diff-resizer"></div>
+  </figure>
+</section>
+
+<!-- Chat Section -->
+<section class="mb-12">
+  <h2 class="text-3xl font-bold mb-6">Chat</h2>
+  <div class="bg-base-200 rounded-box p-6">
+    <div class="chat chat-start">
+      <div class="chat-image avatar">
+        <div class="w-10 rounded-full">
+          <img alt="Avatar" src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
+        </div>
+      </div>
+      <div class="chat-bubble">Hello! How are you?</div>
+    </div>
+    <div class="chat chat-end">
+      <div class="chat-image avatar">
+        <div class="w-10 rounded-full">
+          <img alt="Avatar" src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
+        </div>
+      </div>
+      <div class="chat-bubble chat-bubble-primary">I'm good, thanks!</div>
+    </div>
+    <div class="chat chat-start">
+      <div class="chat-image avatar">
+        <div class="w-10 rounded-full">
+          <img alt="Avatar" src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
+        </div>
+      </div>
+      <div class="chat-bubble">Want to grab coffee later?</div>
+    </div>
+  </div>
+</section>
+
+<!-- Music List Section -->
+<section class="mb-12">
+  <h2 class="text-3xl font-bold mb-6">List</h2>
+  <ul class="list bg-base-100 rounded-box shadow">
+    <li class="p-4 pb-2 text-xs opacity-60 tracking-wide">Most played songs this week</li>
+    
+    <li class="list-row">
+      <div><img class="size-10 rounded-box" src="https://img.daisyui.com/images/profile/demo/1@94.webp" alt="Dio Lupa"/></div>
+      <div>
+        <div>Dio Lupa</div>
+        <div class="text-xs uppercase font-semibold opacity-60">Remaining Reason</div>
+      </div>
+      <button class="btn btn-square btn-ghost">
+        <svg class="size-[1.2em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g stroke-linejoin="round" stroke-linecap="round" stroke-width="2" fill="none" stroke="currentColor"><path d="M6 3L20 12 6 21 6 3z"></path></g></svg>
+      </button>
+      <button class="btn btn-square btn-ghost">
+        <svg class="size-[1.2em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g stroke-linejoin="round" stroke-linecap="round" stroke-width="2" fill="none" stroke="currentColor"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path></g></svg>
+      </button>
+    </li>
+    
+    <li class="list-row">
+      <div><img class="size-10 rounded-box" src="https://img.daisyui.com/images/profile/demo/4@94.webp" alt="Ellie Beilish"/></div>
+      <div>
+        <div>Ellie Beilish</div>
+        <div class="text-xs uppercase font-semibold opacity-60">Bears of a fever</div>
+      </div>
+      <button class="btn btn-square btn-ghost">
+        <svg class="size-[1.2em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g stroke-linejoin="round" stroke-linecap="round" stroke-width="2" fill="none" stroke="currentColor"><path d="M6 3L20 12 6 21 6 3z"></path></g></svg>
+      </button>
+      <button class="btn btn-square btn-ghost">
+        <svg class="size-[1.2em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g stroke-linejoin="round" stroke-linecap="round" stroke-width="2" fill="none" stroke="currentColor"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path></g></svg>
+      </button>
+    </li>
+    
+    <li class="list-row">
+      <div><img class="size-10 rounded-box" src="https://img.daisyui.com/images/profile/demo/3@94.webp" alt="Sabrino Gardener"/></div>
+      <div>
+        <div>Sabrino Gardener</div>
+        <div class="text-xs uppercase font-semibold opacity-60">Cappuccino</div>
+      </div>
+      <button class="btn btn-square btn-ghost">
+        <svg class="size-[1.2em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g stroke-linejoin="round" stroke-linecap="round" stroke-width="2" fill="none" stroke="currentColor"><path d="M6 3L20 12 6 21 6 3z"></path></g></svg>
+      </button>
+      <button class="btn btn-square btn-ghost">
+        <svg class="size-[1.2em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g stroke-linejoin="round" stroke-linecap="round" stroke-width="2" fill="none" stroke="currentColor"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path></g></svg>
+      </button>
+    </li>
+  </ul>
+</section>
+
+<!-- Carousel Section -->
+<section class="mb-12">
+  <h2 class="text-3xl font-bold mb-6">Carousel</h2>
+  <div class="carousel carousel-center rounded-box">
+    <div class="carousel-item">
+      <img src="https://img.daisyui.com/images/stock/photo-1559703248-dcaaec9fab78.webp" alt="Pizza" />
+    </div>
+    <div class="carousel-item">
+      <img src="https://img.daisyui.com/images/stock/photo-1565098772267-60af42b81ef2.webp" alt="Pizza" />
+    </div>
+    <div class="carousel-item">
+      <img src="https://img.daisyui.com/images/stock/photo-1572635148818-ef6fd45eb394.webp" alt="Pizza" />
+    </div>
+    <div class="carousel-item">
+      <img src="https://img.daisyui.com/images/stock/photo-1494253109108-2e30c049369b.webp" alt="Pizza" />
+    </div>
+    <div class="carousel-item">
+      <img src="https://img.daisyui.com/images/stock/photo-1550258987-190a2d41a8ba.webp" alt="Pizza" />
+    </div>
+    <div class="carousel-item">
+      <img src="https://img.daisyui.com/images/stock/photo-1559181567-c3190ca9959b.webp" alt="Pizza" />
+    </div>
+    <div class="carousel-item">
+      <img src="https://img.daisyui.com/images/stock/photo-1601004890684-d8cbf643f5f2.webp" alt="Pizza" />
+    </div>
+  </div>
+</section>
+
+<!-- Form Inputs Section -->
+<section class="mb-12">
+  <h2 class="text-3xl font-bold mb-6">Form Inputs</h2>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    
+    <div>
+      <h4 class="font-semibold mb-3">Text Input</h4>
+      <input type="text" placeholder="Type here" class="input input-bordered w-full" />
+    </div>
+    
+    <div>
+      <h4 class="font-semibold mb-3">Select</h4>
+      <select class="select select-bordered w-full">
+        <option disabled selected>Pick one</option>
+        <option>Option 1</option>
+        <option>Option 2</option>
+      </select>
+    </div>
+    
+    <div>
+      <h4 class="font-semibold mb-3">Checkbox & Radio</h4>
+      <div class="flex gap-4">
+        <input type="checkbox" checked class="checkbox" />
+        <input type="checkbox" checked class="checkbox checkbox-primary" />
+        <input type="radio" name="radio-1" class="radio" checked />
+        <input type="radio" name="radio-1" class="radio radio-primary" />
+      </div>
+    </div>
+    
+    <div>
+      <h4 class="font-semibold mb-3">Toggle</h4>
+      <div class="flex gap-4">
+        <input type="checkbox" class="toggle" checked />
+        <input type="checkbox" class="toggle toggle-primary" checked />
+        <input type="checkbox" class="toggle toggle-secondary" checked />
+      </div>
+    </div>
+    
+    <div>
+      <h4 class="font-semibold mb-3">Range</h4>
+      <input type="range" min="0" max="100" value="50" class="range range-primary" />
+    </div>
+    
+    <div>
+      <h4 class="font-semibold mb-3">Rating</h4>
+      <div class="rating">
+        <input type="radio" name="rating-2" class="mask mask-star-2 bg-orange-400" />
+        <input type="radio" name="rating-2" class="mask mask-star-2 bg-orange-400" checked />
+        <input type="radio" name="rating-2" class="mask mask-star-2 bg-orange-400" />
+        <input type="radio" name="rating-2" class="mask mask-star-2 bg-orange-400" />
+        <input type="radio" name="rating-2" class="mask mask-star-2 bg-orange-400" />
+      </div>
+    </div>
+    
+  </div>
+</section>
+
+<!-- Progress Section -->
+<section class="mb-12">
+  <h2 class="text-3xl font-bold mb-6">Progress</h2>
+  <div class="space-y-3">
+    <progress class="progress progress-primary w-full" value="20" max="100"></progress>
+    <progress class="progress progress-secondary w-full" value="40" max="100"></progress>
+    <progress class="progress progress-accent w-full" value="60" max="100"></progress>
+    <progress class="progress progress-success w-full" value="80" max="100"></progress>
+  </div>
+</section>
+
+<!-- Loading Section -->
+<section class="mb-12">
+  <h2 class="text-3xl font-bold mb-6">Loading</h2>
+  <div class="flex gap-4 flex-wrap items-center">
+    <span class="loading loading-spinner loading-xs"></span>
+    <span class="loading loading-spinner loading-sm"></span>
+    <span class="loading loading-spinner loading-md"></span>
+    <span class="loading loading-spinner loading-lg"></span>
+    <span class="loading loading-dots loading-lg"></span>
+    <span class="loading loading-ring loading-lg"></span>
+    <span class="loading loading-ball loading-lg"></span>
+    <span class="loading loading-bars loading-lg"></span>
+  </div>
+</section>
+
+<!-- Navigation Components -->
+<section class="mb-12">
+  <h2 class="text-3xl font-bold mb-6">Navigation</h2>
+  
+  <div class="space-y-6">
+    <div>
+      <h4 class="font-semibold mb-3">Tabs</h4>
+      <div role="tablist" class="tabs tabs-lifted">
+        <input type="radio" name="my_tabs_2" role="tab" class="tab" aria-label="Tab 1" checked />
+        <div role="tabpanel" class="tab-content bg-base-100 border-base-300 rounded-box p-6">
+          Tab content 1
+        </div>
+        <input type="radio" name="my_tabs_2" role="tab" class="tab" aria-label="Tab 2" />
+        <div role="tabpanel" class="tab-content bg-base-100 border-base-300 rounded-box p-6">
+          Tab content 2
+        </div>
+      </div>
+    </div>
+    
+    <div>
+      <h4 class="font-semibold mb-3">Menu</h4>
+      <ul class="menu bg-base-200 rounded-box w-56">
+        <li><a>Item 1</a></li>
+        <li><a>Item 2</a></li>
+        <li><a>Item 3</a></li>
+      </ul>
+    </div>
+    
+    <div>
+      <h4 class="font-semibold mb-3">Breadcrumbs</h4>
+      <div class="breadcrumbs">
+        <ul>
+          <li><a>Home</a></li>
+          <li><a>Documents</a></li>
+          <li>Add Document</li>
+        </ul>
+      </div>
+    </div>
+    
+    <div>
+      <h4 class="font-semibold mb-3">Steps</h4>
+      <ul class="steps">
+        <li class="step step-primary">Register</li>
+        <li class="step step-primary">Choose plan</li>
+        <li class="step">Purchase</li>
+        <li class="step">Receive Product</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- Layout Components -->
+<section class="mb-12">
+  <h2 class="text-3xl font-bold mb-6">Layout</h2>
+  
+  <div class="space-y-6">
+    <div>
+      <h4 class="font-semibold mb-3">Divider</h4>
+      <div class="divider">OR</div>
+    </div>
+    
+    <div>
+      <h4 class="font-semibold mb-3">Join</h4>
+      <div class="join">
+        <button class="btn join-item">Button</button>
+        <button class="btn join-item btn-active">Button</button>
+        <button class="btn join-item">Button</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+// Countdown animation
+(function() {
+  let targetDate = new Date();
+  targetDate.setDate(targetDate.getDate() + 15);
+  targetDate.setHours(targetDate.getHours() + 10);
+  targetDate.setMinutes(targetDate.getMinutes() + 24);
+  targetDate.setSeconds(targetDate.getSeconds() + 58);
+  
+  function updateCountdown() {
+    const now = new Date();
+    const diff = targetDate - now;
+    
+    if (diff > 0) {
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+      
+      // Update large countdown
+      const daysEl = document.getElementById('countdown-days');
+      const hoursEl = document.getElementById('countdown-hours');
+      const minutesEl = document.getElementById('countdown-minutes');
+      const secondsEl = document.getElementById('countdown-seconds');
+      
+      if (daysEl) daysEl.style.setProperty('--value', days);
+      if (hoursEl) hoursEl.style.setProperty('--value', hours);
+      if (minutesEl) minutesEl.style.setProperty('--value', minutes);
+      if (secondsEl) secondsEl.style.setProperty('--value', seconds);
+      
+      // Update small countdown
+      const hEl = document.getElementById('countdown-h');
+      const mEl = document.getElementById('countdown-m');
+      const sEl = document.getElementById('countdown-s');
+      
+      if (hEl) {
+        hEl.style.setProperty('--value', hours);
+        hEl.textContent = hours;
+        hEl.setAttribute('aria-label', hours);
+      }
+      if (mEl) {
+        mEl.style.setProperty('--value', minutes);
+        mEl.textContent = minutes;
+        mEl.setAttribute('aria-label', minutes);
+      }
+      if (sEl) {
+        sEl.style.setProperty('--value', seconds);
+        sEl.textContent = seconds;
+        sEl.setAttribute('aria-label', seconds);
+      }
+    }
+  }
+  
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
+})();
+</script>
+
+
+
+      </main>
+      <footer class="footer footer-center bg-base-200 text-base-content p-10 mt-20">
+  <aside>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 94 90" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-12 h-12">
+      <path d="m37.361 37.392 6.783 16.393 6.792-16.393M32.017 45.49h-7.908M33.161 37.392h-9.3v16.393h9.293M61.732 37.392c4.239 0 7.675 3.51 7.675 8.097 0 4.588-3.437 8.296-7.676 8.296-4.239 0-7.675-3.708-7.675-8.296 0-4.587 3.435-8.097 7.674-8.097h.002z"/>
+      <path d="M45.829 8.807c19.573.002 35.44 15.174 35.439 35.01-.001 19.834-15.87 35.868-35.443 35.868-19.574 0-35.443-16.034-35.444-35.869 0-19.835 15.865-35.007 35.439-35.009h.009z"/>
+      <path d="M22.837 71.115C10.95 65.332 2.745 53.035 2.744 38.773c0-19.835 15.865-35.007 35.439-35.01h.009c9.046.002 17.3 3.243 23.562 8.687"/>
+      <path d="M34.652 10.59c5.906-4.288 13.233-6.782 21.168-6.783h.009c19.573.002 35.44 15.175 35.439 35.01 0 10.025-4.055 19.08-10.593 25.583"/>
+      <path d="M68.538 16.749c10.126 6.054 16.73 17.13 16.73 30.067-.001 19.835-15.87 35.869-35.444 35.869-8.814 0-16.878-3.252-23.079-8.638M68.392 16.87"/>
+      <path d="M60.448 81.004a34.999 34.999 0 0 1-19.626 5.99c-19.574 0-35.443-16.033-35.444-35.868 0-9.088 3.33-17.198 8.824-23.318m58.13 39.768"/>
+    </svg>
+    <p class="text-xs opacity-70">© 2025 Evolution Team • Powered by Tailwind CSS v4 & daisyUI v5</p>
+  </aside>
+  <nav>
+    <div class="grid grid-flow-col gap-4">
+      <a class="link link-hover">Get EVO</a>
+      <a class="link link-hover">Documentation</a>
+      <a class="link link-hover">Core Team Support</a>
+      <a class="link link-hover">Telegram</a>
+    </div>
+  </nav>
+</footer>
+
+
+    </div>
+    
+    <div class="drawer-side z-50">
+      <label for="settings-drawer" aria-label="close sidebar" class="drawer-overlay"></label>
+      <div class="bg-base-100 min-h-full w-96 p-6 overflow-y-auto">
+        <!-- Settings Panel -->
+<div class="flex flex-col h-full">
+  <div class="flex items-center justify-between mb-4">
+    <h3 class="font-bold text-xl">Theme Builder</h3>
+    <label for="settings-drawer" class="btn btn-sm btn-circle btn-ghost">✕</label>
+  </div>
+  
+  <div class="tabs tabs-boxed mb-4">
+      <input type="radio" name="settings_tabs" class="tab" aria-label="General" checked />
+      <div class="tab-content bg-base-200 border-base-300 rounded-box p-4">
+        <h4 class="font-semibold text-base mb-3">General Settings</h4>
+        
+        <!-- Theme Select -->
+        <div class="form-control mb-3">
+          <label class="label py-1">
+            <span class="label-text text-sm font-semibold">Theme</span>
+          </label>
+          <select class="select select-sm select-bordered w-full" id="settings_theme" data-choose-theme>
+        <option value="light-evo">Light-evo</option>
+        <option value="light">Light</option>
+        <option value="cupcake">Cupcake</option>
+        <option value="bumblebee">Bumblebee</option>
+        <option value="emerald">Emerald</option>
+        <option value="corporate">Corporate</option>
+        <option value="retro">Retro</option>
+        <option value="valentine">Valentine</option>
+        <option value="garden">Garden</option>
+        <option value="pastel">Pastel</option>
+        <option value="fantasy">Fantasy</option>
+        <option value="wireframe">Wireframe</option>
+        <option value="cmyk">Cmyk</option>
+        <option value="autumn">Autumn</option>
+        <option value="acid">Acid</option>
+        <option value="lemonade">Lemonade</option>
+        <option value="winter">Winter</option>
+        <option value="nord">Nord</option>
+        <option value="lofi">Lofi</option>
+        <option value="dark-evo">Dark-evo</option>
+        <option value="dark-evo">Dark-evo</option>
+        <option value="dark">Dark</option>
+        <option value="synthwave">Synthwave</option>
+        <option value="cyberpunk">Cyberpunk</option>
+        <option value="halloween">Halloween</option>
+        <option value="forest">Forest</option>
+        <option value="aqua">Aqua</option>
+        <option value="black">Black</option>
+        <option value="luxury">Luxury</option>
+        <option value="dracula">Dracula</option>
+        <option value="business">Business</option>
+        <option value="night">Night</option>
+        <option value="coffee">Coffee</option>
+        <option value="dim">Dim</option>
+        <option value="sunset">Sunset</option>
+      </select>
+        </div>
+
+        <!-- Language Select -->
+        <div class="form-control mb-3">
+          <label class="label py-1">
+            <span class="label-text text-sm font-semibold">Language</span>
+          </label>
+          <select class="select select-sm select-bordered w-full" id="settings_lang" onchange="__setLang(this.value)">
+            <option value="uk">🇺🇦 Українська</option>
+            <option value="en">🇬🇧 English</option>
+            <option value="pl">🇵🇱 Polski</option>
+          </select>
+        </div>
+
+        <!-- Background Select -->
+        <div class="form-control mb-3">
+          <label class="label py-1">
+            <span class="label-text text-sm font-semibold">Animated Background</span>
+          </label>
+          <select class="select select-sm select-bordered w-full" id="settings_background" onchange="__setBackground(this.value)">
+        <option value="none">⬜ None</option>
+        <option value="gradient-spheres">🌈 Gradient Spheres</option>
+        <option value="colorful-dots">✨ Colorful Dots</option>
+        <option value="cosmic-dream">🌌 Cosmic Dream</option>
+      </select>
+          <label class="label py-0">
+            <span class="label-text-alt text-xs">Dynamic background animations</span>
+          </label>
+        </div>
+      </div>
+
+      <input type="radio" name="settings_tabs" class="tab" aria-label="Radius" />
+      <div class="tab-content bg-base-100 border-base-300 rounded-box p-4">
+        <h4 class="font-semibold text-base mb-3">Border Radius</h4>
+        
+        <!-- Radius Selector -->
+        <div class="form-control mb-3">
+          <label class="label py-1">
+            <span class="label-text text-sm font-semibold">Selector Radius</span>
+            <span class="label-text-alt text-xs" id="radius_selector_value">1rem</span>
+          </label>
+          <input type="range" min="0" max="2" step="0.25" value="1" class="range range-xs" 
+                 id="radius_selector" 
+                 oninput="this.nextElementSibling.textContent = this.value + 'rem'; document.getElementById('radius_selector_value').textContent = this.value + 'rem'; __setThemeVar('--radius-selector', this.value + 'rem')" />
+          <div class="w-full flex justify-between text-xs px-2 mt-1">
+            <span>0</span>
+            <span>0.5</span>
+            <span>1</span>
+            <span>1.5</span>
+            <span>2</span>
+          </div>
+          <label class="label py-0">
+            <span class="label-text-alt text-xs">Checkboxes, toggles, badges</span>
+          </label>
+        </div>
+
+        <!-- Radius Field -->
+        <div class="form-control mb-4">
+          <label class="label">
+            <span class="label-text font-semibold">Field Radius</span>
+            <span class="label-text-alt" id="radius_field_value">0.25rem</span>
+          </label>
+          <input type="range" min="0" max="2" step="0.25" value="0.25" class="range" 
+                 id="radius_field"
+                 oninput="this.nextElementSibling.textContent = this.value + 'rem'; document.getElementById('radius_field_value').textContent = this.value + 'rem'; __setThemeVar('--radius-field', this.value + 'rem')" />
+          <div class="w-full flex justify-between text-xs px-2 mt-2">
+            <span>0</span>
+            <span>0.5</span>
+            <span>1</span>
+            <span>1.5</span>
+            <span>2</span>
+          </div>
+          <label class="label">
+            <span class="label-text-alt">Border radius of fields (button, input, select, tab)</span>
+          </label>
+        </div>
+
+        <!-- Radius Box -->
+        <div class="form-control mb-4">
+          <label class="label">
+            <span class="label-text font-semibold">Box Radius</span>
+            <span class="label-text-alt" id="radius_box_value">0.5rem</span>
+          </label>
+          <input type="range" min="0" max="2" step="0.25" value="0.5" class="range" 
+                 id="radius_box"
+                 oninput="this.nextElementSibling.textContent = this.value + 'rem'; document.getElementById('radius_box_value').textContent = this.value + 'rem'; __setThemeVar('--radius-box', this.value + 'rem')" />
+          <div class="w-full flex justify-between text-xs px-2 mt-2">
+            <span>0</span>
+            <span>0.5</span>
+            <span>1</span>
+            <span>1.5</span>
+            <span>2</span>
+          </div>
+          <label class="label">
+            <span class="label-text-alt">Border radius of boxes (card, modal, alert)</span>
+          </label>
+        </div>
+      </div>
+
+      <input type="radio" name="settings_tabs" class="tab" aria-label="Sizes" />
+      <div class="tab-content bg-base-100 border-base-300 rounded-box p-6">
+        <h4 class="font-semibold text-lg mb-4">Base Sizes</h4>
+        
+        <!-- Size Selector -->
+        <div class="form-control mb-4">
+          <label class="label">
+            <span class="label-text font-semibold">Selector Size</span>
+            <span class="label-text-alt" id="size_selector_value">0.25rem</span>
+          </label>
+          <input type="range" min="0.1875" max="0.3125" step="0.03125" value="0.25" class="range range-sm" 
+                 id="size_selector"
+                 oninput="this.nextElementSibling.textContent = this.value + 'rem'; document.getElementById('size_selector_value').textContent = this.value + 'rem'; __setThemeVar('--size-selector', this.value + 'rem')" />
+          <div class="w-full flex justify-between text-xs px-2 mt-2">
+            <span>Smaller</span>
+            <span>Default</span>
+            <span>Bigger</span>
+          </div>
+          <label class="label">
+            <span class="label-text-alt">Base size of selectors (checkbox, toggle, badge)</span>
+          </label>
+        </div>
+
+        <!-- Size Field -->
+        <div class="form-control mb-4">
+          <label class="label">
+            <span class="label-text font-semibold">Field Size</span>
+            <span class="label-text-alt" id="size_field_value">0.25rem</span>
+          </label>
+          <input type="range" min="0.1875" max="0.3125" step="0.03125" value="0.25" class="range range-sm" 
+                 id="size_field"
+                 oninput="this.nextElementSibling.textContent = this.value + 'rem'; document.getElementById('size_field_value').textContent = this.value + 'rem'; __setThemeVar('--size-field', this.value + 'rem')" />
+          <div class="w-full flex justify-between text-xs px-2 mt-2">
+            <span>Smaller</span>
+            <span>Default</span>
+            <span>Bigger</span>
+          </div>
+          <label class="label">
+            <span class="label-text-alt">Base size of fields (button, input, select, tab)</span>
+          </label>
+        </div>
+      </div>
+
+      <input type="radio" name="settings_tabs" class="tab" aria-label="Effects" />
+      <div class="tab-content bg-base-100 border-base-300 rounded-box p-6">
+        <h4 class="font-semibold text-lg mb-4">Visual Effects</h4>
+        
+        <!-- Border Width -->
+        <div class="form-control mb-4">
+          <label class="label">
+            <span class="label-text font-semibold">Border Width</span>
+            <span class="label-text-alt" id="border_value">1px</span>
+          </label>
+          <input type="range" min="0" max="2" step="0.5" value="1" class="range range-sm" 
+                 id="border"
+                 oninput="this.nextElementSibling.textContent = this.value + 'px'; document.getElementById('border_value').textContent = this.value + 'px'; __setThemeVar('--border', this.value + 'px')" />
+          <div class="w-full flex justify-between text-xs px-2 mt-2">
+            <span>None</span>
+            <span>Thin</span>
+            <span>Default</span>
+            <span>Thick</span>
+            <span>Extra</span>
+          </div>
+          <label class="label">
+            <span class="label-text-alt">Border width for components</span>
+          </label>
+        </div>
+
+        <!-- Depth -->
+        <div class="form-control mb-4">
+          <label class="label">
+            <span class="label-text font-semibold">Depth (3D Shadow)</span>
+          </label>
+          <div class="flex gap-4">
+            <label class="label cursor-pointer gap-2">
+              <input type="radio" name="depth" class="radio" value="0" onchange="__setThemeVar('--depth', this.value)" />
+              <span class="label-text">Off</span>
+            </label>
+            <label class="label cursor-pointer gap-2">
+              <input type="radio" name="depth" class="radio" value="1" checked onchange="__setThemeVar('--depth', this.value)" />
+              <span class="label-text">On</span>
+            </label>
+          </div>
+          <label class="label">
+            <span class="label-text-alt">Adds subtle 3D depth effect to components</span>
+          </label>
+        </div>
+
+        <!-- Noise -->
+        <div class="form-control mb-4">
+          <label class="label">
+            <span class="label-text font-semibold">Noise (Grain Effect)</span>
+          </label>
+          <div class="flex gap-4">
+            <label class="label cursor-pointer gap-2">
+              <input type="radio" name="noise" class="radio" value="0" checked onchange="__setThemeVar('--noise', this.value)" />
+              <span class="label-text">Off</span>
+            </label>
+            <label class="label cursor-pointer gap-2">
+              <input type="radio" name="noise" class="radio" value="1" onchange="__setThemeVar('--noise', this.value)" />
+              <span class="label-text">On</span>
+            </label>
+          </div>
+          <label class="label">
+            <span class="label-text-alt">Adds subtle grain/noise effect to components</span>
+          </label>
+        </div>
+      </div>
+
+      <input type="radio" name="settings_tabs" class="tab" aria-label="Export/Import" />
+      <div class="tab-content bg-base-100 border-base-300 rounded-box p-6">
+        <h4 class="font-semibold text-lg mb-4">Theme Management</h4>
+        
+        <div class="alert alert-info mb-4">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+          <span>Export your current theme settings as JSON or import a previously saved theme.</span>
+        </div>
+
+        <!-- Export -->
+        <div class="form-control mb-4">
+          <label class="label">
+            <span class="label-text font-semibold">Export Theme</span>
+          </label>
+          <button class="btn btn-primary btn-block" onclick="__exportTheme()">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+            </svg>
+            Download Theme as JSON
+          </button>
+        </div>
+
+        <!-- Import -->
+        <div class="form-control mb-4">
+          <label class="label">
+            <span class="label-text font-semibold">Import Theme</span>
+          </label>
+          <input type="file" accept=".json" class="file-input file-input-bordered w-full" 
+                 id="theme_import" 
+                 onchange="if(this.files[0]) __importTheme(this.files[0])" />
+        </div>
+
+        <div class="divider">OR</div>
+
+        <!-- Reset -->
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text font-semibold">Reset to Defaults</span>
+          </label>
+          <button class="btn btn-warning btn-block" onclick="if(confirm('Reset all settings to default?')) { localStorage.clear(); location.reload(); }">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+            </svg>
+            Reset All Settings
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-action">
+      <form method="dialog">
+        <button class="btn">Close</button>
+      </form>
+    </div>
+  </div>
+  <form method="dialog" class="modal-backdrop">
+    <button>close</button>
+  </form>
+</dialog>
+
+<script>
+  // Sync settings modal with current values when opened
+  document.getElementById('settings_modal')?.addEventListener('show', function() {
+    const themeSel = document.getElementById('settings_theme');
+    const langSel = document.getElementById('settings_lang');
+    const backgroundSel = document.getElementById('settings_background');
+    
+    const curTheme = document.documentElement.getAttribute('data-theme') || 'light';
+    const curLang = document.documentElement.getAttribute('lang') || 'uk';
+    const curBackground = localStorage.getItem('evo-background') || 'none';
+    
+    if (themeSel) themeSel.value = curTheme;
+    if (langSel) langSel.value = curLang;
+    if (backgroundSel) backgroundSel.value = curBackground;
+
+    // Load saved theme variables
+    const savedVars = localStorage.getItem('evo-theme-variables');
+    if (savedVars) {
+      try {
+        const vars = JSON.parse(savedVars);
+        if (vars['--radius-selector']) {
+          const val = parseFloat(vars['--radius-selector']);
+          document.getElementById('radius_selector').value = val;
+          document.getElementById('radius_selector_value').textContent = val + 'rem';
+        }
+        if (vars['--radius-field']) {
+          const val = parseFloat(vars['--radius-field']);
+          document.getElementById('radius_field').value = val;
+          document.getElementById('radius_field_value').textContent = val + 'rem';
+        }
+        if (vars['--radius-box']) {
+          const val = parseFloat(vars['--radius-box']);
+          document.getElementById('radius_box').value = val;
+          document.getElementById('radius_box_value').textContent = val + 'rem';
+        }
+        if (vars['--size-selector']) {
+          const val = parseFloat(vars['--size-selector']);
+          document.getElementById('size_selector').value = val;
+          document.getElementById('size_selector_value').textContent = val + 'rem';
+        }
+        if (vars['--size-field']) {
+          const val = parseFloat(vars['--size-field']);
+          document.getElementById('size_field').value = val;
+          document.getElementById('size_field_value').textContent = val + 'rem';
+        }
+        if (vars['--border']) {
+          const val = parseFloat(vars['--border']);
+          document.getElementById('border').value = val;
+          document.getElementById('border_value').textContent = val + 'px';
+        }
+        if (vars['--depth']) {
+          document.querySelector('input[name="depth"][value="' + vars['--depth'] + '"]').checked = true;
+        }
+        if (vars['--noise']) {
+          document.querySelector('input[name="noise"][value="' + vars['--noise'] + '"]').checked = true;
+        }
+      } catch (e) {
+        console.error('Failed to load theme variables:', e);
+      }
+    }
+  });
+</script>
+
+
+      </div>
+    </div>
+  </div>
+</body>
+</html>
+

@@ -1,8 +1,8 @@
 # Dependencies
 node_modules/
 
-# Build output
-dist/
+# Build output (закоментовано, щоб dist/ коммітився)
+# dist/
 
 # OS files
 .DS_Store
