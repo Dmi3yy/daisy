@@ -41,8 +41,9 @@
       // Apply saved background after DOM is loaded
       const storedBackground = localStorage.getItem(backgroundKey) || 'none';
       window.addEventListener('DOMContentLoaded', function() {
+        const evoButton = document.getElementById('evo-button');
         window.__applyBackground(storedBackground);
-        
+
         // Initialize background checkmarks
         document.querySelectorAll('.bg-item').forEach(btn => {
           const checkmark = btn.querySelector('.bg-checkmark');
