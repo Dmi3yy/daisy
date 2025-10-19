@@ -193,6 +193,19 @@
                 </div>
                 <input type="checkbox" class="toggle toggle-sm toggle-primary" id="system-noise-toggle" />
               </div>
+              <!-- Glass Effect -->
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7h16M4 12h10M4 17h6" />
+                  </svg>
+                  <div>
+                    <div class="text-sm font-medium">Glass Effect</div>
+                    <div class="text-xs opacity-60">Blurred translucent surfaces</div>
+                  </div>
+                </div>
+                <input type="checkbox" class="toggle toggle-sm toggle-primary" id="system-glass-toggle" onchange="__toggleGlass(this.checked)" />
+              </div>
             </div>
           </div>
         </div>
@@ -723,7 +736,7 @@
 
       // Initialize Glass Effect
       const savedGlass = localStorage.getItem('evo-glass') || '0';
-      const glassToggle = document.getElementById('system-glass-toggle'); // Assuming this is the correct ID for the glass toggle
+      const glassToggle = document.getElementById('system-glass-toggle');
 
       if (glassToggle) {
         glassToggle.checked = savedGlass === '1';
