@@ -6,6 +6,8 @@ import { join } from 'node:path';
 
 const npmCommand = process.platform === 'win32' ? 'npm.cmd' : 'npm';
 const distDir = join(process.cwd(), 'dist');
+const skipBuildStep = process.env.SKIP_TEST_BUILD === 'true';
+const skipValidationStep = process.env.SKIP_TEST_VALIDATION === 'true';
 
 function runCommand(command, args, options = {}) {
   const result = spawnSync(command, args, {
@@ -25,6 +27,15 @@ function runCommand(command, args, options = {}) {
 }
 
 before(() => {
+  if (skipBuildStep) {
+    if (!existsSync(distDir)) {
+      throw new Error(
+        "dist directory must exist when SKIP_TEST_BUILD is enabled. Run 'npm run build' before executing tests.",
+      );
+    }
+    return;
+  }
+
   try {
     rmSync(distDir, { recursive: true, force: true });
   } catch {
@@ -43,6 +54,10 @@ test('build artifacts are generated', () => {
   }
 });
 
-test('project validation script passes', () => {
-  runCommand('node', ['./scripts/validate.mjs']);
-});
+test(
+  'project validation script passes',
+  { skip: skipValidationStep },
+  () => {
+    runCommand('node', ['./scripts/validate.mjs']);
+  },
+);
