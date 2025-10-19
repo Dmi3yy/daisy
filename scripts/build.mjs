@@ -184,6 +184,7 @@ console.log(`[build] ✓ Loaded ${lightThemes.length} light themes and ${darkThe
 // Animated backgrounds
 const backgrounds = [
   { id: "none", name: "None", icon: "⬜" },
+  { id: "transparent", name: "Transparent Glass", icon: "💎" },
   { id: "liquid", name: "Liquid Glass", icon: "🌊" },
   { id: "gradient-spheres", name: "Gradient Spheres", icon: "🌈" },
   { id: "magic", name: "Magic Aurora", icon: "🪄" },

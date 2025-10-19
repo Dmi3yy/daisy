@@ -6,19 +6,39 @@
       "description": "No animated background"
     },
     {
+      "id": "transparent",
+      "name": "Transparent Glass",
+      "description": "Minimal glass blur overlay without animation"
+    },
+    {
       "id": "liquid",
       "name": "Liquid Glass",
-      "description": "macOS-inspired liquid gradient with responsive hotspots"
+      "description": "macOS-inspired liquid gradient with responsive hotspots",
+      "animated": true
     },
     {
       "id": "gradient-spheres",
       "name": "Gradient Spheres",
-      "description": "Modern gradient with soft spheres and particles"
+      "description": "Modern gradient with soft spheres and particles",
+      "animated": true
+    },
+    {
+      "id": "colorful-dots",
+      "name": "Colorful Dots",
+      "description": "Vibrant constellation of colorful speckled particles",
+      "animated": true
+    },
+    {
+      "id": "cosmic-dream",
+      "name": "Cosmic Dream",
+      "description": "Shifting cosmic clouds with soft aurora lighting",
+      "animated": true
     },
     {
       "id": "magic",
       "name": "Magic Aurora",
-      "description": "Shimmering aurora waves with sparkling particles"
+      "description": "Shimmering aurora waves with sparkling particles",
+      "animated": true
     }
   ]
 }

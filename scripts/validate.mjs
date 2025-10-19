@@ -19,6 +19,8 @@ const relativeToRoot = (targetPath) => path.relative(root, targetPath);
 const isPlainObject = (value) => value !== null && typeof value === "object" && !Array.isArray(value);
 const colorValuePattern =
   /^(#([0-9a-fA-F]{3,8})|oklch\(|rgba?\(|hsla?\(|hwb\(|lab\(|lch\(|color-mix\(|var\()/;
+const backgroundRegistry = new Map();
+let backgroundsLoaded = false;
 
 function parseJsonFile(filePath, description, options = {}) {
   try {
@@ -520,11 +522,203 @@ if (!fs.existsSync(palettesPath)) {
   }
 }
 
+// Validate background presets
+console.log("\n🌌 Validating background catalog...");
+const backgroundsPath = path.join(root, "src/backgrounds.json");
+if (!fs.existsSync(backgroundsPath)) {
+  console.error("  ✗ src/backgrounds.json is missing");
+  hasErrors = true;
+} else {
+  const backgroundData = parseJsonFile(backgroundsPath, "Background catalog");
+  if (!backgroundData || !isPlainObject(backgroundData)) {
+    console.error("  ✗ src/backgrounds.json must export an object with a backgrounds array");
+    hasErrors = true;
+  } else if (!Array.isArray(backgroundData.backgrounds)) {
+    console.error("  ✗ src/backgrounds.json must define a 'backgrounds' array");
+    hasErrors = true;
+  } else if (backgroundData.backgrounds.length === 0) {
+    console.error("  ✗ src/backgrounds.json must include at least one background definition");
+    hasErrors = true;
+  } else {
+    const seenBackgroundIds = new Map();
+
+    for (const background of backgroundData.backgrounds) {
+      let backgroundIsValid = true;
+
+      if (!background || !isPlainObject(background)) {
+        console.error("  ✗ Background entries must be objects");
+        hasErrors = true;
+        backgroundIsValid = false;
+        continue;
+      }
+
+      if (typeof background.id !== "string" || background.id.trim() === "") {
+        console.error("  ✗ Background entry is missing a non-empty 'id'");
+        backgroundIsValid = false;
+        hasErrors = true;
+      } else if (seenBackgroundIds.has(background.id.trim())) {
+        console.error(
+          `  ✗ Duplicate background id '${background.id.trim()}' detected (also defined earlier)`
+        );
+        backgroundIsValid = false;
+        hasErrors = true;
+      } else {
+        seenBackgroundIds.set(background.id.trim(), true);
+      }
+
+      if (typeof background.name !== "string" || background.name.trim() === "") {
+        console.error(`  ✗ Background '${background.id ?? "<unknown>"}' is missing a display name`);
+        backgroundIsValid = false;
+        hasErrors = true;
+      }
+
+      if (typeof background.description !== "string" || background.description.trim() === "") {
+        console.error(
+          `  ✗ Background '${background.id ?? "<unknown>"}' is missing a description`
+        );
+        backgroundIsValid = false;
+        hasErrors = true;
+      }
+
+      if ("animated" in background && typeof background.animated !== "boolean") {
+        console.warn(
+          `  ⚠️ Background '${background.id ?? "<unknown>"}' has a non-boolean 'animated' flag`
+        );
+        hasWarnings = true;
+      }
+
+      if (backgroundIsValid) {
+        const normalizedId = background.id.trim();
+        backgroundRegistry.set(normalizedId, background);
+        console.log(`  ✓ Background '${normalizedId}' passed validation`);
+      }
+    }
+
+    if (backgroundRegistry.size > 0) {
+      backgroundsLoaded = true;
+    }
+  }
+}
+
+// Validate UI component configuration
+console.log("\n🧭 Validating UI component configuration...");
+const uiConfigPath = path.join(root, "src/config/ui-components.json");
+if (!fs.existsSync(uiConfigPath)) {
+  console.error("  ✗ src/config/ui-components.json is missing");
+  hasErrors = true;
+} else {
+  const uiConfig = parseJsonFile(uiConfigPath, "UI component configuration");
+  if (!uiConfig || !isPlainObject(uiConfig)) {
+    console.error("  ✗ src/config/ui-components.json must export a configuration object");
+    hasErrors = true;
+  } else {
+    const navbarConfig = uiConfig.navbar;
+    if (!isPlainObject(navbarConfig)) {
+      console.error("  ✗ UI config must define a navbar configuration object");
+      hasErrors = true;
+    } else {
+      const backgroundsConfig = navbarConfig.backgrounds;
+      if (!isPlainObject(backgroundsConfig)) {
+        console.error("  ✗ UI config navbar.backgrounds must be an object");
+        hasErrors = true;
+      } else if (!Array.isArray(backgroundsConfig.items)) {
+        console.error("  ✗ UI config navbar.backgrounds.items must be an array");
+        hasErrors = true;
+      } else if (backgroundsConfig.items.length === 0) {
+        console.error("  ✗ UI config navbar.backgrounds.items must include at least one entry");
+        hasErrors = true;
+      } else {
+        for (const item of backgroundsConfig.items) {
+          if (!item || !isPlainObject(item)) {
+            console.error("  ✗ UI background entries must be objects");
+            hasErrors = true;
+            continue;
+          }
+
+          if (typeof item.id !== "string" || item.id.trim() === "") {
+            console.error("  ✗ UI background entry is missing a non-empty 'id'");
+            hasErrors = true;
+          } else if (backgroundsLoaded && !backgroundRegistry.has(item.id.trim())) {
+            console.error(
+              `  ✗ UI background '${item.id.trim()}' does not match any entry in src/backgrounds.json`
+            );
+            hasErrors = true;
+          }
+
+          if (typeof item.label !== "string" || item.label.trim() === "") {
+            console.error(
+              `  ✗ UI background '${item.id ?? "<unknown>"}' is missing a display label`
+            );
+            hasErrors = true;
+          }
+
+          if (typeof item.icon !== "string" || item.icon.trim() === "") {
+            console.error(
+              `  ✗ UI background '${item.id ?? "<unknown>"}' is missing an icon string`
+            );
+            hasErrors = true;
+          }
+
+          if ("animated" in item && typeof item.animated !== "boolean") {
+            console.warn(
+              `  ⚠️ UI background '${item.id ?? "<unknown>"}' has a non-boolean 'animated' flag`
+            );
+            hasWarnings = true;
+          }
+        }
+      }
+    }
+
+    const themeModeConfig = uiConfig.themeMode;
+    if (!isPlainObject(themeModeConfig)) {
+      console.error("  ✗ UI config must define a themeMode object");
+      hasErrors = true;
+    } else if (!Array.isArray(themeModeConfig.modes)) {
+      console.error("  ✗ UI config themeMode.modes must be an array");
+      hasErrors = true;
+    } else if (themeModeConfig.modes.length === 0) {
+      console.error("  ✗ UI config themeMode.modes must include at least one mode definition");
+      hasErrors = true;
+    } else {
+      const seenModeIds = new Map();
+      for (const mode of themeModeConfig.modes) {
+        if (!mode || !isPlainObject(mode)) {
+          console.error("  ✗ UI theme mode entries must be objects");
+          hasErrors = true;
+          continue;
+        }
+
+        if (typeof mode.id !== "string" || mode.id.trim() === "") {
+          console.error("  ✗ UI theme mode entry is missing a non-empty 'id'");
+          hasErrors = true;
+        } else if (seenModeIds.has(mode.id.trim())) {
+          console.error(`  ✗ Duplicate UI theme mode id '${mode.id.trim()}' detected`);
+          hasErrors = true;
+        } else {
+          seenModeIds.set(mode.id.trim(), true);
+        }
+
+        if (typeof mode.label !== "string" || mode.label.trim() === "") {
+          console.error(
+            `  ✗ UI theme mode '${mode.id ?? "<unknown>"}' is missing a display label`
+          );
+          hasErrors = true;
+        }
+
+        if (typeof mode.icon !== "string" || mode.icon.trim() === "") {
+          console.error(`  ✗ UI theme mode '${mode.id ?? "<unknown>"}' is missing an icon string`);
+          hasErrors = true;
+        }
+      }
+    }
+  }
+}
+
 // Try to run a test build (if dependencies are installed)
 if (!hasErrors && fs.existsSync(nodeModulesPath)) {
   console.log("\n🔨 Running test build...");
   try {
-    execSync("npm run build", { 
+    execSync("npm run build", {
       cwd: root, 
       stdio: "pipe",
       encoding: "utf8"
