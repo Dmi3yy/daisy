@@ -15,7 +15,36 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  build-and-validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run build
+        run: npm run build
+
+      - name: Run project validation
+        run: npm run validate
+
+      - name: Run tests
+        run: npm test
+        env:
+          SKIP_TEST_BUILD: "true"
+          SKIP_TEST_VALIDATION: "true"
+
   deploy:
+    needs: build-and-validate
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
