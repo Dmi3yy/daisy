@@ -7,12 +7,12 @@
     "clean": "rm -rf dist && mkdir -p dist",
     "build:css": "tailwindcss -i ./src/app.css -o ./dist/styles.css --minify",
     "build:html": "node ./scripts/build.mjs",
-    "build:inline": "node ./scripts/inline.mjs",
-    "build": "npm run clean && npm run build:css && npm run build:html && npm run build:inline",
+    "build:html:dev": "node ./scripts/build.mjs --keep-css=true",
+    "build": "npm run clean && npm run build:css && npm run build:html",
     "dev:css": "tailwindcss -i ./src/app.css -o ./dist/styles.css --watch",
     "dev:html": "node ./scripts/watch.mjs",
     "dev:server": "live-server dist --port=3000 --host=localhost --wait=200 --no-browser",
-    "dev": "npm run build:html && concurrently -n \"CSS,HTML,SERVER\" -c \"cyan,green,magenta\" \"npm:dev:css\" \"npm:dev:html\" \"npm:dev:server\"",
+    "dev": "npm run build:css && npm run build:html:dev && concurrently -n \"CSS,HTML,SERVER\" -c \"cyan,green,magenta\" \"npm:dev:css\" \"npm:dev:html\" \"npm:dev:server\"",
     "validate": "node ./scripts/validate.mjs"
   },
   "devDependencies": {

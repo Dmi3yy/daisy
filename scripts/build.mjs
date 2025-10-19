@@ -24,6 +24,7 @@ function arg(name, def) {
 // Get CLI/ENV arguments with defaults
 const theme = arg("theme", process.env.THEME || "light");
 const lang = arg("lang", process.env.LANG || "uk");
+const keepCss = (arg("keep-css", process.env.KEEP_CSS || "false") || "false") === "true";
 
 console.log(`[build] Starting build with theme="${theme}" lang="${lang}"`);
 
@@ -324,6 +325,26 @@ base = base.replace(
   `const __lightThemes = ${JSON.stringify(lightThemesList)};
       const __darkThemes = ${JSON.stringify(darkThemesList)};`
 );
+
+// Inline CSS if available
+const cssPath = path.join(root, "dist/styles.css");
+let inlineCss = "";
+
+if (fs.existsSync(cssPath)) {
+  console.log(`[build] Inlining CSS from ${cssPath}`);
+  inlineCss = read(cssPath);
+} else {
+  console.warn(`[build] ⚠ Warning: ${cssPath} not found. Inline styles placeholder will remain.`);
+}
+
+base = base.replace("/* @@INLINE_CSS */", inlineCss);
+
+if (!keepCss && fs.existsSync(cssPath)) {
+  fs.unlinkSync(cssPath);
+  console.log(`[build] ✓ Removed ${cssPath} after inlining`);
+} else if (keepCss) {
+  console.log("[build] ℹ Preserving dist/styles.css (keep-css enabled)");
+}
 
 // Write output
 const outputPath = path.join(root, "dist/index.html");

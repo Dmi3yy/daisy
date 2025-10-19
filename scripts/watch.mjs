@@ -13,10 +13,15 @@ console.log('[watch] Starting HTML file watcher...');
 // Watch for changes in src directory
 const watcher = chokidar.watch([
   path.join(root, 'src/**/*.html'),
-  path.join(root, 'src/**/*.json')
+  path.join(root, 'src/**/*.json'),
+  path.join(root, 'dist/styles.css')
 ], {
   persistent: true,
-  ignoreInitial: true
+  ignoreInitial: true,
+  awaitWriteFinish: {
+    stabilityThreshold: 150,
+    pollInterval: 50
+  }
 });
 
 // Debounce rebuild to avoid multiple builds
@@ -25,7 +30,7 @@ function triggerRebuild() {
   clearTimeout(rebuildTimeout);
   rebuildTimeout = setTimeout(() => {
     console.log('[watch] Changes detected, rebuilding HTML...');
-    const build = spawn('node', [path.join(root, 'scripts/build.mjs')], {
+    const build = spawn('node', [path.join(root, 'scripts/build.mjs'), '--keep-css=true'], {
       stdio: 'inherit',
       cwd: root
     });
