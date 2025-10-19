@@ -1,8 +1,8 @@
 <div class="navbar bg-base-100 shadow-sm">
-  <!-- Logo and brand -->
+  <!-- Logo and brand (glows when Evo is active) -->
   <div class="flex-1">
-    <a class="btn btn-ghost text-xl gap-2">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 94 90" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8">
+    <a class="btn btn-ghost text-xl gap-2 transition-all duration-300" id="evo-logo">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 94 90" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 transition-all duration-300">
         <path d="m37.361 37.392 6.783 16.393 6.792-16.393M32.017 45.49h-7.908M33.161 37.392h-9.3v16.393h9.293M61.732 37.392c4.239 0 7.675 3.51 7.675 8.097 0 4.588-3.437 8.296-7.676 8.296-4.239 0-7.675-3.708-7.675-8.296 0-4.587 3.435-8.097 7.674-8.097h.002z"/>
         <path d="M45.829 8.807c19.573.002 35.44 15.174 35.439 35.01-.001 19.834-15.87 35.868-35.443 35.868-19.574 0-35.443-16.034-35.444-35.869 0-19.835 15.865-35.007 35.439-35.009h.009z"/>
         <path d="M22.837 71.115C10.95 65.332 2.745 53.035 2.744 38.773c0-19.835 15.865-35.007 35.439-35.01h.009c9.046.002 17.3 3.243 23.562 8.687"/>
@@ -10,17 +10,19 @@
         <path d="M68.538 16.749c10.126 6.054 16.73 17.13 16.73 30.067-.001 19.835-15.87 35.869-35.444 35.869-8.814 0-16.878-3.252-23.079-8.638M68.392 16.87"/>
         <path d="M60.448 81.004a34.999 34.999 0 0 1-19.626 5.99c-19.574 0-35.443-16.033-35.444-35.868 0-9.088 3.33-17.198 8.824-23.318m58.13 39.768"/>
       </svg>
-      <span class="font-bold hidden sm:inline">Evolution</span>
+      <span class="font-bold hidden sm:inline">EVO</span>
     </a>
   </div>
 
   <!-- Desktop menu -->
   <div class="flex-none hidden lg:flex">
     <ul class="menu menu-horizontal px-1">
-      <li><a>Home</a></li>
-      <li><a>Components</a></li>
-      <li><a>Themes</a></li>
+      <li><a>About</a></li>
       <li><a>Docs</a></li>
+      <li><a>Forum</a></li>
+      <li><a>Community</a></li>
+      <li><a>Extras</a></li>
+      <li><a>GitHub</a></li>
     </ul>
   </div>
 
@@ -28,7 +30,7 @@
   <div class="flex-none">
     <div class="flex items-center gap-2">
     
-    <!-- Theme Panel with Mode Toggle and Theme Select -->
+    <!-- Theme Panel -->
     <div class="dropdown dropdown-end">
       <div tabindex="0" role="button" class="btn btn-ghost btn-circle" id="theme-button">
         <!-- Sun icon (light mode) - shown by default -->
@@ -40,76 +42,219 @@
           <path d="M21.64,13a1,1,0,0,0-1.05-.14,8.05,8.05,0,0,1-3.37.73A8.15,8.15,0,0,1,9.08,5.49a8.59,8.59,0,0,1,.25-2A1,1,0,0,0,8,2.36,10.14,10.14,0,1,0,22,14.05,1,1,0,0,0,21.64,13Zm-9.5,6.69A8.14,8.14,0,0,1,7.08,5.22v.27A10.15,10.15,0,0,0,17.22,15.63a9.79,9.79,0,0,0,2.1-.22A8.11,8.11,0,0,1,12.14,19.73Z"/>
         </svg>
       </div>
-      <div tabindex="0" class="dropdown-content bg-base-100 rounded-box z-[1] w-72 p-4 shadow-2xl border border-base-300 mt-3">
-        <!-- Mode Toggle - 3 Icons -->
-        <div class="flex items-center justify-between mb-4 pb-3 border-b border-base-300">
-          <span class="text-sm font-semibold">Theme Mode</span>
-          <div class="flex gap-1">
-            <!-- Evo Auto Mode Toggle -->
-            <button onclick="__toggleEvoMode()" class="btn btn-sm btn-square btn-ghost" id="mode-evo" title="Evo Auto Mode (ON/OFF)">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 94 90" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5">
-                <path d="m37.361 37.392 6.783 16.393 6.792-16.393M32.017 45.49h-7.908M33.161 37.392h-9.3v16.393h9.293M61.732 37.392c4.239 0 7.675 3.51 7.675 8.097 0 4.588-3.437 8.296-7.676 8.296-4.239 0-7.675-3.708-7.675-8.296 0-4.587 3.435-8.097 7.674-8.097h.002z"/>
-                <path d="M45.829 8.807c19.573.002 35.44 15.174 35.439 35.01-.001 19.834-15.87 35.868-35.443 35.868-19.574 0-35.443-16.034-35.444-35.869 0-19.835 15.865-35.007 35.439-35.009h.009z"/>
+      <div tabindex="0" class="dropdown-content bg-base-100 rounded-box z-[1] w-80 p-4 shadow-2xl border border-base-300 mt-3 max-h-[80vh] overflow-y-auto">
+        
+        <!-- 1. Theme Mode Selector: System / Light / Dark -->
+        <div class="mb-4 pb-4 border-b border-base-300">
+          <div class="text-xs font-bold text-base-content/50 uppercase tracking-wider mb-3">Theme Mode</div>
+          <div class="flex gap-2">
+            <button onclick="__setThemeMode('system')" class="btn btn-sm flex-1" id="mode-system">
+              <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <rect x="2" y="3" width="20" height="14" rx="2" stroke-width="2"/>
+                <path d="M8 21h8M12 17v4" stroke-width="2"/>
               </svg>
+              System
             </button>
-            <!-- Sun icon (light mode) -->
-            <button onclick="__setModeAndDefaultTheme('light')" class="btn btn-sm btn-square btn-ghost" id="mode-light" title="Light Mode">
-              <svg class="fill-current w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M5.64,17l-.71.71a1,1,0,0,0,0,1.41,1,1,0,0,0,1.41,0l.71-.71A1,1,0,0,0,5.64,17ZM5,12a1,1,0,0,0-1-1H3a1,1,0,0,0,0,2H4A1,1,0,0,0,5,12Zm7-7a1,1,0,0,0,1-1V3a1,1,0,0,0-2,0V4A1,1,0,0,0,12,5ZM5.64,7.05a1,1,0,0,0,.7.29,1,1,0,0,0,.71-.29,1,1,0,0,0,0-1.41l-.71-.71A1,1,0,0,0,4.93,6.34Zm12,.29a1,1,0,0,0,.7-.29l.71-.71a1,1,0,1,0-1.41-1.41L17,5.64a1,1,0,0,0,0,1.41A1,1,0,0,0,17.66,7.34ZM21,11H20a1,1,0,0,0,0,2h1a1,1,0,0,0,0-2Zm-9,8a1,1,0,0,0-1,1v1a1,1,0,0,0,2,0V20A1,1,0,0,0,12,19ZM18.36,17A1,1,0,0,0,17,18.36l.71.71a1,1,0,0,0,1.41,0,1,1,0,0,0,0-1.41ZM12,6.5A5.5,5.5,0,1,0,17.5,12,5.51,5.51,0,0,0,12,6.5Zm0,9A3.5,3.5,0,1,1,15.5,12,3.5,3.5,0,0,1,12,15.5Z"/></svg>
+            <button onclick="__setThemeMode('light')" class="btn btn-sm flex-1" id="mode-light">
+              <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12,6.5A5.5,5.5,0,1,0,17.5,12,5.51,5.51,0,0,0,12,6.5Zm0,9A3.5,3.5,0,1,1,15.5,12,3.5,3.5,0,0,1,12,15.5Z"/>
+              </svg>
+              Light
             </button>
-            <!-- Moon icon (dark mode) -->
-            <button onclick="__setModeAndDefaultTheme('dark')" class="btn btn-sm btn-square btn-ghost" id="mode-dark" title="Dark Mode">
-              <svg class="fill-current w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21.64,13a1,1,0,0,0-1.05-.14,8.05,8.05,0,0,1-3.37.73A8.15,8.15,0,0,1,9.08,5.49a8.59,8.59,0,0,1,.25-2A1,1,0,0,0,8,2.36,10.14,10.14,0,1,0,22,14.05,1,1,0,0,0,21.64,13Zm-9.5,6.69A8.14,8.14,0,0,1,7.08,5.22v.27A10.15,10.15,0,0,0,17.22,15.63a9.79,9.79,0,0,0,2.1-.22A8.11,8.11,0,0,1,12.14,19.73Z"/></svg>
+            <button onclick="__setThemeMode('dark')" class="btn btn-sm flex-1" id="mode-dark">
+              <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M21.64,13a1,1,0,0,0-1.05-.14,8.05,8.05,0,0,1-3.37.73A8.15,8.15,0,0,1,9.08,5.49a8.59,8.59,0,0,1,.25-2A1,1,0,0,0,8,2.36,10.14,10.14,0,1,0,22,14.05,1,1,0,0,0,21.64,13Z"/>
+              </svg>
+              Dark
             </button>
           </div>
         </div>
-        
-        <!-- Theme List -->
-        <div class="text-xs font-bold text-base-content/50 uppercase tracking-wider mb-2" id="themeMenuTitle">Light Themes</div>
-        <ul class="max-h-80 overflow-y-auto space-y-1" id="themeMenu">
-          <li><!-- Will be filled by build.mjs with theme options --></li>
-        </ul>
+
+        <!-- 2. Themes Accordion (Open by default) -->
+        <div class="collapse collapse-arrow border-b border-base-300 rounded-none">
+          <input type="checkbox" id="themes-accordion" checked />
+          <div class="collapse-title px-0 py-3 min-h-0">
+            <div class="flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+              </svg>
+              <span class="text-sm font-semibold">Themes</span>
+            </div>
+          </div>
+          <div class="collapse-content px-0 pb-3">
+            <ul class="max-h-60 overflow-y-auto space-y-1" id="themeMenu">
+              <li><!-- Will be filled by build.mjs with theme options --></li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- 3. Theme Parameters -->
+        <div class="collapse collapse-arrow border-b border-base-300 rounded-none">
+          <input type="checkbox" id="theme-params-accordion" />
+          <div class="collapse-title px-0 py-3 min-h-0">
+            <div class="flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+              </svg>
+              <span class="text-sm font-semibold">Theme Parameters</span>
+            </div>
+          </div>
+          <div class="collapse-content px-0 pb-3">
+            <div class="space-y-4">
+              
+              <!-- Evo Auto Theme Toggle -->
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 94 90" fill="none" stroke="currentColor" stroke-width="2" class="w-5 h-5 evo-logo" id="evo-logo">
+                    <path d="m37.361 37.392 6.783 16.393 6.792-16.393M32.017 45.49h-7.908M33.161 37.392h-9.3v16.393h9.293M61.732 37.392c4.239 0 7.675 3.51 7.675 8.097 0 4.588-3.437 8.296-7.676 8.296-4.239 0-7.675-3.708-7.675-8.296 0-4.587 3.435-8.097 7.674-8.097h.002z"/>
+                  </svg>
+                  <div>
+                    <div class="text-sm font-medium">Evo Auto Theme</div>
+                    <div class="text-xs opacity-60">Random theme rotation</div>
+                  </div>
+                </div>
+                <input type="checkbox" class="toggle toggle-primary toggle-sm" id="evo-toggle" onchange="__toggleEvoMode()" />
+              </div>
+
+              <!-- Rotation Speed (shown when Evo is ON) -->
+              <div id="evo-speed-section">
+                <div class="text-xs font-bold text-base-content/50 uppercase tracking-wider mb-2">Rotation Speed</div>
+                <div class="space-y-2">
+                  <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs font-mono badge badge-ghost badge-sm" id="evo-speed-display">0s (Off)</span>
+                  </div>
+                  <input type="range" min="0" max="10" value="0" step="0.1" class="range range-primary range-xs" id="evo-speed-slider" oninput="__updateEvoSpeed(this.value)" />
+                  <div class="flex justify-between text-xs opacity-50 px-1">
+                    <span>Off</span>
+                    <span>2.5s</span>
+                    <span>5s</span>
+                    <span>7.5s</span>
+                    <span>10s</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 3D Depth -->
+              <div class="flex items-center justify-between pt-3 border-t border-base-300">
+                <div class="flex items-center gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                  </svg>
+                  <div>
+                    <div class="text-sm font-medium">3D Depth</div>
+                    <div class="text-xs opacity-60">Shadows and depth</div>
+                  </div>
+                </div>
+                <input type="checkbox" class="toggle toggle-sm toggle-primary" id="system-depth-toggle" checked />
+              </div>
+              
+              <!-- Film Grain -->
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+                  </svg>
+                  <div>
+                    <div class="text-sm font-medium">Film Grain</div>
+                    <div class="text-xs opacity-60">Texture overlay</div>
+                  </div>
+                </div>
+                <input type="checkbox" class="toggle toggle-sm toggle-primary" id="system-noise-toggle" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. Background -->
+        <div class="collapse collapse-arrow border-b border-base-300 rounded-none">
+          <input type="checkbox" id="background-accordion" />
+          <div class="collapse-title px-0 py-3 min-h-0">
+            <div class="flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              <span class="text-sm font-semibold">Background</span>
+            </div>
+          </div>
+          <div class="collapse-content px-0 pb-3">
+            <div class="space-y-2">
+              <!-- None -->
+              <button onclick="__setBackground('none')" class="btn btn-sm btn-block justify-start" data-bg="none">
+                <span class="text-lg">⬜</span>
+                None
+              </button>
+              
+              <!-- Transparent -->
+              <button onclick="__setBackground('transparent')" class="btn btn-sm btn-block justify-start" data-bg="transparent">
+                <span class="text-lg">💎</span>
+                Transparent (Glass)
+              </button>
+              
+              <!-- Animated Backgrounds -->
+              <div class="text-xs opacity-60 mt-3 mb-2">Animated</div>
+              <button onclick="__setBackground('gradient-spheres')" class="btn btn-sm btn-block justify-start" data-bg="gradient-spheres">
+                <span class="text-lg">🌈</span>
+                Gradient Spheres
+              </button>
+              <button onclick="__setBackground('colorful-dots')" class="btn btn-sm btn-block justify-start" data-bg="colorful-dots">
+                <span class="text-lg">✨</span>
+                Colorful Dots
+              </button>
+              <button onclick="__setBackground('cosmic-dream')" class="btn btn-sm btn-block justify-start" data-bg="cosmic-dream">
+                <span class="text-lg">🌌</span>
+                Cosmic Dream
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5. Solid Color Layer -->
+        <div class="collapse collapse-arrow rounded-none">
+          <input type="checkbox" id="solid-color-accordion" />
+          <div class="collapse-title px-0 py-3 min-h-0">
+            <div class="flex items-center gap-2">
+              <span class="text-lg">🎨</span>
+              <span class="text-sm font-semibold">Solid Color Layer</span>
+              <span id="hue-value-mini" class="text-xs font-mono badge badge-sm ml-auto">220°</span>
+            </div>
+          </div>
+          <div class="collapse-content px-0 pb-3">
+            <div class="space-y-3">
+              <!-- Hue Slider -->
+              <div>
+                <div class="text-xs opacity-60 mb-2 flex justify-between">
+                  <span>Hue</span>
+                  <span id="hue-value" class="font-mono">220°</span>
+                </div>
+                <input type="range" min="0" max="360" value="220" step="1" 
+                       class="rainbow-slider w-full h-8 rounded-lg cursor-pointer" 
+                       id="hue-slider" 
+                       oninput="__applySolidColorRealtime()" />
+              </div>
+              
+              <!-- Opacity Slider -->
+              <div>
+                <div class="text-xs opacity-60 mb-2 flex justify-between">
+                  <span>Opacity</span>
+                  <span id="opacity-value" class="font-mono">100%</span>
+                </div>
+                <input type="range" min="0" max="100" value="100" step="1" 
+                       class="opacity-slider w-full h-8 rounded-lg cursor-pointer" 
+                       id="opacity-slider" 
+                       oninput="__applySolidColorRealtime()" />
+              </div>
+              
+              <!-- Save Button -->
+              <button onclick="__saveSolidColorToStorage()" class="btn btn-sm btn-block btn-primary">
+                💾 Save to Storage
+              </button>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
 
-    <!-- Background dropdown -->
-    <div class="dropdown dropdown-end">
-      <div tabindex="0" role="button" class="btn btn-ghost btn-circle">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-        </svg>
-      </div>
-      <ul tabindex="0" class="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow-lg" id="backgroundMenu">
-        <li class="px-3 py-1 text-xs font-bold text-base-content/50 uppercase tracking-wider">Backgrounds</li>
-        <li><button onclick="__setBackground('none')" class="flex items-center gap-3" data-background="none">
-          <span class="text-2xl">⬜</span>
-          <span class="flex-1">None</span>
-          <svg class="h-4 w-4 flex-shrink-0 opacity-0 bg-checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-          </svg>
-        </button></li>
-        <li><button onclick="__setBackground('gradient-spheres')" class="flex items-center gap-3" data-background="gradient-spheres">
-          <span class="text-2xl">🌈</span>
-          <span class="flex-1">Gradient Spheres</span>
-          <svg class="h-4 w-4 flex-shrink-0 opacity-0 bg-checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-          </svg>
-        </button></li>
-        <li><button onclick="__setBackground('colorful-dots')" class="flex items-center gap-3" data-background="colorful-dots">
-          <span class="text-2xl">✨</span>
-          <span class="flex-1">Colorful Dots</span>
-          <svg class="h-4 w-4 flex-shrink-0 opacity-0 bg-checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-          </svg>
-        </button></li>
-        <li><button onclick="__setBackground('cosmic-dream')" class="flex items-center gap-3" data-background="cosmic-dream">
-          <span class="text-2xl">🌌</span>
-          <span class="flex-1">Cosmic Dream</span>
-          <svg class="h-4 w-4 flex-shrink-0 opacity-0 bg-checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-          </svg>
-        </button></li>
-      </ul>
-    </div>
 
     <!-- Language dropdown -->
     <div class="dropdown dropdown-end">
@@ -154,124 +299,124 @@
         </svg>
       </div>
       <ul tabindex="0" class="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow-lg">
-        <li><a>Home</a></li>
-        <li><a>Components</a></li>
-        <li><a>Themes</a></li>
-        <li><a>Docs</a></li>
-        <li class="md:hidden"><a onclick="document.getElementById('settings_modal').showModal()">Settings</a></li>
+          <li><a>About</a></li>
+          <li><a>Docs</a></li>
+          <li><a>Forum</a></li>
+          <li><a>Community</a></li>
+          <li><a>Extras</a></li>
+          <li><a>GitHub</a></li>
+          <li class="md:hidden"><a onclick="document.getElementById('settings_modal').showModal()">Settings</a></li>
       </ul>
     </div>
     </div>
   </div>
 </div>
 
+
+
+
+
+
 <script>
-  // Mode and theme management
-  (function() {
-    let currentMode = localStorage.getItem('evo-mode') || 'light';
+  // Theme Mode Selector
+  window.__setThemeMode = function(mode) {
+    localStorage.setItem('evo-theme-mode', mode);
     
-    // Theme data with modes (not really needed, filtering by data-mode attribute)
-    const themeData = {
-      light: ['light', 'cupcake', 'bumblebee', 'emerald', 'corporate', 'retro', 'valentine', 'garden', 'aqua', 'pastel', 'fantasy', 'wireframe', 'cmyk', 'autumn', 'acid', 'lemonade', 'winter', 'nord', 'sunset', 'lofi', 'evo'],
-      dark: ['dark', 'synthwave', 'cyberpunk', 'halloween', 'forest', 'black', 'luxury', 'dracula', 'business', 'night', 'coffee', 'dim']
-    };
-    
-    function filterThemesByMode(mode) {
-      const items = document.querySelectorAll('.theme-item');
-      items.forEach(item => {
-        if (item.dataset.mode === mode) {
-          item.style.display = '';
+    // Update active button
+    ['system', 'light', 'dark'].forEach(m => {
+      const btn = document.getElementById(`mode-${m}`);
+      if (btn) {
+        if (m === mode) {
+          btn.classList.add('btn-primary');
         } else {
-          item.style.display = 'none';
+          btn.classList.remove('btn-primary');
         }
-      });
-      
-      // Update title
-      const title = document.getElementById('themeMenuTitle');
-      if (title) {
-        title.textContent = mode === 'light' ? 'Light Themes' : 'Dark Themes';
+      }
+    });
+    
+    // Apply theme based on mode
+    if (mode === 'system') {
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const theme = prefersDark ? 'dark' : 'light';
+      window.__setTheme(theme);
+    } else if (mode === 'light') {
+      window.__setTheme('light');
+    } else if (mode === 'dark') {
+      window.__setTheme('dark');
+    }
+  };
+  
+  // Evo Toggle (settings always visible now)
+  window.__toggleEvoMode = function() {
+    const toggle = document.getElementById('evo-toggle');
+    const logo = document.getElementById('evo-logo');
+    const isActive = toggle && toggle.checked;
+    
+    // Save state
+    localStorage.setItem('evo-active', isActive);
+    
+    // Update logo glow
+    if (logo) {
+      if (isActive) {
+        logo.classList.add('evo-active');
+      } else {
+        logo.classList.remove('evo-active');
       }
     }
     
-    function updateModeToggle() {
-      // Update active mode icon
+    // Start/stop Evo Auto
+    if (isActive) {
+      const speed = parseInt(document.getElementById('evo-speed-slider')?.value || 3);
+      window.__startEvoAuto && window.__startEvoAuto(speed);
+    } else {
+      window.__stopEvoAuto && window.__stopEvoAuto();
+    }
+  };
+  
+  // Evo Speed Update
+  window.__updateEvoSpeed = function(speed) {
+    const speedNum = parseFloat(speed);
+    const display = document.getElementById('evo-speed-display');
+    if (display) {
+      display.textContent = speedNum === 0 ? 'OFF' : `${speedNum.toFixed(1)}s`;
+    }
+    
+    // Save speed
+    localStorage.setItem('evo-speed', speedNum);
+    
+    // Update Evo Auto with new speed
+    const toggle = document.getElementById('evo-toggle');
+    if (toggle && toggle.checked) {
+      if (speedNum === 0) {
+        window.__stopEvoAuto && window.__stopEvoAuto();
+        toggle.checked = false;
+        document.getElementById('evo-logo')?.classList.remove('evo-active');
+      } else {
+        window.__startEvoAuto && window.__startEvoAuto(speedNum);
+      }
+    }
+  };
+  
+  // Theme management - simplified
+  (function() {
+    function getThemeMode(theme) {
+      const lightThemes = ['light', 'cupcake', 'bumblebee', 'emerald', 'corporate', 'retro', 'valentine', 'garden', 'pastel', 'fantasy', 'wireframe', 'cmyk', 'autumn', 'acid', 'lemonade', 'winter', 'nord', 'lofi', 'cyberpunk', 'evo', 'liquidglass'];
+      return lightThemes.includes(theme) ? 'light' : 'dark';
+    }
+    
+    function updateThemeIcon() {
       const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
-      
-      // Reset all mode buttons
-      document.getElementById('mode-evo')?.classList.remove('btn-primary');
-      document.getElementById('mode-light')?.classList.remove('btn-primary');
-      document.getElementById('mode-dark')?.classList.remove('btn-primary');
-      
-      // Update main theme button icon
       const lightIcon = document.getElementById('theme-icon-light');
       const darkIcon = document.getElementById('theme-icon-dark');
       
-      // Highlight active mode
-      if (currentTheme === 'evo') {
-        document.getElementById('mode-evo')?.classList.add('btn-primary');
-        // Show sun icon for evo (light theme)
+      const themeMode = getThemeMode(currentTheme);
+      if (themeMode === 'dark') {
+        if (lightIcon) lightIcon.classList.add('hidden');
+        if (darkIcon) darkIcon.classList.remove('hidden');
+      } else {
         if (lightIcon) lightIcon.classList.remove('hidden');
         if (darkIcon) darkIcon.classList.add('hidden');
-      } else {
-        const themeMode = document.querySelector(`[data-theme="${currentTheme}"]`)?.dataset.mode;
-        if (themeMode === 'dark') {
-          document.getElementById('mode-dark')?.classList.add('btn-primary');
-          // Show moon icon for dark themes
-          if (lightIcon) lightIcon.classList.add('hidden');
-          if (darkIcon) darkIcon.classList.remove('hidden');
-        } else {
-          document.getElementById('mode-light')?.classList.add('btn-primary');
-          // Show sun icon for light themes
-          if (lightIcon) lightIcon.classList.remove('hidden');
-          if (darkIcon) darkIcon.classList.add('hidden');
-        }
       }
-    }
-    
-    window.__toggleEvoMode = function() {
-      const isEvoActive = localStorage.getItem('evo-auto-active') === 'true';
-      
-      if (isEvoActive) {
-        // Turn OFF
-        localStorage.setItem('evo-auto-active', 'false');
-        if (window.__stopEvoAuto) {
-          window.__stopEvoAuto();
-        }
-        document.getElementById('mode-evo')?.classList.remove('btn-primary');
-        console.log('🎨 Evo Auto Mode: OFF');
-      } else {
-        // Turn ON
-        localStorage.setItem('evo-auto-active', 'true');
-        if (window.__startEvoAuto) {
-          window.__startEvoAuto();
-        }
-        document.getElementById('mode-evo')?.classList.add('btn-primary');
-        document.getElementById('mode-light')?.classList.remove('btn-primary');
-        document.getElementById('mode-dark')?.classList.remove('btn-primary');
-        console.log('🎨 Evo Auto Mode: ON');
-      }
-      
-      updateActiveIndicators();
-    };
-    
-    window.__setModeAndDefaultTheme = function(mode) {
-      // Turn off Evo Auto mode when manually selecting mode
-      localStorage.setItem('evo-auto-active', 'false');
-      if (window.__stopEvoAuto) {
-        window.__stopEvoAuto();
-      }
-      
-      currentMode = mode;
-      localStorage.setItem('evo-mode', mode);
-      
-      // Switch to last saved theme of the mode
-      const lastTheme = window.__getLastThemeForMode ? window.__getLastThemeForMode(mode) : (mode === 'light' ? 'light' : 'dark');
-      __setTheme(lastTheme);
-      
-      // Update UI
-      filterThemesByMode(mode);
-      updateModeToggle();
-      updateActiveIndicators();
     }
     
     function updateActiveIndicators() {
@@ -279,10 +424,10 @@
       const currentBackground = localStorage.getItem('evo-background') || 'none';
       
       // Update theme checkmarks
-      document.querySelectorAll('[data-theme]').forEach(btn => {
+      document.querySelectorAll('[data-set-theme]').forEach(btn => {
         const checkmark = btn.querySelector('.theme-checkmark');
         if (checkmark) {
-          if (btn.dataset.theme === currentTheme) {
+          if (btn.dataset.setTheme === currentTheme) {
             checkmark.style.opacity = '1';
             btn.classList.add('active');
           } else {
@@ -292,70 +437,80 @@
         }
       });
       
-      // Update background checkmarks
-      document.querySelectorAll('[data-background]').forEach(btn => {
-        const checkmark = btn.querySelector('.bg-checkmark');
-        if (checkmark) {
-          if (btn.dataset.background === currentBackground) {
-            checkmark.style.opacity = '1';
-            btn.classList.add('bg-base-200');
-          } else {
-            checkmark.style.opacity = '0';
-            btn.classList.remove('bg-base-200');
-          }
+      // Update background buttons
+      document.querySelectorAll('[data-bg]').forEach(btn => {
+        if (btn.dataset.bg === currentBackground) {
+          btn.classList.add('btn-active');
+        } else {
+          btn.classList.remove('btn-active');
         }
       });
     }
     
-    // Initialize on DOM ready
+    // Initialize
     document.addEventListener('DOMContentLoaded', function() {
-      updateModeToggle();
-      filterThemesByMode(currentMode);
+      updateThemeIcon();
       updateActiveIndicators();
+      
+      // Initialize theme mode
+      const savedMode = localStorage.getItem('evo-theme-mode') || 'system';
+      window.__setThemeMode(savedMode);
+      
+      // Initialize Evo state
+      const evoToggle = document.getElementById('evo-toggle');
+      const evoAccordion = document.getElementById('evo-accordion');
+      const savedEvoState = localStorage.getItem('evo-active') === 'true';
+      
+        if (evoToggle) {
+          evoToggle.checked = savedEvoState;
+          if (savedEvoState) {
+            // Update logo
+            document.getElementById('evo-logo')?.classList.add('evo-active');
+          }
+        }
     });
-    
-    // Also run immediately in case DOM is already loaded
-    if (document.readyState === 'loading') {
-      // DOM is still loading
-    } else {
-      // DOM is already loaded
-      updateModeToggle();
-      filterThemesByMode(currentMode);
-      updateActiveIndicators();
-    }
     
     // Update when theme/background changes
     const originalSetTheme = window.__setTheme;
     const originalSetBackground = window.__setBackground;
     
-    window.__setTheme = function(theme) {
-      originalSetTheme(theme);
-      
-      // Update currentMode based on selected theme
-      if (theme === 'evo') {
-        currentMode = 'light'; // Evo is light by default
-      } else {
-        const themeBtn = document.querySelector(`[data-theme="${theme}"]`);
-        if (themeBtn) {
-          const mode = themeBtn.dataset.mode;
-          if (mode) {
-            currentMode = mode;
-            localStorage.setItem('evo-mode', mode);
-            filterThemesByMode(mode);
-          }
-        }
-      }
-      
-      setTimeout(() => {
-        updateActiveIndicators();
-        updateModeToggle();
-      }, 100);
-    };
+    if (originalSetTheme) {
+      window.__setTheme = function(theme) {
+        originalSetTheme(theme);
+        setTimeout(() => {
+          updateActiveIndicators();
+          updateThemeIcon();
+        }, 100);
+      };
+    }
     
-    window.__setBackground = function(bg) {
-      originalSetBackground(bg);
-      setTimeout(updateActiveIndicators, 100);
-    };
+    if (originalSetBackground) {
+      window.__setBackground = function(bg) {
+        originalSetBackground(bg);
+        setTimeout(updateActiveIndicators, 100);
+      };
+    }
   })();
 </script>
+
+<style>
+  /* Evo Logo Glow Effect */
+  #evo-logo.evo-active {
+    position: relative;
+  }
+  
+  #evo-logo.evo-active svg {
+    filter: drop-shadow(0 0 8px oklch(var(--p))) drop-shadow(0 0 16px oklch(var(--p) / 0.5));
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
+  
+  @keyframes pulse-glow {
+    0%, 100% {
+      filter: drop-shadow(0 0 8px oklch(var(--p))) drop-shadow(0 0 16px oklch(var(--p) / 0.5));
+    }
+    50% {
+      filter: drop-shadow(0 0 12px oklch(var(--p))) drop-shadow(0 0 24px oklch(var(--p) / 0.7));
+    }
+  }
+</style>
 

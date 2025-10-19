@@ -4,6 +4,200 @@
   logs: true;
 }
 
+/* Register CSS custom properties for smooth numeric interpolation */
+@property --radius-selector {
+  syntax: '<length>';
+  inherits: true;
+  initial-value: 1rem;
+}
+
+@property --radius-field {
+  syntax: '<length>';
+  inherits: true;
+  initial-value: 0.25rem;
+}
+
+@property --radius-box {
+  syntax: '<length>';
+  inherits: true;
+  initial-value: 0.5rem;
+}
+
+@property --size-selector {
+  syntax: '<length>';
+  inherits: true;
+  initial-value: 0.25rem;
+}
+
+@property --size-field {
+  syntax: '<length>';
+  inherits: true;
+  initial-value: 0.25rem;
+}
+
+@property --border {
+  syntax: '<length>';
+  inherits: true;
+  initial-value: 1px;
+}
+
+@property --depth {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 1;
+}
+
+@property --noise {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 0;
+}
+
+/* Register color variables for smooth interpolation */
+@property --color-base-100 {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: oklch(100% 0 0);
+}
+
+@property --color-base-200 {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: oklch(95% 0 0);
+}
+
+@property --color-base-300 {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: oklch(90% 0 0);
+}
+
+@property --color-base-content {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: oklch(20% 0 0);
+}
+
+@property --color-primary {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: oklch(50% 0.2 250);
+}
+
+@property --color-primary-content {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: oklch(100% 0 0);
+}
+
+@property --color-secondary {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: oklch(70% 0.2 150);
+}
+
+@property --color-secondary-content {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: oklch(100% 0 0);
+}
+
+@property --color-accent {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: oklch(70% 0.2 50);
+}
+
+@property --color-accent-content {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: oklch(100% 0 0);
+}
+
+@property --color-neutral {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: oklch(50% 0 0);
+}
+
+@property --color-neutral-content {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: oklch(100% 0 0);
+}
+
+@property --color-info {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: oklch(70% 0.2 220);
+}
+
+@property --color-info-content {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: oklch(100% 0 0);
+}
+
+@property --color-success {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: oklch(70% 0.2 140);
+}
+
+@property --color-success-content {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: oklch(100% 0 0);
+}
+
+@property --color-warning {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: oklch(70% 0.2 80);
+}
+
+@property --color-warning-content {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: oklch(20% 0 0);
+}
+
+@property --color-error {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: oklch(70% 0.2 30);
+}
+
+@property --color-error-content {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: oklch(100% 0 0);
+}
+
+/* Smooth theme transitions - all elements animate beautifully */
+@layer base {
+  :root {
+    --theme-transition-duration: 500ms; /* Default, dynamically changes based on Evo speed */
+  }
+  
+  *,
+  *::before,
+  *::after {
+    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, box-shadow, 
+                        --radius-selector, --radius-field, --radius-box, 
+                        --size-selector, --size-field, 
+                        --border, --depth, --noise;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: var(--theme-transition-duration);
+  }
+  
+  /* Only disable for elements that have their own animations */
+  [data-no-transition],
+  .no-transition {
+    transition: none !important;
+  }
+}
+
 /* Custom theme 'evo' via daisyUI Theme API */
 @plugin "daisyui/theme" {
   name: "evo";
@@ -42,6 +236,52 @@
   --size-selector: 0.25rem;
   --size-field: 0.25rem;
   --border: 1px;
+  --depth: 1;
+  --noise: 0;
+}
+
+/* Custom theme 'liquidglass' - inspired by Apple Design */
+@plugin "daisyui/theme" {
+  name: "liquidglass";
+  default: false;
+  prefersdark: false;
+  color-scheme: light;
+
+  /* Base colors - ultra clean white with subtle blue tint like iOS */
+  --color-base-100: oklch(99% 0.005 240);
+  --color-base-200: oklch(97% 0.008 240);
+  --color-base-300: oklch(94% 0.01 240);
+  --color-base-content: oklch(25% 0.01 240);
+
+  /* Brand colors - Apple's iconic blues and greens */
+  --color-primary: oklch(55% 0.20 240);
+  --color-primary-content: oklch(99% 0.005 240);
+  --color-secondary: oklch(65% 0.18 200);
+  --color-secondary-content: oklch(99% 0.005 200);
+  --color-accent: oklch(70% 0.17 160);
+  --color-accent-content: oklch(15% 0.01 160);
+  --color-neutral: oklch(45% 0.01 240);
+  --color-neutral-content: oklch(99% 0.005 240);
+  --color-info: oklch(65% 0.18 220);
+  --color-info-content: oklch(99% 0.005 220);
+  --color-success: oklch(60% 0.20 145);
+  --color-success-content: oklch(99% 0.005 145);
+  --color-warning: oklch(75% 0.18 60);
+  --color-warning-content: oklch(15% 0.01 60);
+  --color-error: oklch(60% 0.22 25);
+  --color-error-content: oklch(99% 0.005 25);
+
+  /* Apple-style rounded corners - very smooth */
+  --radius-selector: 1.25rem;
+  --radius-field: 0.75rem;
+  --radius-box: 1.125rem;
+  
+  /* Refined sizes */
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  
+  /* Subtle borders and depth */
+  --border: 0.5px;
   --depth: 1;
   --noise: 0;
 }
@@ -98,16 +338,7 @@
   }
 }
 
-/* Animated Backgrounds System */
-#app-background {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: -1;
-  pointer-events: none;
-}
+/* Animated Backgrounds System - see layer system below */
 
 /* Gradient Spheres Background */
 .bg-gradient-spheres {
@@ -565,25 +796,159 @@ body > .drawer {
   z-index: 1;
 }
 
-/* Theme mode buttons active state */
-#mode-evo.btn-primary,
-#mode-light.btn-primary,
-#mode-dark.btn-primary {
-  background: oklch(var(--p) / 1);
-  color: oklch(var(--pc) / 1);
-  border-color: oklch(var(--p) / 1);
-}
-
-#mode-evo:not(.btn-primary),
-#mode-light:not(.btn-primary),
-#mode-dark:not(.btn-primary) {
+/* Evo Auto toggle in navbar */
+#mode-evo:disabled {
   opacity: 0.5;
+  cursor: not-allowed;
 }
 
-#mode-evo:not(.btn-primary):hover,
-#mode-light:not(.btn-primary):hover,
-#mode-dark:not(.btn-primary):hover {
-  opacity: 0.8;
+/* Light/Dark toggle - disabled when Evo is active */
+#mode-lightdark:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Background Layer System (Sandwich) */
+/* Layer 1: DaisyUI theme base-100 (body background - lowest) */
+/* Layer 2: Animated backgrounds (inside #app-background) */
+/* Layer 3: Solid color with opacity (on top of animated) */
+
+#app-background {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* Container for layered backgrounds */
+#app-background > .background-layers {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+/* Animated background layer (bottom of sandwich) */
+#app-background .animated-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+/* Solid color layer (top of sandwich, with opacity control) */
+#app-background .solid-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  transition: background-color 300ms ease;
+}
+
+/* Rainbow Hue Slider - colorful gradient slider */
+.rainbow-slider {
+  --thumb-color: hsl(220, 80%, 60%); /* Default blue, updated via JS */
+  background: linear-gradient(to right, 
+    hsl(0, 100%, 50%), 
+    hsl(60, 100%, 50%), 
+    hsl(120, 100%, 50%), 
+    hsl(180, 100%, 50%), 
+    hsl(240, 100%, 50%), 
+    hsl(300, 100%, 50%), 
+    hsl(360, 100%, 50%));
+  outline: none;
+  border: 2px solid oklch(var(--bc) / 0.2);
+}
+
+.rainbow-slider::-webkit-slider-thumb {
+  appearance: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--thumb-color);
+  cursor: grab;
+  border: 3px solid white;
+  box-shadow: 
+    0 0 0 1px oklch(var(--bc) / 0.2),
+    0 4px 12px rgba(0, 0, 0, 0.3),
+    0 2px 4px rgba(0, 0, 0, 0.2),
+    inset 0 1px 2px rgba(255, 255, 255, 0.3);
+  transition: transform 0.1s ease;
+}
+
+.rainbow-slider::-webkit-slider-thumb:active {
+  cursor: grabbing;
+  transform: scale(1.1);
+}
+
+.rainbow-slider::-moz-range-thumb {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--thumb-color);
+  cursor: grab;
+  border: 3px solid white;
+  box-shadow: 
+    0 0 0 1px oklch(var(--bc) / 0.2),
+    0 4px 12px rgba(0, 0, 0, 0.3),
+    0 2px 4px rgba(0, 0, 0, 0.2),
+    inset 0 1px 2px rgba(255, 255, 255, 0.3);
+  transition: transform 0.1s ease;
+}
+
+.rainbow-slider::-moz-range-thumb:active {
+  cursor: grabbing;
+  transform: scale(1.1);
+}
+
+/* Opacity Slider - gradient from transparent to full color */
+.opacity-slider {
+  --thumb-color: hsl(220, 80%, 60%); /* Default, updated via JS */
+  --gradient-color: hsl(220, 80%, 60%); /* Same color, updated via JS */
+  background: linear-gradient(to right, 
+    transparent,
+    var(--gradient-color));
+  outline: none;
+  border: 2px solid oklch(var(--bc) / 0.2);
+}
+
+.opacity-slider::-webkit-slider-thumb {
+  appearance: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--thumb-color);
+  cursor: grab;
+  border: 3px solid white;
+  box-shadow: 
+    0 0 0 1px oklch(var(--bc) / 0.2),
+    0 4px 12px rgba(0, 0, 0, 0.3),
+    0 2px 4px rgba(0, 0, 0, 0.2),
+    inset 0 1px 2px rgba(255, 255, 255, 0.3);
+  transition: transform 0.1s ease;
+}
+
+.opacity-slider::-webkit-slider-thumb:active {
+  cursor: grabbing;
+  transform: scale(1.1);
+}
+
+.opacity-slider::-moz-range-thumb {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--thumb-color);
+  cursor: grab;
+  border: 3px solid white;
+  box-shadow: 
+    0 0 0 1px oklch(var(--bc) / 0.2),
+    0 4px 12px rgba(0, 0, 0, 0.3),
+    0 2px 4px rgba(0, 0, 0, 0.2),
+    inset 0 1px 2px rgba(255, 255, 255, 0.3);
+  transition: transform 0.1s ease;
+}
+
+.opacity-slider::-moz-range-thumb:active {
+  cursor: grabbing;
+  transform: scale(1.1);
 }
 
 /* Glassmorphism effect for hero when background is active */

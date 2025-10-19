@@ -27,47 +27,55 @@ const lang = arg("lang", process.env.LANG || "uk");
 
 console.log(`[build] Starting build with theme="${theme}" lang="${lang}"`);
 
-// All built-in themes from daisyUI v5 with color indicators and mode
-const builtInThemes = [
-  // Light themes
-  { id: "light", name: "light", mode: "light", colors: ["#570df8", "#f000b8", "#37cdbe", "#fbbf24"] },
-  { id: "cupcake", name: "cupcake", mode: "light", colors: ["#65c3c8", "#ef9fbc", "#eeaf3a", "#fbbf24"] },
-  { id: "bumblebee", name: "bumblebee", mode: "light", colors: ["#e0a82e", "#f9d72f", "#181830", "#fbbf24"] },
-  { id: "emerald", name: "emerald", mode: "light", colors: ["#66cc8a", "#377cfb", "#ea5234", "#fbbf24"] },
-  { id: "corporate", name: "corporate", mode: "light", colors: ["#4b6bfb", "#7b92b2", "#67cba0", "#fbbf24"] },
-  { id: "retro", name: "retro", mode: "light", colors: ["#ef9995", "#a4cbb4", "#fbbf24", "#fbbf24"] },
-  { id: "valentine", name: "valentine", mode: "light", colors: ["#e96d7b", "#a991f7", "#88dbdd", "#fbbf24"] },
-  { id: "garden", name: "garden", mode: "light", colors: ["#5c7f67", "#ecf4e7", "#fbbf24", "#fbbf24"] },
-  { id: "aqua", name: "aqua", mode: "light", colors: ["#09ecf3", "#966fb3", "#fef3c7", "#fbbf24"] },
-  { id: "pastel", name: "pastel", mode: "light", colors: ["#d1c1d7", "#f6cbd1", "#b4e9d6", "#fbbf24"] },
-  { id: "fantasy", name: "fantasy", mode: "light", colors: ["#6e0b75", "#007ebd", "#fbbf24", "#fbbf24"] },
-  { id: "wireframe", name: "wireframe", mode: "light", colors: ["#b8b8b8", "#b8b8b8", "#b8b8b8", "#fbbf24"] },
-  { id: "cmyk", name: "cmyk", mode: "light", colors: ["#45AEEE", "#E8488A", "#FFF232", "#fbbf24"] },
-  { id: "autumn", name: "autumn", mode: "light", colors: ["#8C0327", "#D85251", "#fbbf24", "#fbbf24"] },
-  { id: "acid", name: "acid", mode: "light", colors: ["#FF00F4", "#FF7400", "#FFED00", "#fbbf24"] },
-  { id: "lemonade", name: "lemonade", mode: "light", colors: ["#519903", "#fbbf24", "#fbbf24", "#fbbf24"] },
-  { id: "winter", name: "winter", mode: "light", colors: ["#047AFF", "#463AA2", "#C148AC", "#fbbf24"] },
-  { id: "nord", name: "nord", mode: "light", colors: ["#5E81AC", "#BF616A", "#A3BE8C", "#fbbf24"] },
-  { id: "sunset", name: "sunset", mode: "light", colors: ["#FF6B35", "#004E89", "#fbbf24", "#fbbf24"] },
-  { id: "lofi", name: "lofi", mode: "light", colors: ["#0D0D0D", "#0D0D0D", "#0D0D0D", "#fbbf24"] },
+// Function to read all theme JSON files from a directory
+function loadThemesFromDirectory(dirPath) {
+  const themes = [];
+  if (!fs.existsSync(dirPath)) {
+    return themes;
+  }
   
-  // Dark themes
-  { id: "dark", name: "dark", mode: "dark", colors: ["#661AE6", "#D926AA", "#1FB2A6", "#fbbf24"] },
-  { id: "synthwave", name: "synthwave", mode: "dark", colors: ["#e779c1", "#58c7f3", "#f4f019", "#fbbf24"] },
-  { id: "cyberpunk", name: "cyberpunk", mode: "dark", colors: ["#ff7598", "#75d1f0", "#fbbf24", "#fbbf24"] },
-  { id: "halloween", name: "halloween", mode: "dark", colors: ["#f28c18", "#6d3a9c", "#51a800", "#fbbf24"] },
-  { id: "forest", name: "forest", mode: "dark", colors: ["#1eb854", "#1db88e", "#fbbf24", "#fbbf24"] },
-  { id: "black", name: "black", mode: "dark", colors: ["#373737", "#373737", "#373737", "#fbbf24"] },
-  { id: "luxury", name: "luxury", mode: "dark", colors: ["#ffffff", "#ffffff", "#ffffff", "#fbbf24"] },
-  { id: "dracula", name: "dracula", mode: "dark", colors: ["#ff79c6", "#bd93f9", "#50fa7b", "#fbbf24"] },
-  { id: "business", name: "business", mode: "dark", colors: ["#1C4E80", "#7C909A", "#EA6947", "#fbbf24"] },
-  { id: "night", name: "night", mode: "dark", colors: ["#38bdf8", "#818cf8", "#f471b5", "#fbbf24"] },
-  { id: "coffee", name: "coffee", mode: "dark", colors: ["#DB924B", "#263E3F", "#fbbf24", "#fbbf24"] },
-  { id: "dim", name: "dim", mode: "dark", colors: ["#9FE88D", "#FF7D87", "#FDDD8E", "#fbbf24"] },
-  
-  // Custom
-  { id: "evo", name: "evo", mode: "light", colors: ["#667eea", "#764ba2", "#f093fb", "#4facfe"] }
-];
+  const files = fs.readdirSync(dirPath);
+  for (const file of files) {
+    if (file.endsWith('.json')) {
+      const filePath = path.join(dirPath, file);
+      try {
+        const themeData = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+        // Extract real theme colors from JSON (OKLCH format supported by modern browsers)
+        const colors = themeData.colors || {};
+        const themeColors = [
+          colors['--color-base-100'] || 'oklch(100% 0 0)',
+          colors['--color-primary'] || 'oklch(70% 0.15 220)',
+          colors['--color-secondary'] || 'oklch(70% 0.15 280)',
+          colors['--color-accent'] || 'oklch(70% 0.15 160)',
+          colors['--color-base-200'] || 'oklch(95% 0 0)'
+        ];
+        themes.push({
+          id: themeData.name,
+          name: themeData.name,
+          mode: themeData.mode,
+          colors: themeColors,
+          primaryColor: colors['--color-primary'] || 'oklch(70% 0.15 220)',
+          file: file
+        });
+      } catch (err) {
+        console.warn(`[build] Warning: Could not parse ${file}: ${err.message}`);
+      }
+    }
+  }
+  return themes;
+}
+
+// Load all themes from JSON files
+console.log("[build] Loading themes from JSON files...");
+const lightThemesPath = path.join(root, "themes/light");
+const darkThemesPath = path.join(root, "themes/dark");
+
+const lightThemes = loadThemesFromDirectory(lightThemesPath);
+const darkThemes = loadThemesFromDirectory(darkThemesPath);
+
+const builtInThemes = [...lightThemes, ...darkThemes];
+
+console.log(`[build] ✓ Loaded ${lightThemes.length} light themes and ${darkThemes.length} dark themes from JSON files`);
 
 // Animated backgrounds
 const backgrounds = [
@@ -85,6 +93,67 @@ const footer = read(path.join(root, "src/components/footer.html"));
 const content = read(path.join(root, "src/content/home.html"));
 const settings = read(path.join(root, "src/components/settings.html"));
 
+// Read middleDaisy components
+let middleDaisy = read(path.join(root, "src/components/middleDaisy.html"));
+
+// Read middleDaisy editor components
+const editorHeader = read(path.join(root, "src/components/middleDaisy/editor/header.html"));
+const editorColors = read(path.join(root, "src/components/middleDaisy/editor/colors-section.html"));
+const editorRadius = read(path.join(root, "src/components/middleDaisy/editor/radius-section.html"));
+const editorEffects = read(path.join(root, "src/components/middleDaisy/editor/effects-section.html"));
+const editorOptions = read(path.join(root, "src/components/middleDaisy/editor/options-section.html"));
+
+// Read middleDaisy preview components
+const previewFilterCard = read(path.join(root, "src/components/middleDaisy/preview/filter-card.html"));
+const previewCalendar = read(path.join(root, "src/components/middleDaisy/preview/calendar-card.html"));
+const previewTabs = read(path.join(root, "src/components/middleDaisy/preview/tabs-example.html"));
+const previewPriceRange = read(path.join(root, "src/components/middleDaisy/preview/price-range-card.html"));
+const previewProductCard = read(path.join(root, "src/components/middleDaisy/preview/product-card.html"));
+const previewSearchForm = read(path.join(root, "src/components/middleDaisy/preview/search-form.html"));
+const previewChartsCard = read(path.join(root, "src/components/middleDaisy/preview/charts-card.html"));
+const previewPageScore = read(path.join(root, "src/components/middleDaisy/preview/page-score-card.html"));
+const previewRecentOrders = read(path.join(root, "src/components/middleDaisy/preview/recent-orders-card.html"));
+const previewRevenueStat = read(path.join(root, "src/components/middleDaisy/preview/revenue-stat.html"));
+const previewRegisterForm = read(path.join(root, "src/components/middleDaisy/preview/register-form.html"));
+const previewWritePost = read(path.join(root, "src/components/middleDaisy/preview/write-post-form.html"));
+const previewChatBubbles = read(path.join(root, "src/components/middleDaisy/preview/chat-bubbles.html"));
+const previewDockNav = read(path.join(root, "src/components/middleDaisy/preview/dock-nav.html"));
+const previewAdminMenu = read(path.join(root, "src/components/middleDaisy/preview/admin-menu.html"));
+const previewMediaPlayer = read(path.join(root, "src/components/middleDaisy/preview/media-player.html"));
+const previewCodeMockup = read(path.join(root, "src/components/middleDaisy/preview/code-mockup.html"));
+const previewAlerts = read(path.join(root, "src/components/middleDaisy/preview/alerts.html"));
+const previewTimeline = read(path.join(root, "src/components/middleDaisy/preview/timeline.html"));
+const previewPricingCard = read(path.join(root, "src/components/middleDaisy/preview/pricing-card.html"));
+
+// Compose middleDaisy component
+console.log("[build] Composing middleDaisy components...");
+middleDaisy = middleDaisy
+  .replace("<!-- @@MIDDLEDAISY_EDITOR_HEADER -->", editorHeader)
+  .replace("<!-- @@MIDDLEDAISY_EDITOR_COLORS -->", editorColors)
+  .replace("<!-- @@MIDDLEDAISY_EDITOR_RADIUS -->", editorRadius)
+  .replace("<!-- @@MIDDLEDAISY_EDITOR_EFFECTS -->", editorEffects)
+  .replace("<!-- @@MIDDLEDAISY_EDITOR_OPTIONS -->", editorOptions)
+  .replace("<!-- @@MIDDLEDAISY_PREVIEW_FILTER_CARD -->", previewFilterCard)
+  .replace("<!-- @@MIDDLEDAISY_PREVIEW_CALENDAR_CARD -->", previewCalendar)
+  .replace("<!-- @@MIDDLEDAISY_PREVIEW_TABS -->", previewTabs)
+  .replace("<!-- @@MIDDLEDAISY_PREVIEW_PRICE_RANGE -->", previewPriceRange)
+  .replace("<!-- @@MIDDLEDAISY_PREVIEW_PRODUCT_CARD -->", previewProductCard)
+  .replace("<!-- @@MIDDLEDAISY_PREVIEW_SEARCH_FORM -->", previewSearchForm)
+  .replace("<!-- @@MIDDLEDAISY_PREVIEW_CHARTS_CARD -->", previewChartsCard)
+  .replace("<!-- @@MIDDLEDAISY_PREVIEW_PAGE_SCORE -->", previewPageScore)
+  .replace("<!-- @@MIDDLEDAISY_PREVIEW_RECENT_ORDERS -->", previewRecentOrders)
+  .replace("<!-- @@MIDDLEDAISY_PREVIEW_REVENUE_STAT -->", previewRevenueStat)
+  .replace("<!-- @@MIDDLEDAISY_PREVIEW_REGISTER_FORM -->", previewRegisterForm)
+  .replace("<!-- @@MIDDLEDAISY_PREVIEW_WRITE_POST -->", previewWritePost)
+  .replace("<!-- @@MIDDLEDAISY_PREVIEW_CHAT_BUBBLES -->", previewChatBubbles)
+  .replace("<!-- @@MIDDLEDAISY_PREVIEW_DOCK_NAV -->", previewDockNav)
+  .replace("<!-- @@MIDDLEDAISY_PREVIEW_ADMIN_MENU -->", previewAdminMenu)
+  .replace("<!-- @@MIDDLEDAISY_PREVIEW_MEDIA_PLAYER -->", previewMediaPlayer)
+  .replace("<!-- @@MIDDLEDAISY_PREVIEW_CODE_MOCKUP -->", previewCodeMockup)
+  .replace("<!-- @@MIDDLEDAISY_PREVIEW_ALERTS -->", previewAlerts)
+  .replace("<!-- @@MIDDLEDAISY_PREVIEW_TIMELINE -->", previewTimeline)
+  .replace("<!-- @@MIDDLEDAISY_PREVIEW_PRICING_CARD -->", previewPricingCard);
+
 // Inject component placeholders
 console.log("[build] Composing components...");
 base = base
@@ -92,6 +161,7 @@ base = base
   .replace("<!-- @@FOOTER -->", footer)
   .replace("<!-- @@CONTENT -->", content)
   .replace("<!-- @@SETTINGS -->", settings)
+  .replace("<!-- @@MIDDLEDAISY -->", middleDaisy)
   .replace(/\[\[THEME\]\]/g, theme)
   .replace(/\[\[LANG\]\]/g, lang);
 
@@ -99,15 +169,15 @@ base = base
 console.log("[build] Injecting theme options...");
 const themeMenuItems = builtInThemes
   .map(t => `<li data-mode="${t.mode}" class="theme-item">
-          <button onclick="__setTheme('${t.id}')" class="flex w-full items-center gap-2 px-3 py-1.5 rounded-lg transition-all hover:shadow-sm" data-theme="${t.id}">
+          <button data-set-theme="${t.id}" data-act-class="active" class="flex w-full items-center gap-2 px-3 py-1.5 rounded-lg transition-all hover:shadow-sm">
             <svg class="h-6 w-6 flex-shrink-0 rounded-md overflow-hidden shadow-sm" viewBox="0 0 80 80">
               <rect width="80" height="80" fill="${t.colors[0]}"/>
               <circle cx="28" cy="28" r="9" fill="${t.colors[1]}"/>
               <circle cx="52" cy="28" r="9" fill="${t.colors[2]}"/>
               <circle cx="28" cy="52" r="9" fill="${t.colors[3]}"/>
-              <circle cx="52" cy="52" r="9" fill="oklch(from ${t.colors[0]} calc(l - 0.15) c h)"/>
+              <circle cx="52" cy="52" r="9" fill="${t.colors[4]}"/>
             </svg>
-            <span class="flex-1 text-left text-sm capitalize theme-name">${t.name}</span>
+            <span class="flex-1 text-left text-sm capitalize theme-name" style="color: ${t.primaryColor}">${t.name}</span>
             <svg class="h-3.5 w-3.5 flex-shrink-0 opacity-0 theme-checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
               <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
             </svg>
@@ -144,17 +214,24 @@ base = base.replace(
 // Ensure dist directory exists
 fs.mkdirSync(path.join(root, "dist"), { recursive: true });
 
+// Inject theme lists for Evo Auto mode
+const lightThemesList = lightThemes.map(t => t.id);
+const darkThemesList = darkThemes.map(t => t.id);
+
+base = base.replace(
+  "/* @@THEME_LISTS */",
+  `const __lightThemes = ${JSON.stringify(lightThemesList)};
+      const __darkThemes = ${JSON.stringify(darkThemesList)};`
+);
+
 // Write output
 const outputPath = path.join(root, "dist/index.html");
 write(outputPath, base);
 
-const lightThemes = builtInThemes.filter(t => t.mode === 'light').length;
-const darkThemes = builtInThemes.filter(t => t.mode === 'dark').length;
-
 console.log(`[build] ✓ Successfully built index.html`);
 console.log(`[build] ✓ Theme: ${theme}`);
 console.log(`[build] ✓ Language: ${lang}`);
-console.log(`[build] ✓ Total themes: ${builtInThemes.length} (${lightThemes} light + ${darkThemes} dark)`);
+console.log(`[build] ✓ Total themes: ${builtInThemes.length} (${lightThemes.length} light + ${darkThemes.length} dark)`);
 console.log(`[build] ✓ Total backgrounds available: ${backgrounds.length}`);
 console.log(`[build] ✓ Output: ${outputPath}`);
 

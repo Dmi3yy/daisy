@@ -6,6 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>Evolution + DaisyUI 5.7</title>
   <link rel="stylesheet" href="./styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/theme-change@2.0.2/index.js"></script>
   <script>
     (function () {
       // Storage keys
@@ -19,12 +20,18 @@
       const backgroundColorKey = "evo-background-color";
 
       // Load saved preferences
-      const storedTheme = localStorage.getItem(themeKey);
+      // theme-change uses "theme" key, but we also check our legacy key
+      const storedTheme = localStorage.getItem("theme") || localStorage.getItem(themeKey);
       const storedLang = localStorage.getItem(langKey);
       const storedVars = localStorage.getItem(themeVarsKey);
 
       // Apply saved theme and language
-      if (storedTheme) document.documentElement.setAttribute("data-theme", storedTheme);
+      if (storedTheme) {
+        document.documentElement.setAttribute("data-theme", storedTheme);
+        // Sync both storage keys
+        localStorage.setItem("theme", storedTheme);
+        localStorage.setItem(themeKey, storedTheme);
+      }
       if (storedLang) document.documentElement.setAttribute("lang", storedLang);
       
       // Apply saved background after DOM is loaded
@@ -32,18 +39,103 @@
       if (storedBackground) {
         window.addEventListener('DOMContentLoaded', function() {
           window.__applyBackground(storedBackground);
+          
+          // Initialize HSL sliders with saved values
+          const savedHue = localStorage.getItem('evo-solid-hue') || 220;
+          const savedOpacity = localStorage.getItem('evo-solid-opacity') || 100;
+          
+          const hueSlider = document.getElementById('hue-slider');
+          const opacitySlider = document.getElementById('opacity-slider');
+          
+          if (hueSlider) hueSlider.value = savedHue;
+          if (opacitySlider) opacitySlider.value = savedOpacity;
+          
+          // Update displays and slider colors
+          if (window.__applySolidColorRealtime) {
+            window.__applySolidColorRealtime();
+          }
         });
       }
       
+      // Evo Theme Effects Management
+      const evoDepthKey = 'evo-depth';
+      const evoNoiseKey = 'evo-noise';
+      
+      // Apply theme effects
+      window.__applyEvoEffects = function() {
+        const depth = localStorage.getItem(evoDepthKey) === 'true' ? '1' : '0';
+        const noise = localStorage.getItem(evoNoiseKey) === 'true' ? '1' : '0';
+        
+        // Create or update style element for Evo effects
+        let style = document.getElementById('evo-effects-style');
+        if (!style) {
+          style = document.createElement('style');
+          style.id = 'evo-effects-style';
+          document.head.appendChild(style);
+        }
+        
+        style.textContent = `:root {
+          --depth: ${depth} !important;
+          --noise: ${noise} !important;
+        }`;
+        
+        console.log(`🎨 Evo Effects: depth=${depth}, noise=${noise}`);
+      };
+      
       // Start Evo Auto Mode if it was active
       window.addEventListener('DOMContentLoaded', function() {
-        const evoAutoActive = localStorage.getItem('evo-auto-active') === 'true';
-        if (evoAutoActive && window.__startEvoAuto) {
-          window.__startEvoAuto();
-          // Update button state
-          setTimeout(() => {
-            document.getElementById('mode-evo')?.classList.add('btn-primary');
-          }, 100);
+        const evoSpeed = parseFloat(localStorage.getItem('evo-speed') || '0');
+        
+        // Update slider and display
+        const slider = document.getElementById('evo-speed-slider');
+        const speedDisplay = document.getElementById('evo-speed-display');
+        
+        if (slider) {
+          slider.value = evoSpeed;
+        }
+        
+        if (speedDisplay) {
+          speedDisplay.textContent = evoSpeed === 0 ? 'OFF' : `${evoSpeed.toFixed(1)}s`;
+        }
+        
+        // Initialize system effect toggles
+        const depthToggle = document.getElementById('system-depth-toggle');
+        const noiseToggle = document.getElementById('system-noise-toggle');
+        
+        if (depthToggle) {
+          const depth = localStorage.getItem(evoDepthKey) !== 'false'; // Default true
+          depthToggle.checked = depth;
+          localStorage.setItem(evoDepthKey, depth);
+        }
+        
+        if (noiseToggle) {
+          const noise = localStorage.getItem(evoNoiseKey) === 'true'; // Default false
+          noiseToggle.checked = noise;
+          localStorage.setItem(evoNoiseKey, noise);
+        }
+        
+        // Apply effects
+        window.__applyEvoEffects();
+        
+        // Add event listeners for effect toggles
+        if (depthToggle) {
+          depthToggle.addEventListener('change', function(e) {
+            localStorage.setItem(evoDepthKey, e.target.checked);
+            window.__applyEvoEffects();
+          });
+        }
+        
+        if (noiseToggle) {
+          noiseToggle.addEventListener('change', function(e) {
+            localStorage.setItem(evoNoiseKey, e.target.checked);
+            window.__applyEvoEffects();
+          });
+        }
+        
+        // Start Evo Auto if speed > 0
+        if (evoSpeed > 0 && window.__startEvoAuto) {
+          window.__startEvoAuto(evoSpeed);
+          if (evoButton) evoButton.classList.add('btn-primary');
         }
       });
 
@@ -65,16 +157,20 @@
         }
       }
 
-      // Theme modes mapping
-      const lightThemes = ['light', 'cupcake', 'bumblebee', 'emerald', 'corporate', 'retro', 'valentine', 'garden', 'aqua', 'pastel', 'fantasy', 'wireframe', 'cmyk', 'autumn', 'acid', 'lemonade', 'winter', 'nord', 'sunset', 'lofi', 'evo'];
-      const darkThemes = ['dark', 'synthwave', 'cyberpunk', 'halloween', 'forest', 'black', 'luxury', 'dracula', 'business', 'night', 'coffee', 'dim'];
+      // Theme modes mapping - dynamically loaded from theme files
+      /* @@THEME_LISTS */
+      const lightThemes = __lightThemes || [];
+      const darkThemes = __darkThemes || [];
 
       // Global functions for theme/lang switching
+      // theme-change library handles the actual theme switching, but we need to track light/dark preferences
       window.__setTheme = function (t) {
+        // Let theme-change handle the actual setting
         document.documentElement.setAttribute("data-theme", t);
-        localStorage.setItem(themeKey, t);
+        localStorage.setItem("theme", t); // theme-change uses "theme" key
+        localStorage.setItem(themeKey, t); // Keep our legacy key too
         
-        // Save theme based on mode
+        // Save theme based on mode for light/dark memory
         if (lightThemes.includes(t)) {
           localStorage.setItem(lightThemeKey, t);
         } else if (darkThemes.includes(t)) {
@@ -96,6 +192,30 @@
           }
         }
       };
+      
+      // Watch for theme changes from theme-change library
+      const themeObserver = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+          if (mutation.attributeName === 'data-theme') {
+            const newTheme = document.documentElement.getAttribute('data-theme');
+            if (newTheme) {
+              // Save last theme for light/dark mode
+              if (lightThemes.includes(newTheme)) {
+                localStorage.setItem(lightThemeKey, newTheme);
+              } else if (darkThemes.includes(newTheme)) {
+                localStorage.setItem(darkThemeKey, newTheme);
+              }
+              localStorage.setItem(themeKey, newTheme);
+            }
+          }
+        });
+      });
+      
+      // Start observing theme changes
+      themeObserver.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['data-theme']
+      });
       
       window.__getLastThemeForMode = function(mode) {
         if (mode === 'light') {
@@ -125,11 +245,40 @@
           window.__stopCosmicDream();
         }
 
-        // Clear existing background
-        container.innerHTML = '';
-        container.className = '';
+        // Create layer structure if it doesn't exist
+        let layersContainer = container.querySelector('.background-layers');
+        let animatedLayer = container.querySelector('.animated-layer');
+        let solidLayer = container.querySelector('.solid-layer');
+        
+        if (!layersContainer) {
+          layersContainer = document.createElement('div');
+          layersContainer.className = 'background-layers';
+          container.appendChild(layersContainer);
+        }
+        
+        if (!animatedLayer) {
+          animatedLayer = document.createElement('div');
+          animatedLayer.className = 'animated-layer';
+          layersContainer.appendChild(animatedLayer);
+        }
+        
+        if (!solidLayer) {
+          solidLayer = document.createElement('div');
+          solidLayer.className = 'solid-layer';
+          layersContainer.appendChild(solidLayer);
+        }
+
+        // Save last animated background for transparent mode
+        const animatedBackgrounds = ['gradient-spheres', 'colorful-dots', 'cosmic-dream'];
+        if (animatedBackgrounds.includes(bgId)) {
+          localStorage.setItem('evo-last-animated-bg', bgId);
+        }
 
         if (bgId === 'none' || !bgId) {
+          // Clear both layers
+          animatedLayer.innerHTML = '';
+          animatedLayer.className = 'animated-layer';
+          solidLayer.style.background = '';
           // Disable glass surfaces when no dynamic background
           document.body.classList.remove('has-dynamic-bg');
           return;
@@ -138,16 +287,30 @@
         // Mark page as having a dynamic background (enables glass UI surfaces)
         document.body.classList.add('has-dynamic-bg');
 
-        if (bgId === 'solid-color') {
-          // Solid color background (no dynamic effects)
-          const color = localStorage.getItem(backgroundColorKey) || '#111827';
-          container.className = 'bg-solid-color';
-          container.style.background = color;
-          // Solid color is not considered dynamic
-          document.body.classList.remove('has-dynamic-bg');
+        if (bgId === 'transparent') {
+          // Clear solid layer, keep animated
+          solidLayer.style.background = '';
+          document.body.classList.add('has-dynamic-bg');
+        } else if (bgId === 'solid-color') {
+          // Apply solid color layer on top
+          const hue = localStorage.getItem('evo-solid-hue') || 220;
+          const opacity = localStorage.getItem('evo-solid-opacity') || 100;
+          const alpha = opacity / 100;
+          const color = `hsla(${hue}, 80%, 60%, ${alpha})`;
+          
+          solidLayer.style.background = color;
+          
+          // Enable glass effects if opacity < 100 (semi-transparent)
+          if (alpha < 1) {
+            document.body.classList.add('has-dynamic-bg');
+          } else {
+            document.body.classList.remove('has-dynamic-bg');
+          }
         } else if (bgId === 'gradient-spheres') {
-          container.className = 'bg-gradient-spheres';
-          container.innerHTML = `
+          // Clear solid layer, apply animated
+          solidLayer.style.background = '';
+          animatedLayer.className = 'animated-layer bg-gradient-spheres';
+          animatedLayer.innerHTML = `
             <div class="gradient-sphere sphere-1"></div>
             <div class="gradient-sphere sphere-2"></div>
             <div class="gradient-sphere sphere-3"></div>
@@ -158,16 +321,20 @@
           `;
           __initGradientSpheresParticles();
         } else if (bgId === 'colorful-dots') {
-          container.className = 'bg-colorful-dots';
-          container.innerHTML = `
+          // Clear solid layer, apply animated
+          solidLayer.style.background = '';
+          animatedLayer.className = 'animated-layer bg-colorful-dots';
+          animatedLayer.innerHTML = `
             <div class="dots-layer dots-layer-1">.</div>
             <div class="dots-layer dots-layer-2">.</div>
             <div class="dots-layer dots-layer-3">.</div>
             <div class="dots-layer dots-layer-4">.</div>
           `;
         } else if (bgId === 'cosmic-dream') {
-          container.className = 'bg-cosmic-dream';
-          container.innerHTML = `
+          // Clear solid layer, apply animated
+          solidLayer.style.background = '';
+          animatedLayer.className = 'animated-layer bg-cosmic-dream';
+          animatedLayer.innerHTML = `
             <div class="cosmic-spheres">
               <div class="cosmic-sphere cosmic-sphere-1"></div>
               <div class="cosmic-sphere cosmic-sphere-2"></div>
@@ -188,7 +355,87 @@
         }
       };
 
-      // Set solid background color and apply if active
+      // Apply solid color in real-time (without saving to localStorage)
+      window.__applySolidColorRealtime = function() {
+        const hue = document.getElementById('hue-slider')?.value || 220;
+        const opacity = document.getElementById('opacity-slider')?.value || 100;
+        const alpha = opacity / 100;
+        
+        // Update display values (main and mini)
+        const hueDisplay = document.getElementById('hue-value');
+        const hueDisplayMini = document.getElementById('hue-value-mini');
+        const opacityDisplay = document.getElementById('opacity-value');
+        const hueSlider = document.getElementById('hue-slider');
+        const opacitySlider = document.getElementById('opacity-slider');
+        
+        if (hueDisplay) hueDisplay.textContent = `${hue}°`;
+        if (hueDisplayMini) hueDisplayMini.textContent = `${hue}°`;
+        if (opacityDisplay) opacityDisplay.textContent = `${opacity}%`;
+        
+        // Update both sliders with current color
+        const color = `hsl(${hue}, 80%, 60%)`;
+        
+        // Hue slider thumb
+        if (hueSlider) {
+          hueSlider.style.setProperty('--thumb-color', color);
+        }
+        
+        // Opacity slider - thumb (full color) and background gradient
+        if (opacitySlider) {
+          opacitySlider.style.setProperty('--thumb-color', color);
+          opacitySlider.style.setProperty('--gradient-color', color);
+        }
+        
+        // Get solid layer
+        const container = document.getElementById('app-background');
+        if (!container) return;
+        
+        let solidLayer = container.querySelector('.solid-layer');
+        if (!solidLayer) {
+          // Create layer structure if needed
+          __applyBackground('none');
+          solidLayer = container.querySelector('.solid-layer');
+        }
+        
+        // Apply color to solid layer
+        const colorWithAlpha = `hsla(${hue}, 80%, 60%, ${alpha})`;
+        if (solidLayer) {
+          solidLayer.style.background = colorWithAlpha;
+        }
+        
+        // Enable glass effects if opacity < 100
+        if (alpha < 1) {
+          document.body.classList.add('has-dynamic-bg');
+        } else {
+          document.body.classList.remove('has-dynamic-bg');
+        }
+      };
+      
+      // Save solid color settings to localStorage
+      window.__saveSolidColorToStorage = function() {
+        const hue = document.getElementById('hue-slider')?.value || 220;
+        const opacity = document.getElementById('opacity-slider')?.value || 100;
+        
+        localStorage.setItem('evo-solid-hue', hue);
+        localStorage.setItem('evo-solid-opacity', opacity);
+        localStorage.setItem(backgroundKey, 'solid-color-layer');
+        
+        console.log(`💾 Saved: H${hue}° O${opacity}%`);
+        
+        // Visual feedback
+        const btn = event?.target;
+        if (btn) {
+          const originalText = btn.innerHTML;
+          btn.innerHTML = '✅ Saved!';
+          btn.classList.add('btn-success');
+          setTimeout(() => {
+            btn.innerHTML = originalText;
+            btn.classList.remove('btn-success');
+          }, 1500);
+        }
+      };
+      
+      // Legacy function for backward compatibility
       window.__setBackgroundColor = function(hex) {
         try {
           localStorage.setItem(backgroundColorKey, hex);
@@ -262,175 +509,121 @@
         document.documentElement.style.transition = '';
       };
 
-      // Evo Auto Mode - CONTINUOUS SMOOTH THEME TRANSITION
+      // Update transition duration based on Evo speed
+      window.__updateTransitionDuration = function(speedSeconds) {
+        // Calculate transition duration to be 80% of rotation time
+        // 20% static + 80% smooth transition to next theme
+        let duration;
+        if (speedSeconds === 0) {
+          duration = 500; // Default when Evo is off (0.5s)
+        } else {
+          // Use 80% of the rotation speed for smooth transition
+          // e.g., 1s = 800ms, 3s = 2400ms, 6s = 4800ms, 10s = 8000ms
+          duration = Math.round(speedSeconds * 800);
+        }
+        
+        document.documentElement.style.setProperty('--theme-transition-duration', `${duration}ms`);
+        console.log(`⏱️ Transition: ${(duration/1000).toFixed(1)}s (80% of ${speedSeconds}s rotation)`);
+      };
+      
+      // Evo Auto Mode - Theme switching with configurable speed
       (function() {
-        let themeCache = null;
-        let animationFrameId = null;
+        let evoInterval = null;
         
-        const lightThemes = ['light', 'cupcake', 'bumblebee', 'emerald', 'corporate', 'retro', 'valentine', 'garden', 'aqua', 'pastel', 'fantasy', 'wireframe', 'cmyk', 'autumn', 'acid', 'lemonade', 'winter', 'nord', 'sunset', 'lofi'];
-        const darkThemes = ['dark', 'synthwave', 'cyberpunk', 'halloween', 'forest', 'black', 'luxury', 'dracula', 'business', 'night', 'coffee', 'dim'];
-        const allThemes = [...lightThemes, ...darkThemes, 'evo'];
-        
-        const themeProps = [
-            // Colors
-            "--p", "--s", "--a", "--n", "--b1", "--b2", "--b3", "--in", "--su", "--wa", "--er",
-            "--pc", "--sc", "--ac", "--nc", "--bc", "--inc", "--suc", "--wac", "--erc",
-            // Radii
-            "--rounded-box", "--rounded-btn", "--rounded-badge", "--tab-radius",
-            // Other numeric properties
-            "--animation-btn", "--animation-input",
-            "--btn-focus-scale",
-            "--border-btn", "--tab-border"
-        ];
-
-        function parseLCH(lchString) {
-            if (!lchString) return null;
-            const parts = lchString.trim().replace('%','').split(/\s+/);
-            if (parts.length !== 3) return null;
-            return { l: parseFloat(parts[0]), c: parseFloat(parts[1]), h: parseFloat(parts[2]) };
+        function getCurrentModeThemes() {
+          const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+          return darkThemes.includes(currentTheme) ? darkThemes : lightThemes;
         }
 
-        function parseUnitValue(unitString) {
-            if (!unitString) return null;
-            const match = unitString.trim().match(/([\d.]+)(.*)/);
-            if (!match || match.length < 3) return null;
-            return { value: parseFloat(match[1]), unit: match[2] || '' };
+        function pickNextTheme(current) {
+          const themeList = getCurrentModeThemes();
+          let next;
+          do {
+            next = themeList[Math.floor(Math.random() * themeList.length)];
+          } while (next === current && themeList.length > 1);
+          return next;
         }
         
-        function interpolateHue(h1, h2, progress) {
-            let diff = h2 - h1;
-            if (diff > 180) diff -= 360;
-            else if (diff < -180) diff += 360;
-            return (h1 + diff * progress + 360) % 360;
-        }
-
-        function generateThemeCache() {
-            console.log("🎨 Generating daisyUI theme property cache...");
-            const cache = {};
-            const el = document.createElement('div');
-            el.style.display = 'none';
-            document.body.appendChild(el);
-
-            allThemes.forEach(theme => {
-                el.setAttribute('data-theme', theme);
-                const computedStyles = getComputedStyle(el);
-                const values = {};
-                themeProps.forEach(prop => {
-                    values[prop] = computedStyles.getPropertyValue(prop).trim();
-                });
-                cache[theme] = values;
-            });
-
-            document.body.removeChild(el);
-            themeCache = cache;
-            try {
-                localStorage.setItem('daisy-theme-cache', JSON.stringify(cache));
-                console.log("🎨 Theme property cache generated and stored.");
-            } catch(e) {
-                console.error("Could not store theme property cache in localStorage", e);
-            }
-        }
-        
-        function init() {
-            try {
-                const cached = localStorage.getItem('daisy-theme-cache');
-                if (cached) {
-                    themeCache = JSON.parse(cached);
-                } else {
-                    window.addEventListener('load', generateThemeCache);
-                }
-            } catch (e) {
-                console.error("Failed to load theme property cache, will regenerate.", e);
-                window.addEventListener('load', generateThemeCache);
-            }
-        }
-        
-        window.__startEvoAuto = function() {
-            if (animationFrameId || !themeCache) return; // Already running or cache not ready
-
-            let fromTheme, toTheme;
-            let startTime = null;
-            const duration = 12000; // 12 seconds for each transition, making it slow and beautiful
-
-            function getCurrentModeThemes() {
-                const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
-                return darkThemes.includes(currentTheme) ? darkThemes : lightThemes;
-            }
-
-            function pickNextTheme(current) {
-                const themeList = getCurrentModeThemes();
-                let next;
-                do {
-                    next = themeList[Math.floor(Math.random() * themeList.length)];
-                } while (next === current);
-                return next;
-            }
-            
-            fromTheme = document.documentElement.getAttribute('data-theme') || 'light';
-            toTheme = pickNextTheme(fromTheme);
-            console.log(`🎨 Evo Auto: Starting perpetual transition from ${fromTheme}...`);
-
-            function animate(currentTime) {
-                if (!startTime) startTime = currentTime;
-                const progress = Math.min((currentTime - startTime) / duration, 1);
-                
-                const fromProps = themeCache[fromTheme];
-                const toProps = themeCache[toTheme];
-
-                if (fromProps && toProps) {
-                     themeProps.forEach(prop => {
-                        const from = fromProps[prop];
-                        const to = toProps[prop];
-                        
-                        if (from && to) {
-                            // First, try to parse as color (OKLCH)
-                            const fromLCH = parseLCH(from);
-                            const toLCH = parseLCH(to);
-
-                            if(fromLCH && toLCH) {
-                                const l = fromLCH.l + (toLCH.l - fromLCH.l) * progress;
-                                const c = fromLCH.c + (toLCH.c - fromLCH.c) * progress;
-                                const h = interpolateHue(fromLCH.h, toLCH.h, progress);
-                                document.documentElement.style.setProperty(prop, `${l}% ${c} ${h}`);
-                            } else {
-                                // If not a color, treat as a unit value (e.g., 1rem, 0.95, 1px, 0.25s)
-                                const fromVal = parseUnitValue(from);
-                                const toVal = parseUnitValue(to);
-                                if (fromVal && toVal && fromVal.unit === toVal.unit) {
-                                    const val = fromVal.value + (toVal.value - fromVal.value) * progress;
-                                    document.documentElement.style.setProperty(prop, `${val}${fromVal.unit}`);
-                                }
-                            }
-                        }
-                    });
-                }
-
-                if (progress >= 1) {
-                    // Cycle complete, start the next one
-                    document.documentElement.setAttribute('data-theme', toTheme);
-                    fromTheme = toTheme;
-                    toTheme = pickNextTheme(fromTheme);
-                    startTime = null; // Reset start time for the new cycle
-                    console.log(`🎨 Evo Auto: Morphing towards ${toTheme}`);
-                }
-
-                animationFrameId = requestAnimationFrame(animate);
-            }
-
-            animationFrameId = requestAnimationFrame(animate);
+        window.__startEvoAuto = function(speedSeconds) {
+          window.__stopEvoAuto(); // Stop if already running
+          
+          if (!speedSeconds || speedSeconds === 0) {
+            console.log('🎨 Evo Auto Mode: Speed is 0, not starting');
+            window.__updateTransitionDuration(0); // Reset to default
+            return;
+          }
+          
+          // Update transition duration based on speed
+          window.__updateTransitionDuration(speedSeconds);
+          
+          console.log(`🎨 Evo Auto Mode: ON - switching themes every ${speedSeconds}s`);
+          
+          // Switch theme immediately
+          const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+          const nextTheme = pickNextTheme(currentTheme);
+          window.__setTheme(nextTheme);
+          
+          // Then switch at specified interval
+          evoInterval = setInterval(() => {
+            const current = document.documentElement.getAttribute('data-theme');
+            const next = pickNextTheme(current);
+            window.__setTheme(next);
+            console.log(`🎨 Evo Auto: Switched to ${next}`);
+          }, speedSeconds * 1000); // Convert to milliseconds
         };
         
         window.__stopEvoAuto = function() {
-            if (animationFrameId) {
-                cancelAnimationFrame(animationFrameId);
-                animationFrameId = null;
-            }
-            const root = document.documentElement;
-            themeProps.forEach(prop => root.style.removeProperty(prop));
-            console.log("🎨 Evo Auto Mode stopped.");
+          if (evoInterval) {
+            clearInterval(evoInterval);
+            evoInterval = null;
+            window.__updateTransitionDuration(0); // Reset to default
+            console.log("🎨 Evo Auto Mode: OFF");
+          }
         };
-
-        init();
+        
+        // Handle speed slider changes
+        window.__updateEvoUI = function(speed) {
+          const speedValue = document.getElementById('evo-speed-value');
+          const statusBadge = document.getElementById('evo-status-badge');
+          const evoButton = document.getElementById('evo-button');
+          
+          if (speed === 0) {
+            if (speedValue) speedValue.textContent = '0s (OFF)';
+            if (statusBadge) {
+              statusBadge.textContent = 'OFF';
+              statusBadge.classList.remove('badge-success');
+              statusBadge.classList.add('badge-primary');
+            }
+            if (evoButton) evoButton.classList.remove('btn-primary');
+          } else {
+            if (speedValue) speedValue.textContent = `${speed}s`;
+            if (statusBadge) {
+              statusBadge.textContent = 'ON';
+              statusBadge.classList.remove('badge-primary');
+              statusBadge.classList.add('badge-success');
+            }
+            if (evoButton) evoButton.classList.add('btn-primary');
+          }
+        };
+        
+        // Speed slider handler
+        window.addEventListener('DOMContentLoaded', function() {
+          const slider = document.getElementById('evo-speed-slider');
+          if (slider) {
+            slider.addEventListener('input', function(e) {
+              const speed = parseInt(e.target.value, 10);
+              localStorage.setItem('evo-speed', speed);
+              window.__updateEvoUI(speed);
+              
+              // Restart Evo Auto with new speed
+              if (speed > 0) {
+                window.__startEvoAuto(speed);
+              } else {
+                window.__stopEvoAuto();
+              }
+            });
+          }
+        });
       })();
 
       window.__initGradientSpheresParticles = function() {
