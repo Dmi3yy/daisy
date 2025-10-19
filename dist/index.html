@@ -1750,6 +1750,19 @@
                 </div>
                 <input type="checkbox" class="toggle toggle-sm toggle-primary" id="system-noise-toggle" />
               </div>
+              <!-- Glass Effect -->
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7h16M4 12h10M4 17h6" />
+                  </svg>
+                  <div>
+                    <div class="text-sm font-medium">Glass Effect</div>
+                    <div class="text-xs opacity-60">Blurred translucent surfaces</div>
+                  </div>
+                </div>
+                <input type="checkbox" class="toggle toggle-sm toggle-primary" id="system-glass-toggle" onchange="__toggleGlass(this.checked)" />
+              </div>
             </div>
           </div>
         </div>
@@ -2280,7 +2293,7 @@
 
       // Initialize Glass Effect
       const savedGlass = localStorage.getItem('evo-glass') || '0';
-      const glassToggle = document.getElementById('system-glass-toggle'); // Assuming this is the correct ID for the glass toggle
+      const glassToggle = document.getElementById('system-glass-toggle');
 
       if (glassToggle) {
         glassToggle.checked = savedGlass === '1';
@@ -2410,7 +2423,7 @@
 
 
       <main class="container mx-auto px-4 py-8">
-        <div class="hero bg-base-200 rounded-box p-10 mb-10">
+        <div class="hero bg-base-200 rounded-box p-10 mb-10 glass-surface">
   <div class="hero-content text-center">
     <div class="max-w-2xl">
       <h1 class="text-5xl font-bold mb-4">EVO</h1>
@@ -2530,7 +2543,7 @@
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
     
     <!-- Product Card -->
-    <div class="card bg-base-100 shadow">
+    <div class="card bg-base-100 shadow glass-surface">
       <figure><img src="https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp" alt="Shoes" /></figure>
       <div class="card-body">
         <h2 class="card-title">
@@ -2545,7 +2558,7 @@
     </div>
     
     <!-- Hover Gallery Product Card -->
-    <div class="card bg-base-100 shadow">
+    <div class="card bg-base-100 shadow glass-surface">
       <figure class="hover-gallery">
         <img src="https://img.daisyui.com/images/stock/daisyui-hat-1.webp" alt="daisyUI Hat" />
         <img src="https://img.daisyui.com/images/stock/daisyui-hat-2.webp" alt="daisyUI Hat" />
@@ -2562,7 +2575,7 @@
     </div>
     
     <!-- Stats Card -->
-    <div class="stats shadow">
+    <div class="stats shadow glass-surface">
       <div class="stat">
         <div class="stat-figure text-primary">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-8 h-8 stroke-current"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
@@ -2580,7 +2593,7 @@
 <section class="mb-12">
   <h2 class="text-3xl font-bold mb-6">Countdown</h2>
   <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-    <div class="bg-base-200 rounded-box p-6">
+    <div class="bg-base-200 rounded-box p-6 glass-surface">
       <div class="grid grid-flow-col gap-5 text-center auto-cols-max">
         <div class="flex flex-col">
           <span class="countdown font-mono text-5xl">
@@ -2609,7 +2622,7 @@
       </div>
     </div>
     
-    <div class="bg-base-200 rounded-box p-6 flex items-center justify-center">
+    <div class="bg-base-200 rounded-box p-6 flex items-center justify-center glass-surface">
       <span class="countdown font-mono text-4xl">
         <span id="countdown-h" style="--value:10;" aria-live="polite" aria-label="10">10</span>
         :

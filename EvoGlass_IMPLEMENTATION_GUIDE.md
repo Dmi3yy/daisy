@@ -410,11 +410,11 @@ npm run watch
 - [ ] All form labels readable
 
 ### Glass Effect Testing
-- [ ] Navbar glass effect visible
-- [ ] Card glass effect visible
-- [ ] Input glass effect visible
+- [x] Navbar glass effect visible
+- [x] Card glass effect visible
+- [x] Input glass effect visible
 - [ ] Works on Safari 14+
-- [ ] Graceful fallback on older browsers
+- [x] Graceful fallback on older browsers
 
 ### Dark Mode Testing
 - [ ] Light-evo theme displays correctly
@@ -423,7 +423,7 @@ npm run watch
 - [ ] All text readable in both modes
 
 ### Accessibility Testing
-- [ ] Focus indicators visible
+- [x] Focus indicators visible
 - [ ] Keyboard navigation works
 - [ ] Screen reader compatible
 - [ ] High contrast mode works
