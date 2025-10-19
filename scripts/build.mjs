@@ -24,7 +24,9 @@ function arg(name, def) {
 // Get CLI/ENV arguments with defaults
 const theme = arg("theme", process.env.THEME || "light-evo");
 const lang = arg("lang", process.env.LANG || "uk");
-const keepCss = (arg("keep-css", process.env.KEEP_CSS || "false") || "false") === "true";
+const inlineCss = (arg("inline-css", process.env.INLINE_CSS || "false") || "false") === "true";
+const keepCssDefault = inlineCss ? "false" : "true";
+const keepCss = (arg("keep-css", process.env.KEEP_CSS || keepCssDefault) || keepCssDefault) === "true";
 
 console.log(`[build] Starting build with theme="${theme}" lang="${lang}"`);
 
@@ -327,22 +329,42 @@ base = base.replace(
       const __darkThemes = ${JSON.stringify(darkThemesList)};`
 );
 
-// Inline CSS if available
-const cssPath = path.join(root, "dist/styles.css");
-let inlineCss = "";
+// Inject external CSS link when required
+const cssLinkTag = '<link rel="stylesheet" href="./styles.css" id="evo-external-css" />';
 
-if (fs.existsSync(cssPath)) {
-  console.log(`[build] Inlining CSS from ${cssPath}`);
-  inlineCss = read(cssPath);
+if (inlineCss && !keepCss) {
+  base = base.replace("<!-- @@CSS_LINK -->", "");
+  console.log("[build] ℹ Inline mode enabled — external CSS link removed");
 } else {
-  console.warn(`[build] ⚠ Warning: ${cssPath} not found. Inline styles placeholder will remain.`);
+  base = base.replace("<!-- @@CSS_LINK -->", cssLinkTag);
 }
 
-base = base.replace("/* @@INLINE_CSS */", inlineCss);
+// Inline CSS if requested
+const cssPath = path.join(root, "dist/styles.css");
+let inlineCssContent = "";
 
-if (!keepCss && fs.existsSync(cssPath)) {
+if (inlineCss) {
+  if (fs.existsSync(cssPath)) {
+    console.log(`[build] Inlining CSS from ${cssPath}`);
+    inlineCssContent = read(cssPath);
+  } else {
+    console.warn(`[build] ⚠ Warning: ${cssPath} not found. Inline styles placeholder will remain.`);
+  }
+} else {
+  console.log("[build] ℹ Inline CSS disabled — placeholder left empty");
+}
+
+base = base.replace("/* @@INLINE_CSS */", inlineCssContent);
+
+if (inlineCss && !keepCss && fs.existsSync(cssPath)) {
   fs.unlinkSync(cssPath);
   console.log(`[build] ✓ Removed ${cssPath} after inlining`);
+} else if (!inlineCss) {
+  if (fs.existsSync(cssPath)) {
+    console.log("[build] ✓ External CSS preserved at dist/styles.css");
+  } else {
+    console.warn(`[build] ⚠ Warning: Expected ${cssPath} to exist for external link`);
+  }
 } else if (keepCss) {
   console.log("[build] ℹ Preserving dist/styles.css (keep-css enabled)");
 }

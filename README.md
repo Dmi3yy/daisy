@@ -39,6 +39,8 @@ npm run build:html     # Зібрати HTML з компонентів
 npm run build:inline   # Створити inline версію
 ```
 
+> ℹ️ Після `npm run build` у каталозі `dist/` ви отримаєте одразу три артефакти: `index.html`, `styles.css` та `index.inline.html`. Якщо потрібно зібрати тільки inline-варіант без зовнішнього CSS, запустіть `npm run build:html -- --inline-css=true --keep-css=false` перед `npm run build:inline`.
+
 ### 3. Режим розробки
 
 ```bash

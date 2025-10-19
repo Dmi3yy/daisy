@@ -3,8 +3,6 @@
 import fs from "node:fs";
 import path from "node:path";
 import url from "node:url";
-import juice from "juice";
-
 const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, "..");
 
@@ -30,17 +28,12 @@ const html = fs.readFileSync(htmlPath, "utf8");
 const css = fs.readFileSync(cssPath, "utf8");
 
 console.log("[inline] Inlining CSS into HTML...");
-const inlined = juice.inlineContent(html, css, {
-  removeStyleTags: false, // Keep style tags for theme variables
-  preserveMediaQueries: true,
-  preserveFontFaces: true,
-  preserveImportant: true,
-  applyWidthAttributes: false,
-  applyHeightAttributes: false,
-  applyAttributesTableElements: false,
-  insertPreservedExtraCss: true,
-  removeHtmlSelectors: false
-});
+const cssLinkPattern = /\s*<link[^>]*id="evo-external-css"[^>]*>\s*/g;
+const htmlWithoutLink = html.replace(cssLinkPattern, "\n");
+const inlined = htmlWithoutLink.replace(
+  /(<style id="evo-inline-css">)([\s\S]*?)(<\/style>)/,
+  (_, start, _content, end) => `${start}${css}${end}`
+);
 
 console.log("[inline] Writing inlined HTML...");
 fs.writeFileSync(outputPath, inlined, "utf8");
