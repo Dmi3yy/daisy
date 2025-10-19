@@ -441,10 +441,25 @@
     localStorage.setItem('evo-noise', value);
   };
   
+
+  // Toggle Glass Effect
+  window.__toggleGlass = function(enabled) {
+    const value = enabled ? '1' : '0';
+    document.documentElement.style.setProperty('--glass', value);
+    localStorage.setItem('evo-glass', value);
+    
+    // Apply glass effect to body if enabled
+    if (enabled) {
+      document.body.classList.add('glass-effect-enabled');
+    } else {
+      document.body.classList.remove('glass-effect-enabled');
+    }
+  };
+  
   // Theme management - simplified
   (function() {
     function getThemeMode(theme) {
-      const lightThemes = ['light', 'cupcake', 'bumblebee', 'emerald', 'corporate', 'retro', 'valentine', 'garden', 'pastel', 'fantasy', 'wireframe', 'cmyk', 'autumn', 'acid', 'lemonade', 'winter', 'nord', 'lofi', 'cyberpunk', 'evo', 'liquidglass'];
+      const lightThemes = ['light', 'light-evo'];
       return lightThemes.includes(theme) ? 'light' : 'dark';
     }
     
@@ -547,6 +562,15 @@
       if (noiseToggle) {
         noiseToggle.checked = savedNoise === '1';
         document.documentElement.style.setProperty('--noise', savedNoise);
+      }
+
+      // Initialize Glass Effect
+      const savedGlass = localStorage.getItem('evo-glass') || '0';
+      const glassToggle = document.getElementById('system-glass-toggle'); // Assuming this is the correct ID for the glass toggle
+
+      if (glassToggle) {
+        glassToggle.checked = savedGlass === '1';
+        window.__toggleGlass(savedGlass === '1');
       }
     });
     
