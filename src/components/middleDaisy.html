@@ -1,0 +1,91 @@
+<div class="flex flex-col lg:flex-row gap-4">
+  <!-- LEFT SIDE: Theme Editor -->
+  <div class="bg-base-100 flex w-full lg:w-96 shrink-0 flex-col items-center gap-4 p-6 pb-20 lg:sticky lg:top-16 lg:h-[calc(100vh-4rem)] lg:items-start lg:overflow-y-scroll">
+    <!-- @@MIDDLEDAISY_EDITOR_HEADER -->
+    <!-- @@MIDDLEDAISY_EDITOR_COLORS -->
+    <!-- @@MIDDLEDAISY_EDITOR_RADIUS -->
+    <!-- @@MIDDLEDAISY_EDITOR_EFFECTS -->
+    <!-- @@MIDDLEDAISY_EDITOR_OPTIONS -->
+  </div>
+  
+  <!-- RIGHT SIDE: Component Preview -->
+  <div class="flex-1 overflow-x-hidden">
+    <div class="border-base-300 overflow-hidden border-s border-t lg:rounded-ss-xl">
+      <!-- Preview wrapper with dynamic theme variables -->
+      <div id="theme-preview-wrapper" style="
+        --color-base-100: oklch(98% 0.02 240);
+        --color-base-200: oklch(95% 0.03 240);
+        --color-base-300: oklch(92% 0.04 240);
+        --color-base-content: oklch(20% 0.05 240);
+        --color-primary: oklch(55% 0.30 260);
+        --color-primary-content: oklch(98% 0.01 260);
+        --color-secondary: oklch(70% 0.25 200);
+        --color-secondary-content: oklch(98% 0.01 200);
+        --color-accent: oklch(65% 0.25 160);
+        --color-accent-content: oklch(98% 0.01 160);
+        --color-neutral: oklch(50% 0.05 240);
+        --color-neutral-content: oklch(98% 0.01 240);
+        --color-info: oklch(70% 0.20 220);
+        --color-info-content: oklch(98% 0.01 220);
+        --color-success: oklch(65% 0.25 140);
+        --color-success-content: oklch(98% 0.01 140);
+        --color-warning: oklch(80% 0.25 80);
+        --color-warning-content: oklch(20% 0.05 80);
+        --color-error: oklch(65% 0.30 30);
+        --color-error-content: oklch(98% 0.01 30);
+        --radius-selector: 1rem;
+        --radius-field: 0.25rem;
+        --radius-box: 0.5rem;
+        --size-selector: 0.25rem;
+        --size-field: 0.25rem;
+        --border: 1px;
+        --depth: 1;
+        --noise: 0;
+      ">
+        <div class="max-md:hidden">
+          <div class="text-base-content pt-6 transition-colors duration-500 bg-base-200">
+            <div class="flex items-center justify-between gap-4 px-8 ps-10">
+              <h2 class="font-title text-lg">Components Demo</h2>
+            </div>
+            <div class="px-8 py-6">
+              <div class="text-base-content mx-auto grid gap-6 pb-20 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
+                <!-- Column 1 -->
+                <div class="flex flex-col gap-4">
+                  <!-- @@MIDDLEDAISY_PREVIEW_FILTER_CARD -->
+                  <!-- @@MIDDLEDAISY_PREVIEW_CALENDAR_CARD -->
+                  <!-- @@MIDDLEDAISY_PREVIEW_TABS -->
+                  <!-- @@MIDDLEDAISY_PREVIEW_PRICE_RANGE -->
+                  <!-- @@MIDDLEDAISY_PREVIEW_PRODUCT_CARD -->
+                  <!-- @@MIDDLEDAISY_PREVIEW_SEARCH_FORM -->
+                </div>
+                
+                <!-- Column 2 -->
+                <div class="flex flex-col gap-4">
+                  <!-- @@MIDDLEDAISY_PREVIEW_CHARTS_CARD -->
+                  <!-- @@MIDDLEDAISY_PREVIEW_PAGE_SCORE -->
+                  <!-- @@MIDDLEDAISY_PREVIEW_RECENT_ORDERS -->
+                  <!-- @@MIDDLEDAISY_PREVIEW_REVENUE_STAT -->
+                  <!-- @@MIDDLEDAISY_PREVIEW_REGISTER_FORM -->
+                  <!-- @@MIDDLEDAISY_PREVIEW_WRITE_POST -->
+                  <!-- @@MIDDLEDAISY_PREVIEW_CHAT_BUBBLES -->
+                  <!-- @@MIDDLEDAISY_PREVIEW_DOCK_NAV -->
+                  <!-- @@MIDDLEDAISY_PREVIEW_ADMIN_MENU -->
+                </div>
+                
+                <!-- Column 3 -->
+                <div class="flex flex-col gap-4">
+                  <!-- @@MIDDLEDAISY_PREVIEW_MEDIA_PLAYER -->
+                  <!-- @@MIDDLEDAISY_PREVIEW_CODE_MOCKUP -->
+                  <!-- @@MIDDLEDAISY_PREVIEW_ALERTS -->
+                  <!-- @@MIDDLEDAISY_PREVIEW_TIMELINE -->
+                  <!-- @@MIDDLEDAISY_PREVIEW_PRICING_CARD -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

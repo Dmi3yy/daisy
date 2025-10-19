@@ -1,0 +1,37 @@
+{
+  "name": "lofi",
+  "mode": "light",
+  "colors": {
+    "--color-base-100": "oklch(100% 0 0)",
+    "--color-base-200": "oklch(97% 0 0)",
+    "--color-base-300": "oklch(94% 0 0)",
+    "--color-base-content": "oklch(20% 0 0)",
+    "--color-primary": "oklch(20% 0 0)",
+    "--color-primary-content": "oklch(90% 0 0)",
+    "--color-secondary": "oklch(20% 0 0)",
+    "--color-secondary-content": "oklch(90% 0 0)",
+    "--color-accent": "oklch(20% 0 0)",
+    "--color-accent-content": "oklch(90% 0 0)",
+    "--color-neutral": "oklch(20% 0 0)",
+    "--color-neutral-content": "oklch(90% 0 0)",
+    "--color-info": "oklch(20% 0 0)",
+    "--color-info-content": "oklch(90% 0 0)",
+    "--color-success": "oklch(20% 0 0)",
+    "--color-success-content": "oklch(90% 0 0)",
+    "--color-warning": "oklch(20% 0 0)",
+    "--color-warning-content": "oklch(90% 0 0)",
+    "--color-error": "oklch(20% 0 0)",
+    "--color-error-content": "oklch(90% 0 0)"
+  },
+  "properties": {
+    "--radius-selector": "0rem",
+    "--radius-field": "0rem",
+    "--radius-box": "0rem",
+    "--size-selector": "0.25rem",
+    "--size-field": "0.25rem",
+    "--border": "2px",
+    "--depth": "0",
+    "--noise": "0"
+  }
+}
+

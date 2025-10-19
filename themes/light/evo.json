@@ -1,0 +1,42 @@
+{
+  "name": "evo",
+  "mode": "light",
+  "default": false,
+  "prefersdark": false,
+  "colorScheme": "light",
+  "colors": {
+    "base-100": "oklch(98% 0.02 240)",
+    "base-200": "oklch(95% 0.03 240)",
+    "base-300": "oklch(92% 0.04 240)",
+    "base-content": "oklch(20% 0.05 240)",
+    "primary": "oklch(55% 0.30 260)",
+    "primary-content": "oklch(98% 0.01 260)",
+    "secondary": "oklch(70% 0.25 200)",
+    "secondary-content": "oklch(98% 0.01 200)",
+    "accent": "oklch(65% 0.25 160)",
+    "accent-content": "oklch(98% 0.01 160)",
+    "neutral": "oklch(50% 0.05 240)",
+    "neutral-content": "oklch(98% 0.01 240)",
+    "info": "oklch(70% 0.20 220)",
+    "info-content": "oklch(98% 0.01 220)",
+    "success": "oklch(65% 0.25 140)",
+    "success-content": "oklch(98% 0.01 140)",
+    "warning": "oklch(80% 0.25 80)",
+    "warning-content": "oklch(20% 0.05 80)",
+    "error": "oklch(65% 0.30 30)",
+    "error-content": "oklch(98% 0.01 30)"
+  },
+  "radius": {
+    "selector": "1rem",
+    "field": "0.25rem",
+    "box": "0.5rem"
+  },
+  "size": {
+    "selector": "0.25rem",
+    "field": "0.25rem"
+  },
+  "border": "1px",
+  "depth": 1,
+  "noise": 0
+}
+

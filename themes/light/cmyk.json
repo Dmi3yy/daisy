@@ -1,0 +1,37 @@
+{
+  "name": "cmyk",
+  "mode": "light",
+  "colors": {
+    "--color-base-100": "oklch(100% 0 0)",
+    "--color-base-200": "oklch(96% 0 0)",
+    "--color-base-300": "oklch(92% 0 0)",
+    "--color-base-content": "oklch(20% 0 0)",
+    "--color-primary": "oklch(65% 0.200 215)",
+    "--color-primary-content": "oklch(15% 0 0)",
+    "--color-secondary": "oklch(65% 0.240 340)",
+    "--color-secondary-content": "oklch(15% 0 0)",
+    "--color-accent": "oklch(80% 0.180 95)",
+    "--color-accent-content": "oklch(15% 0 0)",
+    "--color-neutral": "oklch(20% 0 0)",
+    "--color-neutral-content": "oklch(90% 0 0)",
+    "--color-info": "oklch(65% 0.180 230)",
+    "--color-info-content": "oklch(15% 0 0)",
+    "--color-success": "oklch(65% 0.160 165)",
+    "--color-success-content": "oklch(15% 0 0)",
+    "--color-warning": "oklch(75% 0.150 70)",
+    "--color-warning-content": "oklch(15% 0 0)",
+    "--color-error": "oklch(65% 0.240 25)",
+    "--color-error-content": "oklch(99% 0 0)"
+  },
+  "properties": {
+    "--radius-selector": "0rem",
+    "--radius-field": "0rem",
+    "--radius-box": "0rem",
+    "--size-selector": "0.25rem",
+    "--size-field": "0.25rem",
+    "--border": "1px",
+    "--depth": "0",
+    "--noise": "0"
+  }
+}
+

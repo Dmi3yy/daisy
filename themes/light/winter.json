@@ -1,0 +1,37 @@
+{
+  "name": "winter",
+  "mode": "light",
+  "colors": {
+    "--color-base-100": "oklch(100% 0 0)",
+    "--color-base-200": "oklch(96% 0.010 240)",
+    "--color-base-300": "oklch(92% 0.020 240)",
+    "--color-base-content": "oklch(25% 0.020 240)",
+    "--color-primary": "oklch(55% 0.250 240)",
+    "--color-primary-content": "oklch(99% 0 0)",
+    "--color-secondary": "oklch(55% 0.180 280)",
+    "--color-secondary-content": "oklch(99% 0 0)",
+    "--color-accent": "oklch(60% 0.200 330)",
+    "--color-accent-content": "oklch(99% 0 0)",
+    "--color-neutral": "oklch(25% 0.020 240)",
+    "--color-neutral-content": "oklch(90% 0 0)",
+    "--color-info": "oklch(65% 0.180 230)",
+    "--color-info-content": "oklch(15% 0 0)",
+    "--color-success": "oklch(65% 0.160 165)",
+    "--color-success-content": "oklch(15% 0 0)",
+    "--color-warning": "oklch(75% 0.150 70)",
+    "--color-warning-content": "oklch(15% 0 0)",
+    "--color-error": "oklch(65% 0.240 25)",
+    "--color-error-content": "oklch(99% 0 0)"
+  },
+  "properties": {
+    "--radius-selector": "2rem",
+    "--radius-field": "1rem",
+    "--radius-box": "1rem",
+    "--size-selector": "0.25rem",
+    "--size-field": "0.25rem",
+    "--border": "1px",
+    "--depth": "1",
+    "--noise": "0"
+  }
+}
+
