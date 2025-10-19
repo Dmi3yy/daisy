@@ -118,6 +118,43 @@ body {
   padding-right: env(safe-area-inset-right);
 }
 
+:root {
+  --focus-ring-color: color-mix(in oklch, var(--color-primary) 70%, var(--color-base-content) 30%);
+  --focus-ring-offset: 0.25rem;
+  --focus-ring-shadow: color-mix(in oklch, var(--focus-ring-color) 25%, transparent);
+}
+
+:where(
+    a,
+    button,
+    input,
+    textarea,
+    select,
+    summary,
+    [role="button"],
+    [role="menuitem"],
+    [tabindex]:not([tabindex="-1"])
+  ):focus-visible {
+  outline: 3px solid var(--focus-ring-color);
+  outline-offset: var(--focus-ring-offset);
+  box-shadow: 0 0 0 4px var(--focus-ring-shadow);
+}
+
+:where(
+    a,
+    button,
+    input,
+    textarea,
+    select,
+    summary,
+    [role="button"],
+    [role="menuitem"],
+    [tabindex]:not([tabindex="-1"])
+  ):focus:not(:focus-visible) {
+  outline: none;
+  box-shadow: none;
+}
+
 /* Navbar - follows active theme colors and respects safe areas */
 .navbar {
   --navbar-padding: 0.5rem;
@@ -141,6 +178,54 @@ body {
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
   border-bottom: 1px solid color-mix(in oklch, var(--color-base-content) 8%, transparent) !important;
+}
+
+@media (prefers-contrast: more) {
+  :root {
+    --focus-ring-color: color-mix(in oklch, var(--color-base-content) 85%, white 15%);
+    --focus-ring-shadow: color-mix(in oklch, var(--focus-ring-color) 35%, transparent);
+    --focus-ring-offset: 0.3rem;
+  }
+
+  body {
+    background-color: var(--color-base-100);
+    color: var(--color-base-content);
+  }
+
+  .navbar,
+  [data-theme="light-evo"] .navbar,
+  [data-theme="dark-evo"] .navbar {
+    background-color: var(--color-base-100) !important;
+    border-bottom-color: color-mix(in oklch, var(--color-base-content) 25%, transparent) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  :where(a, summary) {
+    text-decoration: underline;
+    text-decoration-thickness: 0.14em;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  html {
+    scroll-behavior: auto;
+  }
+
+  .navbar {
+    transition: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
 }
 
 /* Fix content positioning for all themes */
