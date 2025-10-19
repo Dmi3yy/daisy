@@ -9,6 +9,11 @@
       "id": "gradient-spheres",
       "name": "Gradient Spheres",
       "description": "Modern gradient with soft spheres and particles"
+    },
+    {
+      "id": "magic",
+      "name": "Magic Aurora",
+      "description": "Shimmering aurora waves with sparkling particles"
     }
   ]
 }
