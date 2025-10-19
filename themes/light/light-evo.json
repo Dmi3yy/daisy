@@ -1,0 +1,45 @@
+{
+  "name": "evo",
+  "mode": "light",
+  "default": false,
+  "prefersdark": false,
+  "colorScheme": "light",
+  "navbar": {
+    "transparent": true
+  },
+  "colors": {
+    "--color-base-100": "oklch(99% 0.005 240)",
+    "--color-base-200": "oklch(96% 0.008 240)",
+    "--color-base-300": "oklch(92% 0.012 240)",
+    "--color-base-content": "oklch(25% 0.015 240)",
+    "--color-primary": "oklch(60% 0.20 250)",
+    "--color-primary-content": "oklch(99% 0.005 250)",
+    "--color-secondary": "oklch(65% 0.18 280)",
+    "--color-secondary-content": "oklch(99% 0.005 280)",
+    "--color-accent": "oklch(70% 0.15 200)",
+    "--color-accent-content": "oklch(99% 0.005 200)",
+    "--color-neutral": "oklch(55% 0.010 240)",
+    "--color-neutral-content": "oklch(99% 0.005 240)",
+    "--color-info": "oklch(68% 0.16 230)",
+    "--color-info-content": "oklch(99% 0.005 230)",
+    "--color-success": "oklch(70% 0.18 150)",
+    "--color-success-content": "oklch(99% 0.005 150)",
+    "--color-warning": "oklch(75% 0.20 85)",
+    "--color-warning-content": "oklch(25% 0.015 85)",
+    "--color-error": "oklch(65% 0.25 25)",
+    "--color-error-content": "oklch(99% 0.005 25)"
+  },
+  "radius": {
+    "selector": "1.25rem",
+    "field": "0.75rem",
+    "box": "1rem"
+  },
+  "size": {
+    "selector": "0.25rem",
+    "field": "0.25rem"
+  },
+  "border": "0.5px",
+  "depth": 1,
+  "noise": 0
+}
+

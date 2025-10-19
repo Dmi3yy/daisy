@@ -1,0 +1,136 @@
+{
+  "navbar": {
+    "themeSelector": {
+      "id": "theme-selector",
+      "icon": {
+        "light": "☀️",
+        "dark": "🌙"
+      },
+      "accordion": {
+        "id": "themes-accordion",
+        "title": "Themes",
+        "defaultOpen": true
+      }
+    },
+    "themeParameters": {
+      "accordion": {
+        "id": "theme-params-accordion",
+        "title": "Theme Parameters"
+      },
+      "customSettings": {
+        "id": "evo-toggle",
+        "label": "Custom Settings",
+        "description": "Apply my customization",
+        "icon": "evo-logo"
+      },
+      "rotation": {
+        "id": "evo-speed-slider",
+        "label": "Theme Rotation",
+        "min": 0,
+        "max": 10,
+        "step": 0.1,
+        "default": 0,
+        "displayId": "evo-speed-display"
+      },
+      "depth": {
+        "id": "system-depth-toggle",
+        "label": "3D Depth",
+        "description": "Subtle shadow effect",
+        "default": true
+      },
+      "noise": {
+        "id": "system-noise-toggle",
+        "label": "Film Grain",
+        "description": "Subtle grain texture",
+        "default": false
+      },
+      "glassEffect": {
+        "id": "system-glass-effect-toggle",
+        "label": "Glass Effect",
+        "description": "Apply a subtle glass effect to the background",
+        "default": false
+      }
+    },
+    "backgrounds": {
+      "accordion": {
+        "id": "background-accordion",
+        "title": "Background"
+      },
+      "items": [
+        {
+          "id": "none",
+          "label": "None",
+          "icon": "⬜"
+        },
+        {
+          "id": "transparent",
+          "label": "Transparent (Glass)",
+          "icon": "💎"
+        },
+        {
+          "id": "gradient-spheres",
+          "label": "Gradient Spheres",
+          "icon": "🌈",
+          "animated": true
+        },
+        {
+          "id": "colorful-dots",
+          "label": "Colorful Dots",
+          "icon": "✨",
+          "animated": true
+        },
+        {
+          "id": "cosmic-dream",
+          "label": "Cosmic Dream",
+          "icon": "🌌",
+          "animated": true
+        }
+      ]
+    },
+    "solidColor": {
+      "accordion": {
+        "id": "solid-color-accordion",
+        "title": "Solid Color Layer"
+      },
+      "hue": {
+        "id": "hue-slider",
+        "label": "Hue",
+        "min": 0,
+        "max": 360,
+        "step": 1,
+        "default": 220,
+        "displayId": "hue-value",
+        "miniDisplayId": "hue-value-mini"
+      },
+      "opacity": {
+        "id": "opacity-slider",
+        "label": "Opacity",
+        "min": 0,
+        "max": 100,
+        "step": 1,
+        "default": 100,
+        "displayId": "opacity-value"
+      }
+    }
+  },
+  "themeMode": {
+    "modes": [
+      {
+        "id": "system",
+        "label": "System",
+        "icon": "💻"
+      },
+      {
+        "id": "light",
+        "label": "Light",
+        "icon": "☀️"
+      },
+      {
+        "id": "dark",
+        "label": "Dark",
+        "icon": "🌙"
+      }
+    ]
+  }
+}
+
