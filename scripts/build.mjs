@@ -131,6 +131,25 @@ const sortThemes = (themes) => {
   });
 };
 
+const dedupeThemes = (themes, label) => {
+  const seen = new Set();
+  return themes.filter(theme => {
+    if (!theme || !theme.id) {
+      console.warn(`[build] Warning: Skipping ${label || 'theme'} entry without an id.`);
+      return false;
+    }
+    if (seen.has(theme.id)) {
+      console.warn(`[build] Warning: Duplicate theme id "${theme.id}" detected in ${label || 'themes'}. Keeping the first occurrence.`);
+      return false;
+    }
+    seen.add(theme.id);
+    return true;
+  });
+};
+
+lightThemes = dedupeThemes(lightThemes, 'light');
+darkThemes = dedupeThemes(darkThemes, 'dark');
+
 sortThemes(lightThemes);
 sortThemes(darkThemes);
 
