@@ -4,8 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="theme-color" content="rgba(236, 236, 236, 0)" media="(prefers-color-scheme: light)" />
-  <meta name="theme-color" content="rgba(30, 30, 30, 0)" media="(prefers-color-scheme: dark)" />
+  <meta name="theme-color" id="theme-color-meta" content="#f5f5f7" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <title>Evolution + DaisyUI 5.7</title>
@@ -24,6 +23,46 @@
       const backgroundKey = "evo-background";
       const backgroundColorKey = "evo-background-color";
 
+      let __themeMetaProbe = null;
+      const __metaProbeHost = document.head || document.documentElement;
+
+      function __resolveMetaColor(raw) {
+        if (!raw) {
+          return null;
+        }
+        if (!__themeMetaProbe) {
+          __themeMetaProbe = document.createElement('div');
+          __themeMetaProbe.style.position = 'absolute';
+          __themeMetaProbe.style.width = '0';
+          __themeMetaProbe.style.height = '0';
+          __themeMetaProbe.style.pointerEvents = 'none';
+          __themeMetaProbe.style.opacity = '0';
+          __metaProbeHost.appendChild(__themeMetaProbe);
+        }
+        __themeMetaProbe.style.color = raw;
+        const resolved = getComputedStyle(__themeMetaProbe).color;
+        return resolved || raw;
+      }
+
+      function __updateThemeMetaColor() {
+        const meta = document.getElementById('theme-color-meta') || document.querySelector('meta[name="theme-color"]');
+        if (!meta) {
+          return;
+        }
+        const styles = getComputedStyle(document.documentElement);
+        let baseColor = styles.getPropertyValue('--color-base-100').trim();
+        if (!baseColor) {
+          baseColor = styles.getPropertyValue('--color-base-200').trim();
+        }
+        if (!baseColor) {
+          return;
+        }
+        const resolvedColor = __resolveMetaColor(baseColor) || baseColor;
+        meta.setAttribute('content', resolvedColor);
+      }
+
+      window.__updateThemeMetaColor = __updateThemeMetaColor;
+
       // Load saved preferences
       // theme-change uses "theme" key, but we also check our legacy key
       const storedTheme = localStorage.getItem("theme") || localStorage.getItem(themeKey);
@@ -38,6 +77,8 @@
         localStorage.setItem(themeKey, storedTheme);
       }
       if (storedLang) document.documentElement.setAttribute("lang", storedLang);
+
+      __updateThemeMetaColor();
       
       const savedBackground = localStorage.getItem(backgroundKey);
       const defaultBackground = 'liquid';
@@ -233,6 +274,8 @@
             style.textContent = css;
           }
         }
+
+        __updateThemeMetaColor();
       };
       
       // Watch for theme changes from theme-change library
@@ -251,6 +294,7 @@
               if (typeof window.__syncThemeUI === 'function') {
                 window.__syncThemeUI();
               }
+              __updateThemeMetaColor();
             }
           }
         });
