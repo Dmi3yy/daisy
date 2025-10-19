@@ -6,6 +6,11 @@
       "description": "No animated background"
     },
     {
+      "id": "liquid",
+      "name": "Liquid Glass",
+      "description": "macOS-inspired liquid gradient with responsive hotspots"
+    },
+    {
       "id": "gradient-spheres",
       "name": "Gradient Spheres",
       "description": "Modern gradient with soft spheres and particles"

@@ -68,6 +68,12 @@
           "icon": "💎"
         },
         {
+          "id": "liquid",
+          "label": "Liquid Glass",
+          "icon": "🌊",
+          "animated": true
+        },
+        {
           "id": "gradient-spheres",
           "label": "Gradient Spheres",
           "icon": "🌈",

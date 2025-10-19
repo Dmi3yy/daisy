@@ -50,18 +50,18 @@ function loadThemesFromDirectory(dirPath) {
             const themeData = JSON.parse(fs.readFileSync(subFilePath, 'utf8'));
             const colors = themeData.colors || {};
             const themeColors = [
-              colors['--color-base-100'] || 'oklch(100% 0 0)',
-              colors['--color-primary'] || 'oklch(70% 0.15 220)',
-              colors['--color-secondary'] || 'oklch(70% 0.15 280)',
-              colors['--color-accent'] || 'oklch(70% 0.15 160)',
-              colors['--color-base-200'] || 'oklch(95% 0 0)'
+              colors['--color-base-100'] || colors['base-100'] || 'oklch(100% 0 0)',
+              colors['--color-primary'] || colors['primary'] || 'oklch(70% 0.15 220)',
+              colors['--color-secondary'] || colors['secondary'] || 'oklch(70% 0.15 280)',
+              colors['--color-accent'] || colors['accent'] || 'oklch(70% 0.15 160)',
+              colors['--color-base-200'] || colors['base-200'] || 'oklch(95% 0 0)'
             ];
             themes.push({
               id: themeData.name,
               name: themeData.name,
               mode: themeData.mode,
               colors: themeColors,
-              primaryColor: colors['--color-primary'] || 'oklch(70% 0.15 220)',
+              primaryColor: colors['--color-primary'] || colors['primary'] || 'oklch(70% 0.15 220)',
               navbar: themeData.navbar || { light: '#ffffff', dark: '#1e1e1e' },
               file: `${file}/${subFile}`
             });
@@ -76,18 +76,18 @@ function loadThemesFromDirectory(dirPath) {
         const themeData = JSON.parse(fs.readFileSync(filePath, 'utf8'));
         const colors = themeData.colors || {};
         const themeColors = [
-          colors['--color-base-100'] || 'oklch(100% 0 0)',
-          colors['--color-primary'] || 'oklch(70% 0.15 220)',
-          colors['--color-secondary'] || 'oklch(70% 0.15 280)',
-          colors['--color-accent'] || 'oklch(70% 0.15 160)',
-          colors['--color-base-200'] || 'oklch(95% 0 0)'
+          colors['--color-base-100'] || colors['base-100'] || 'oklch(100% 0 0)',
+          colors['--color-primary'] || colors['primary'] || 'oklch(70% 0.15 220)',
+          colors['--color-secondary'] || colors['secondary'] || 'oklch(70% 0.15 280)',
+          colors['--color-accent'] || colors['accent'] || 'oklch(70% 0.15 160)',
+          colors['--color-base-200'] || colors['base-200'] || 'oklch(95% 0 0)'
         ];
         themes.push({
           id: themeData.name,
           name: themeData.name,
           mode: themeData.mode,
           colors: themeColors,
-          primaryColor: colors['--color-primary'] || 'oklch(70% 0.15 220)',
+          primaryColor: colors['--color-primary'] || colors['primary'] || 'oklch(70% 0.15 220)',
           navbar: themeData.navbar || { light: '#ffffff', dark: '#1e1e1e' },
           file: file
         });
@@ -182,6 +182,7 @@ console.log(`[build] ✓ Loaded ${lightThemes.length} light themes and ${darkThe
 // Animated backgrounds
 const backgrounds = [
   { id: "none", name: "None", icon: "⬜" },
+  { id: "liquid", name: "Liquid Glass", icon: "🌊" },
   { id: "gradient-spheres", name: "Gradient Spheres", icon: "🌈" },
   { id: "magic", name: "Magic Aurora", icon: "🪄" },
   { id: "colorful-dots", name: "Colorful Dots", icon: "✨" },
