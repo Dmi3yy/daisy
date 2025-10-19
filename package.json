@@ -14,7 +14,8 @@
     "dev:html": "node ./scripts/watch.mjs",
     "dev:server": "live-server dist --port=3000 --host=localhost --wait=200 --no-browser",
     "dev": "npm run build:css && npm run build:html:dev && concurrently -n \"CSS,HTML,SERVER\" -c \"cyan,green,magenta\" \"npm:dev:css\" \"npm:dev:html\" \"npm:dev:server\"",
-    "validate": "node ./scripts/validate.mjs"
+    "validate": "node ./scripts/validate.mjs",
+    "test": "node --test tests"
   },
   "devDependencies": {
     "@tailwindcss/cli": "^4.0.0-alpha.25",
