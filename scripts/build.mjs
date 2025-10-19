@@ -55,6 +55,7 @@ function loadThemesFromDirectory(dirPath) {
           mode: themeData.mode,
           colors: themeColors,
           primaryColor: colors['--color-primary'] || 'oklch(70% 0.15 220)',
+          navbar: themeData.navbar || { light: '#ffffff', dark: '#1e1e1e' },
           file: file
         });
       } catch (err) {

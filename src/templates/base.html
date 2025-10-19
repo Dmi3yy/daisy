@@ -4,6 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="theme-color" content="#ececec" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#1e1e1e" media="(prefers-color-scheme: dark)" />
   <title>Evolution + DaisyUI 5.7</title>
   <link rel="stylesheet" href="./styles.css" />
   <script src="https://cdn.jsdelivr.net/npm/theme-change@2.0.2/index.js"></script>
@@ -35,27 +37,37 @@
       if (storedLang) document.documentElement.setAttribute("lang", storedLang);
       
       // Apply saved background after DOM is loaded
-      const storedBackground = localStorage.getItem(backgroundKey);
-      if (storedBackground) {
-        window.addEventListener('DOMContentLoaded', function() {
-          window.__applyBackground(storedBackground);
-          
-          // Initialize HSL sliders with saved values
-          const savedHue = localStorage.getItem('evo-solid-hue') || 220;
-          const savedOpacity = localStorage.getItem('evo-solid-opacity') || 100;
-          
-          const hueSlider = document.getElementById('hue-slider');
-          const opacitySlider = document.getElementById('opacity-slider');
-          
-          if (hueSlider) hueSlider.value = savedHue;
-          if (opacitySlider) opacitySlider.value = savedOpacity;
-          
-          // Update displays and slider colors
-          if (window.__applySolidColorRealtime) {
-            window.__applySolidColorRealtime();
+      const storedBackground = localStorage.getItem(backgroundKey) || 'none';
+      window.addEventListener('DOMContentLoaded', function() {
+        window.__applyBackground(storedBackground);
+        
+        // Initialize background checkmarks
+        document.querySelectorAll('.bg-item').forEach(btn => {
+          const checkmark = btn.querySelector('.bg-checkmark');
+          if (checkmark) {
+            if (btn.getAttribute('data-bg') === storedBackground) {
+              checkmark.style.opacity = '1';
+            } else {
+              checkmark.style.opacity = '0';
+            }
           }
         });
-      }
+        
+        // Initialize HSL sliders with saved values
+        const savedHue = localStorage.getItem('evo-solid-hue') || 220;
+        const savedOpacity = localStorage.getItem('evo-solid-opacity') || 100;
+        
+        const hueSlider = document.getElementById('hue-slider');
+        const opacitySlider = document.getElementById('opacity-slider');
+        
+        if (hueSlider) hueSlider.value = savedHue;
+        if (opacitySlider) opacitySlider.value = savedOpacity;
+        
+        // Update displays and slider colors
+        if (window.__applySolidColorRealtime) {
+          window.__applySolidColorRealtime();
+        }
+      });
       
       // Evo Theme Effects Management
       const evoDepthKey = 'evo-depth';
@@ -234,6 +246,18 @@
       window.__setBackground = function (bg) {
         localStorage.setItem(backgroundKey, bg);
         __applyBackground(bg);
+        
+        // Update background checkmarks
+        document.querySelectorAll('.bg-item').forEach(btn => {
+          const checkmark = btn.querySelector('.bg-checkmark');
+          if (checkmark) {
+            if (btn.getAttribute('data-bg') === bg) {
+              checkmark.style.opacity = '1';
+            } else {
+              checkmark.style.opacity = '0';
+            }
+          }
+        });
       };
 
       window.__applyBackground = function(bgId) {

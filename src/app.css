@@ -4,6 +4,59 @@
   logs: true;
 }
 
+/* Remove body margin/padding for full-width navbar */
+body {
+  margin: 0;
+  padding: 0;
+}
+
+/* Navbar - always follows OS theme (not site theme) for seamless browser integration */
+.navbar {
+  /* OS Light = light navbar */
+  background-color: #ececec;
+  color: #1d1d1f;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s, border-color 0.3s;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+@media (prefers-color-scheme: dark) {
+  .navbar {
+    /* OS Dark = dark navbar */
+    background-color: #1e1e1e;
+    color: #f5f5f7;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+}
+
+/* EVO theme - transparent navbar with backdrop blur (Apple Liquid Glass style) */
+[data-theme="evo"] .navbar {
+  background-color: rgba(255, 255, 255, 0.7) !important;
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05) !important;
+}
+
+@media (prefers-color-scheme: dark) {
+  [data-theme="evo"] .navbar {
+    background-color: rgba(30, 30, 30, 0.7) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+  }
+}
+
+/* Fix content positioning for all themes */
+.drawer-content > main {
+  position: relative;
+  z-index: 1;
+}
+
+/* Ensure dropdowns appear above navbar */
+.dropdown-content {
+  z-index: 1001 !important;
+}
+
 /* Register CSS custom properties for smooth numeric interpolation */
 @property --radius-selector {
   syntax: '<length>';

@@ -1,4 +1,4 @@
-<div class="navbar bg-base-100 shadow-sm">
+<div class="navbar shadow-sm" id="main-navbar">
   <!-- Logo and brand (glows when Evo is active) -->
   <div class="flex-1">
     <a class="btn btn-ghost text-xl gap-2 transition-all duration-300" id="evo-logo">
@@ -102,23 +102,23 @@
           <div class="collapse-content px-0 pb-3">
             <div class="space-y-4">
               
-              <!-- Evo Auto Theme Toggle -->
+              <!-- Custom Settings Toggle -->
               <div class="flex items-center justify-between">
                 <div class="flex items-center gap-2">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 94 90" fill="none" stroke="currentColor" stroke-width="2" class="w-5 h-5 evo-logo" id="evo-logo">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 94 90" fill="none" stroke="currentColor" stroke-width="2" class="w-5 h-5 evo-logo" id="evo-logo-mini">
                     <path d="m37.361 37.392 6.783 16.393 6.792-16.393M32.017 45.49h-7.908M33.161 37.392h-9.3v16.393h9.293M61.732 37.392c4.239 0 7.675 3.51 7.675 8.097 0 4.588-3.437 8.296-7.676 8.296-4.239 0-7.675-3.708-7.675-8.296 0-4.587 3.435-8.097 7.674-8.097h.002z"/>
                   </svg>
                   <div>
-                    <div class="text-sm font-medium">Evo Auto Theme</div>
-                    <div class="text-xs opacity-60">Random theme rotation</div>
+                    <div class="text-sm font-medium">Custom Settings</div>
+                    <div class="text-xs opacity-60">Apply my customization</div>
                   </div>
                 </div>
-                <input type="checkbox" class="toggle toggle-primary toggle-sm" id="evo-toggle" onchange="__toggleEvoMode()" />
+                <input type="checkbox" class="toggle toggle-primary toggle-sm" id="evo-toggle" onchange="__toggleEvoCustom()" />
               </div>
 
-              <!-- Rotation Speed (shown when Evo is ON) -->
-              <div id="evo-speed-section">
-                <div class="text-xs font-bold text-base-content/50 uppercase tracking-wider mb-2">Rotation Speed</div>
+              <!-- Theme Rotation Speed -->
+              <div id="evo-speed-section" class="pt-3 border-t border-base-300">
+                <div class="text-xs font-bold text-base-content/50 uppercase tracking-wider mb-2">Theme Rotation</div>
                 <div class="space-y-2">
                   <div class="flex items-center justify-between mb-2">
                     <span class="text-xs font-mono badge badge-ghost badge-sm" id="evo-speed-display">0s (Off)</span>
@@ -177,34 +177,61 @@
             </div>
           </div>
           <div class="collapse-content px-0 pb-3">
-            <div class="space-y-2">
+            <ul class="space-y-1">
               <!-- None -->
-              <button onclick="__setBackground('none')" class="btn btn-sm btn-block justify-start" data-bg="none">
-                <span class="text-lg">⬜</span>
-                None
-              </button>
+              <li>
+                <button onclick="__setBackground('none')" class="flex w-full items-center gap-2 px-3 py-1.5 rounded-lg transition-all hover:shadow-sm bg-item" data-bg="none">
+                  <span class="text-lg">⬜</span>
+                  <span class="flex-1 text-left text-sm">None</span>
+                  <svg class="h-3.5 w-3.5 flex-shrink-0 opacity-0 bg-checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                  </svg>
+                </button>
+              </li>
               
               <!-- Transparent -->
-              <button onclick="__setBackground('transparent')" class="btn btn-sm btn-block justify-start" data-bg="transparent">
-                <span class="text-lg">💎</span>
-                Transparent (Glass)
-              </button>
+              <li>
+                <button onclick="__setBackground('transparent')" class="flex w-full items-center gap-2 px-3 py-1.5 rounded-lg transition-all hover:shadow-sm bg-item" data-bg="transparent">
+                  <span class="text-lg">💎</span>
+                  <span class="flex-1 text-left text-sm">Transparent (Glass)</span>
+                  <svg class="h-3.5 w-3.5 flex-shrink-0 opacity-0 bg-checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                  </svg>
+                </button>
+              </li>
               
               <!-- Animated Backgrounds -->
-              <div class="text-xs opacity-60 mt-3 mb-2">Animated</div>
-              <button onclick="__setBackground('gradient-spheres')" class="btn btn-sm btn-block justify-start" data-bg="gradient-spheres">
-                <span class="text-lg">🌈</span>
-                Gradient Spheres
-              </button>
-              <button onclick="__setBackground('colorful-dots')" class="btn btn-sm btn-block justify-start" data-bg="colorful-dots">
-                <span class="text-lg">✨</span>
-                Colorful Dots
-              </button>
-              <button onclick="__setBackground('cosmic-dream')" class="btn btn-sm btn-block justify-start" data-bg="cosmic-dream">
-                <span class="text-lg">🌌</span>
-                Cosmic Dream
-              </button>
-            </div>
+              <li class="pt-2">
+                <div class="text-xs opacity-60 px-3 mb-1">Animated</div>
+              </li>
+              <li>
+                <button onclick="__setBackground('gradient-spheres')" class="flex w-full items-center gap-2 px-3 py-1.5 rounded-lg transition-all hover:shadow-sm bg-item" data-bg="gradient-spheres">
+                  <span class="text-lg">🌈</span>
+                  <span class="flex-1 text-left text-sm">Gradient Spheres</span>
+                  <svg class="h-3.5 w-3.5 flex-shrink-0 opacity-0 bg-checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                  </svg>
+                </button>
+              </li>
+              <li>
+                <button onclick="__setBackground('colorful-dots')" class="flex w-full items-center gap-2 px-3 py-1.5 rounded-lg transition-all hover:shadow-sm bg-item" data-bg="colorful-dots">
+                  <span class="text-lg">✨</span>
+                  <span class="flex-1 text-left text-sm">Colorful Dots</span>
+                  <svg class="h-3.5 w-3.5 flex-shrink-0 opacity-0 bg-checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                  </svg>
+                </button>
+              </li>
+              <li>
+                <button onclick="__setBackground('cosmic-dream')" class="flex w-full items-center gap-2 px-3 py-1.5 rounded-lg transition-all hover:shadow-sm bg-item" data-bg="cosmic-dream">
+                  <span class="text-lg">🌌</span>
+                  <span class="flex-1 text-left text-sm">Cosmic Dream</span>
+                  <svg class="h-3.5 w-3.5 flex-shrink-0 opacity-0 bg-checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                  </svg>
+                </button>
+              </li>
+            </ul>
           </div>
         </div>
 
@@ -346,55 +373,72 @@
     }
   };
   
-  // Evo Toggle (settings always visible now)
-  window.__toggleEvoMode = function() {
+  // Evo Custom Settings Toggle - apply/remove custom theme settings
+  window.__toggleEvoCustom = function() {
     const toggle = document.getElementById('evo-toggle');
     const logo = document.getElementById('evo-logo');
+    const logoMini = document.getElementById('evo-logo-mini');
     const isActive = toggle && toggle.checked;
     
     // Save state
-    localStorage.setItem('evo-active', isActive);
+    localStorage.setItem('evo-custom-active', isActive);
     
-    // Update logo glow
-    if (logo) {
-      if (isActive) {
-        logo.classList.add('evo-active');
-      } else {
-        logo.classList.remove('evo-active');
+    // Update logo glow (both main and mini)
+    [logo, logoMini].forEach(el => {
+      if (el) {
+        if (isActive) {
+          el.classList.add('evo-active');
+        } else {
+          el.classList.remove('evo-active');
+        }
       }
-    }
+    });
     
-    // Start/stop Evo Auto
+    // Apply or remove custom theme variables
     if (isActive) {
-      const speed = parseInt(document.getElementById('evo-speed-slider')?.value || 3);
-      window.__startEvoAuto && window.__startEvoAuto(speed);
+      // Apply custom settings from localStorage
+      window.__applyCustomSettings && window.__applyCustomSettings();
     } else {
-      window.__stopEvoAuto && window.__stopEvoAuto();
+      // Remove custom settings, use theme defaults
+      window.__removeCustomSettings && window.__removeCustomSettings();
     }
   };
   
-  // Evo Speed Update
+  // Theme Rotation Speed Update - independent of custom settings
   window.__updateEvoSpeed = function(speed) {
     const speedNum = parseFloat(speed);
     const display = document.getElementById('evo-speed-display');
     if (display) {
-      display.textContent = speedNum === 0 ? 'OFF' : `${speedNum.toFixed(1)}s`;
+      display.textContent = speedNum === 0 ? 'Off' : `${speedNum.toFixed(1)}s`;
     }
     
     // Save speed
-    localStorage.setItem('evo-speed', speedNum);
+    localStorage.setItem('evo-rotation-speed', speedNum);
     
-    // Update Evo Auto with new speed
-    const toggle = document.getElementById('evo-toggle');
-    if (toggle && toggle.checked) {
-      if (speedNum === 0) {
-        window.__stopEvoAuto && window.__stopEvoAuto();
-        toggle.checked = false;
-        document.getElementById('evo-logo')?.classList.remove('evo-active');
-      } else {
-        window.__startEvoAuto && window.__startEvoAuto(speedNum);
-      }
+    // Stop any existing rotation
+    window.__stopEvoAuto && window.__stopEvoAuto();
+    
+    // Start rotation if speed > 0
+    if (speedNum > 0) {
+      window.__startEvoAuto && window.__startEvoAuto(speedNum);
     }
+    
+    // Update transition duration
+    window.__updateTransitionDuration && window.__updateTransitionDuration(speedNum);
+  };
+  
+  // Toggle 3D Depth effect
+  window.__toggleDepth = function(enabled) {
+    const value = enabled ? '1' : '0';
+    document.documentElement.style.setProperty('--depth', value);
+    localStorage.setItem('evo-depth', value);
+  };
+  
+  // Toggle Film Grain effect
+  window.__toggleNoise = function(enabled) {
+    const value = enabled ? '1' : '0';
+    document.documentElement.style.setProperty('--noise', value);
+    localStorage.setItem('evo-noise', value);
   };
   
   // Theme management - simplified
@@ -456,18 +500,54 @@
       const savedMode = localStorage.getItem('evo-theme-mode') || 'system';
       window.__setThemeMode(savedMode);
       
-      // Initialize Evo state
+      // Initialize Evo Custom Settings state
       const evoToggle = document.getElementById('evo-toggle');
-      const evoAccordion = document.getElementById('evo-accordion');
-      const savedEvoState = localStorage.getItem('evo-active') === 'true';
+      const savedCustomState = localStorage.getItem('evo-custom-active') === 'true';
       
-        if (evoToggle) {
-          evoToggle.checked = savedEvoState;
-          if (savedEvoState) {
-            // Update logo
-            document.getElementById('evo-logo')?.classList.add('evo-active');
-          }
+      if (evoToggle) {
+        evoToggle.checked = savedCustomState;
+        if (savedCustomState) {
+          // Update logos (both main and mini)
+          document.getElementById('evo-logo')?.classList.add('evo-active');
+          document.getElementById('evo-logo-mini')?.classList.add('evo-active');
+          // Apply custom settings
+          window.__applyCustomSettings && window.__applyCustomSettings();
         }
+      }
+      
+      // Initialize Theme Rotation Speed
+      const savedSpeed = parseFloat(localStorage.getItem('evo-rotation-speed') || '0');
+      const speedSlider = document.getElementById('evo-speed-slider');
+      const speedDisplay = document.getElementById('evo-speed-display');
+      
+      if (speedSlider) {
+        speedSlider.value = savedSpeed;
+      }
+      if (speedDisplay) {
+        speedDisplay.textContent = savedSpeed === 0 ? 'Off' : `${savedSpeed.toFixed(1)}s`;
+      }
+      
+      // Start rotation if speed > 0
+      if (savedSpeed > 0) {
+        window.__startEvoAuto && window.__startEvoAuto(savedSpeed);
+      }
+      
+      // Initialize Depth and Noise from localStorage
+      const savedDepth = localStorage.getItem('evo-depth') || '1';
+      const savedNoise = localStorage.getItem('evo-noise') || '0';
+      
+      const depthToggle = document.getElementById('system-depth-toggle');
+      const noiseToggle = document.getElementById('system-noise-toggle');
+      
+      if (depthToggle) {
+        depthToggle.checked = savedDepth === '1';
+        document.documentElement.style.setProperty('--depth', savedDepth);
+      }
+      
+      if (noiseToggle) {
+        noiseToggle.checked = savedNoise === '1';
+        document.documentElement.style.setProperty('--noise', savedNoise);
+      }
     });
     
     // Update when theme/background changes
@@ -495,11 +575,13 @@
 
 <style>
   /* Evo Logo Glow Effect */
-  #evo-logo.evo-active {
+  #evo-logo.evo-active,
+  #evo-logo-mini.evo-active {
     position: relative;
   }
   
-  #evo-logo.evo-active svg {
+  #evo-logo.evo-active svg,
+  #evo-logo-mini.evo-active {
     filter: drop-shadow(0 0 8px oklch(var(--p))) drop-shadow(0 0 16px oklch(var(--p) / 0.5));
     animation: pulse-glow 2s ease-in-out infinite;
   }

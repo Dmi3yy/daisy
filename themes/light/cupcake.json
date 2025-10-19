@@ -1,6 +1,10 @@
 {
   "name": "cupcake",
   "mode": "light",
+  "navbar": {
+    "light": "#ffffff",
+    "dark": "#1e1e1e"
+  },
   "colors": {
     "--color-base-100": "oklch(99% 0 0)",
     "--color-base-200": "oklch(95% 0.015 270)",
