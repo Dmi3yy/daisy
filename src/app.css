@@ -10,39 +10,39 @@
   default: true;
   prefersdark: false;
   color-scheme: light;
-  
-  --color-base-100: oklch(100% 0 0);
-  --color-base-200: oklch(95% 0 0);
-  --color-base-300: oklch(90.5% 0.004 286);
-  --color-base-content: oklch(24% 0.052 272);
-  
-  --color-primary: oklch(51% 0.267 271);
-  --color-primary-content: oklch(89% 0.062 272);
-  
-  --color-secondary: oklch(69% 0.198 328);
-  --color-secondary-content: oklch(100% 0 0);
-  
-  --color-accent: oklch(64% 0.183 186);
-  --color-accent-content: oklch(16% 0.041 192);
-  
-  --color-neutral: oklch(31% 0.041 257);
-  --color-neutral-content: oklch(85% 0.018 258);
-  
-  --color-info: oklch(70% 0.175 231);
-  --color-info-content: oklch(17% 0.042 232);
-  
-  --color-success: oklch(72% 0.183 161);
-  --color-success-content: oklch(15% 0.046 163);
-  
-  --color-warning: oklch(78% 0.194 83);
-  --color-warning-content: oklch(24% 0.049 85);
-  
-  --color-error: oklch(71% 0.199 22);
-  --color-error-content: oklch(29% 0.050 23);
-  
+
+  --color-base-100: oklch(99% 0.003 240);
+  --color-base-200: oklch(97% 0.005 240);
+  --color-base-300: oklch(94% 0.008 240);
+  --color-base-content: oklch(20% 0.05 240);
+
+  --color-primary: oklch(55% 0.20 260);
+  --color-primary-content: oklch(99% 0.003 260);
+
+  --color-secondary: oklch(65% 0.18 200);
+  --color-secondary-content: oklch(99% 0.003 200);
+
+  --color-accent: oklch(70% 0.17 160);
+  --color-accent-content: oklch(99% 0.003 160);
+
+  --color-neutral: oklch(45% 0.01 240);
+  --color-neutral-content: oklch(99% 0.003 240);
+
+  --color-info: oklch(65% 0.18 220);
+  --color-info-content: oklch(99% 0.003 220);
+
+  --color-success: oklch(60% 0.20 145);
+  --color-success-content: oklch(99% 0.003 145);
+
+  --color-warning: oklch(75% 0.18 60);
+  --color-warning-content: oklch(20% 0.05 60);
+
+  --color-error: oklch(60% 0.22 25);
+  --color-error-content: oklch(99% 0.003 25);
+
   --radius-selector: 1rem;
-  --radius-field: 0.5rem;
-  --radius-box: 1rem;
+  --radius-field: 0.75rem;
+  --radius-box: 1.125rem;
   --size-selector: 0.25rem;
   --size-field: 0.25rem;
   --border: 1px;
@@ -57,39 +57,39 @@
   default: false;
   prefersdark: true;
   color-scheme: dark;
-  
-  --color-base-100: oklch(29% 0.028 255);
-  --color-base-200: oklch(26% 0.024 255);
-  --color-base-300: oklch(23% 0.022 256);
-  --color-base-content: oklch(68% 0.014 256);
-  
-  --color-primary: oklch(70% 0.146 221);
-  --color-primary-content: oklch(17% 0.035 221);
-  
-  --color-secondary: oklch(68% 0.148 274);
-  --color-secondary-content: oklch(14% 0.037 274);
-  
-  --color-accent: oklch(72% 0.183 350);
-  --color-accent-content: oklch(30% 0.046 351);
-  
-  --color-neutral: oklch(23% 0.032 253);
-  --color-neutral-content: oklch(81% 0.012 253);
-  
-  --color-info: oklch(70% 0.175 231);
-  --color-info-content: oklch(17% 0.042 232);
-  
-  --color-success: oklch(72% 0.183 161);
-  --color-success-content: oklch(15% 0.046 163);
-  
-  --color-warning: oklch(78% 0.194 83);
-  --color-warning-content: oklch(24% 0.049 85);
-  
-  --color-error: oklch(71% 0.199 22);
-  --color-error-content: oklch(29% 0.050 23);
-  
+
+  --color-base-100: oklch(20% 0.02 240);
+  --color-base-200: oklch(25% 0.03 240);
+  --color-base-300: oklch(30% 0.04 240);
+  --color-base-content: oklch(95% 0.05 240);
+
+  --color-primary: oklch(60% 0.20 260);
+  --color-primary-content: oklch(20% 0.02 260);
+
+  --color-secondary: oklch(70% 0.18 200);
+  --color-secondary-content: oklch(20% 0.02 200);
+
+  --color-accent: oklch(75% 0.17 160);
+  --color-accent-content: oklch(20% 0.02 160);
+
+  --color-neutral: oklch(60% 0.01 240);
+  --color-neutral-content: oklch(20% 0.02 240);
+
+  --color-info: oklch(65% 0.18 220);
+  --color-info-content: oklch(20% 0.02 220);
+
+  --color-success: oklch(65% 0.20 145);
+  --color-success-content: oklch(20% 0.02 145);
+
+  --color-warning: oklch(80% 0.18 60);
+  --color-warning-content: oklch(20% 0.02 60);
+
+  --color-error: oklch(65% 0.22 25);
+  --color-error-content: oklch(20% 0.02 25);
+
   --radius-selector: 1rem;
-  --radius-field: 0.5rem;
-  --radius-box: 1rem;
+  --radius-field: 0.75rem;
+  --radius-box: 1.125rem;
   --size-selector: 0.25rem;
   --size-field: 0.25rem;
   --border: 1px;
@@ -196,13 +196,31 @@ body {
 @property --radius-field {
   syntax: '<length>';
   inherits: true;
-  initial-value: 0.25rem;
+  initial-value: 0.75rem;
 }
 
 @property --radius-box {
   syntax: '<length>';
   inherits: true;
-  initial-value: 0.5rem;
+  initial-value: 1.125rem;
+}
+
+@property --liquid-hx {
+  syntax: '<length-percentage>';
+  inherits: true;
+  initial-value: 50vw;
+}
+
+@property --liquid-hy {
+  syntax: '<length-percentage>';
+  inherits: true;
+  initial-value: 50vh;
+}
+
+@property --liquid-intensity {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 0.45;
 }
 
 @property --size-selector {
@@ -388,33 +406,33 @@ body {
   color-scheme: light;
 
   /* Base colors */
-  --color-base-100: oklch(98% 0.02 240);
-  --color-base-200: oklch(95% 0.03 240);
-  --color-base-300: oklch(92% 0.04 240);
+  --color-base-100: oklch(99% 0.003 240);
+  --color-base-200: oklch(97% 0.005 240);
+  --color-base-300: oklch(94% 0.008 240);
   --color-base-content: oklch(20% 0.05 240);
 
   /* Brand & semantic colors */
-  --color-primary: oklch(55% 0.30 260);
-  --color-primary-content: oklch(98% 0.01 260);
-  --color-secondary: oklch(70% 0.25 200);
-  --color-secondary-content: oklch(98% 0.01 200);
-  --color-accent: oklch(65% 0.25 160);
-  --color-accent-content: oklch(98% 0.01 160);
-  --color-neutral: oklch(50% 0.05 240);
-  --color-neutral-content: oklch(98% 0.01 240);
-  --color-info: oklch(70% 0.20 220);
-  --color-info-content: oklch(98% 0.01 220);
-  --color-success: oklch(65% 0.25 140);
-  --color-success-content: oklch(98% 0.01 140);
-  --color-warning: oklch(80% 0.25 80);
-  --color-warning-content: oklch(20% 0.05 80);
-  --color-error: oklch(65% 0.30 30);
-  --color-error-content: oklch(98% 0.01 30);
+  --color-primary: oklch(55% 0.20 260);
+  --color-primary-content: oklch(99% 0.003 260);
+  --color-secondary: oklch(65% 0.18 200);
+  --color-secondary-content: oklch(99% 0.003 200);
+  --color-accent: oklch(70% 0.17 160);
+  --color-accent-content: oklch(99% 0.003 160);
+  --color-neutral: oklch(45% 0.01 240);
+  --color-neutral-content: oklch(99% 0.003 240);
+  --color-info: oklch(65% 0.18 220);
+  --color-info-content: oklch(99% 0.003 220);
+  --color-success: oklch(60% 0.20 145);
+  --color-success-content: oklch(99% 0.003 145);
+  --color-warning: oklch(75% 0.18 60);
+  --color-warning-content: oklch(20% 0.05 60);
+  --color-error: oklch(60% 0.22 25);
+  --color-error-content: oklch(99% 0.003 25);
 
   /* Theme builder controls */
   --radius-selector: 1rem;
-  --radius-field: 0.25rem;
-  --radius-box: 0.5rem;
+  --radius-field: 0.75rem;
+  --radius-box: 1.125rem;
   --size-selector: 0.25rem;
   --size-field: 0.25rem;
   --border: 1px;
@@ -437,8 +455,8 @@ body {
   --color-base-content: oklch(95% 0.05 240);
 
   /* Brand colors - Apple's iconic blues and greens */
-  --color-primary: oklch(60% 0.20 240);
-  --color-primary-content: oklch(20% 0.02 240);
+  --color-primary: oklch(60% 0.20 260);
+  --color-primary-content: oklch(20% 0.02 260);
   --color-secondary: oklch(70% 0.18 200);
   --color-secondary-content: oklch(20% 0.02 200);
   --color-accent: oklch(75% 0.17 160);
@@ -455,16 +473,16 @@ body {
   --color-error-content: oklch(20% 0.02 25);
 
   /* Apple-style rounded corners */
-  --radius-selector: 1.25rem;
+  --radius-selector: 1rem;
   --radius-field: 0.75rem;
   --radius-box: 1.125rem;
-  
+
   /* Refined sizes */
   --size-selector: 0.25rem;
   --size-field: 0.25rem;
-  
+
   /* Subtle borders and depth */
-  --border: 0.5px;
+  --border: 1px;
   --depth: 1;
   --noise: 0;
   --glass: 1;
@@ -523,6 +541,55 @@ body {
 }
 
 /* Animated Backgrounds System - see layer system below */
+
+/* Liquid Glass Background (default EVO surface) */
+.bg-liquid {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  --liquid-hx: 50vw;
+  --liquid-hy: 50vh;
+  --liquid-intensity: 0.45;
+  --liquid-c1: oklch(78% 0.10 250);
+  --liquid-c2: oklch(78% 0.10 60);
+  --liquid-c3: oklch(78% 0.10 140);
+  transition:
+    --liquid-hx 90ms linear,
+    --liquid-hy 90ms linear,
+    --liquid-intensity 120ms linear,
+    opacity 120ms linear;
+}
+
+.bg-liquid .liquid-surface {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(340px 340px at var(--liquid-hx) var(--liquid-hy),
+      color-mix(in oklab, var(--liquid-c1), transparent 55%) 0%, transparent 70%),
+    radial-gradient(520px 420px at calc(var(--liquid-hx) + 160px) calc(var(--liquid-hy) + 120px),
+      color-mix(in oklab, var(--liquid-c2), transparent 60%) 0%, transparent 85%),
+    radial-gradient(620px 560px at calc(var(--liquid-hx) - 200px) calc(var(--liquid-hy) - 160px),
+      color-mix(in oklab, var(--liquid-c3), transparent 70%) 0%, transparent 90%),
+    conic-gradient(from 0.25turn at var(--liquid-hx) var(--liquid-hy),
+      color-mix(in oklab, var(--liquid-c1), transparent 80%),
+      color-mix(in oklab, var(--liquid-c2), transparent 85%),
+      color-mix(in oklab, var(--liquid-c3), transparent 85%),
+      transparent 40% 100%);
+  opacity: var(--liquid-intensity);
+  -webkit-mask-image:
+    radial-gradient(1200px 360px at var(--liquid-hx) var(--liquid-hy), #000 0 35%, transparent 60%),
+    radial-gradient(100% 100% at 50% 50%, #000 70%, #0000 71%);
+  -webkit-mask-composite: source-in;
+  mask-composite: intersect;
+  filter: saturate(1.1) brightness(1.05);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bg-liquid {
+    transition: none;
+  }
+}
 
 /* Gradient Spheres Background */
 .bg-gradient-spheres {

@@ -75,16 +75,16 @@
         <div class="form-control mb-4">
           <label class="label">
             <span class="label-text font-semibold">Field Radius</span>
-            <span class="label-text-alt" id="radius_field_value">0.25rem</span>
+            <span class="label-text-alt" id="radius_field_value">0.75rem</span>
           </label>
-          <input type="range" min="0" max="2" step="0.25" value="0.25" class="range" 
+          <input type="range" min="0" max="2" step="0.25" value="0.75" class="range"
                  id="radius_field"
                  oninput="this.nextElementSibling.textContent = this.value + 'rem'; document.getElementById('radius_field_value').textContent = this.value + 'rem'; __setThemeVar('--radius-field', this.value + 'rem')" />
           <div class="w-full flex justify-between text-xs px-2 mt-2">
             <span>0</span>
             <span>0.5</span>
+            <span>0.75</span>
             <span>1</span>
-            <span>1.5</span>
             <span>2</span>
           </div>
           <label class="label">
@@ -96,15 +96,15 @@
         <div class="form-control mb-4">
           <label class="label">
             <span class="label-text font-semibold">Box Radius</span>
-            <span class="label-text-alt" id="radius_box_value">0.5rem</span>
+            <span class="label-text-alt" id="radius_box_value">1.125rem</span>
           </label>
-          <input type="range" min="0" max="2" step="0.25" value="0.5" class="range" 
+          <input type="range" min="0" max="2" step="0.125" value="1.125" class="range"
                  id="radius_box"
                  oninput="this.nextElementSibling.textContent = this.value + 'rem'; document.getElementById('radius_box_value').textContent = this.value + 'rem'; __setThemeVar('--radius-box', this.value + 'rem')" />
           <div class="w-full flex justify-between text-xs px-2 mt-2">
             <span>0</span>
-            <span>0.5</span>
-            <span>1</span>
+            <span>0.75</span>
+            <span>1.125</span>
             <span>1.5</span>
             <span>2</span>
           </div>
@@ -292,7 +292,7 @@
     
     const curTheme = document.documentElement.getAttribute('data-theme') || '[[THEME]]';
     const curLang = document.documentElement.getAttribute('lang') || 'uk';
-    const curBackground = localStorage.getItem('evo-background') || 'magic';
+    const curBackground = localStorage.getItem('evo-background') || 'liquid';
     
     if (themeSel) themeSel.value = curTheme;
     if (langSel) langSel.value = curLang;

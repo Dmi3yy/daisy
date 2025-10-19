@@ -40,7 +40,7 @@
       if (storedLang) document.documentElement.setAttribute("lang", storedLang);
       
       const savedBackground = localStorage.getItem(backgroundKey);
-      const defaultBackground = 'magic';
+      const defaultBackground = 'liquid';
       const storedBackground = savedBackground || defaultBackground;
       window.addEventListener('DOMContentLoaded', function() {
         const evoButton = document.getElementById('evo-button');
@@ -310,6 +310,9 @@
         if (window.__stopCosmicDream) {
           window.__stopCosmicDream();
         }
+        if (window.__stopLiquidBackground) {
+          window.__stopLiquidBackground();
+        }
 
         // Create layer structure if it doesn't exist
         let layersContainer = container.querySelector('.background-layers');
@@ -335,7 +338,7 @@
         }
 
         // Save last animated background for transparent mode
-        const animatedBackgrounds = ['gradient-spheres', 'magic', 'colorful-dots', 'cosmic-dream'];
+        const animatedBackgrounds = ['liquid', 'gradient-spheres', 'magic', 'colorful-dots', 'cosmic-dream'];
         if (animatedBackgrounds.includes(bgId)) {
           localStorage.setItem('evo-last-animated-bg', bgId);
         }
@@ -371,6 +374,15 @@
             document.body.classList.add('has-dynamic-bg');
           } else {
             document.body.classList.remove('has-dynamic-bg');
+          }
+        } else if (bgId === 'liquid') {
+          solidLayer.style.background = '';
+          animatedLayer.className = 'animated-layer bg-liquid';
+          animatedLayer.innerHTML = `
+            <div class="liquid-surface" aria-hidden="true"></div>
+          `;
+          if (window.__startLiquidBackground) {
+            window.__startLiquidBackground(animatedLayer);
           }
         } else if (bgId === 'gradient-spheres') {
           // Clear solid layer, apply animated
@@ -703,6 +715,126 @@
           }
         });
       })();
+
+      let __liquidBackgroundState = null;
+
+      window.__startLiquidBackground = function(container) {
+        if (!container) return;
+
+        if (__liquidBackgroundState) {
+          window.__stopLiquidBackground();
+        }
+
+        const setVar = (key, value) => container.style.setProperty(key, value);
+        const defaultColors = [
+          'oklch(78% 0.10 250)',
+          'oklch(78% 0.10 60)',
+          'oklch(78% 0.10 140)'
+        ];
+        let activeColors = [...defaultColors];
+
+        const applyColors = (colors) => {
+          if (!Array.isArray(colors)) return;
+          setVar('--liquid-c1', colors[0] || defaultColors[0]);
+          setVar('--liquid-c2', colors[1] || colors[0] || defaultColors[1]);
+          setVar('--liquid-c3', colors[2] || colors[1] || defaultColors[2]);
+          activeColors = [
+            colors[0] || defaultColors[0],
+            colors[1] || colors[0] || defaultColors[1],
+            colors[2] || colors[1] || defaultColors[2]
+          ];
+        };
+
+        setVar('--liquid-hx', '50vw');
+        setVar('--liquid-hy', '50vh');
+        setVar('--liquid-intensity', '0.45');
+        applyColors(defaultColors);
+
+        const pointermove = (event) => {
+          setVar('--liquid-hx', event.clientX + 'px');
+          setVar('--liquid-hy', event.clientY + 'px');
+        };
+
+        window.addEventListener('pointermove', pointermove, { passive: true });
+
+        const readParams = (element) => {
+          if (!element) return activeColors;
+          try {
+            const parsed = JSON.parse(element.getAttribute('data-evo') || '{}');
+            const params = (parsed && parsed.params) || [];
+            return [
+              params[0]?.color || activeColors[0],
+              params[1]?.color || params[0]?.color || activeColors[1],
+              params[2]?.color || params[1]?.color || activeColors[2]
+            ];
+          } catch (err) {
+            console.warn('[liquid] Failed to parse data-evo:', err);
+            return activeColors;
+          }
+        };
+
+        const onPointerEnter = (event) => {
+          const target = event.target?.closest('[data-evo]');
+          if (!target) return;
+          applyColors(readParams(target));
+          setVar('--liquid-intensity', '0.7');
+        };
+
+        const onPointerLeave = (event) => {
+          if (!event.target?.closest('[data-evo]')) return;
+          applyColors(defaultColors);
+          setVar('--liquid-intensity', '0.45');
+        };
+
+        const onFocusIn = (event) => {
+          const target = event.target?.closest('[data-evo]');
+          if (!target) return;
+          applyColors(readParams(target));
+          setVar('--liquid-intensity', '0.65');
+          const rect = target.getBoundingClientRect();
+          setVar('--liquid-hx', rect.left + rect.width / 2 + 'px');
+          setVar('--liquid-hy', rect.top + rect.height / 2 + 'px');
+        };
+
+        const onFocusOut = (event) => {
+          if (!event.target?.closest('[data-evo]')) return;
+          applyColors(defaultColors);
+          setVar('--liquid-intensity', '0.45');
+        };
+
+        document.addEventListener('pointerenter', onPointerEnter, true);
+        document.addEventListener('pointerleave', onPointerLeave, true);
+        document.addEventListener('focusin', onFocusIn, true);
+        document.addEventListener('focusout', onFocusOut, true);
+
+        __liquidBackgroundState = {
+          pointermove,
+          onPointerEnter,
+          onPointerLeave,
+          onFocusIn,
+          onFocusOut,
+          container
+        };
+      };
+
+      window.__stopLiquidBackground = function() {
+        if (!__liquidBackgroundState) return;
+        const { pointermove, onPointerEnter, onPointerLeave, onFocusIn, onFocusOut, container } = __liquidBackgroundState;
+        window.removeEventListener('pointermove', pointermove);
+        document.removeEventListener('pointerenter', onPointerEnter, true);
+        document.removeEventListener('pointerleave', onPointerLeave, true);
+        document.removeEventListener('focusin', onFocusIn, true);
+        document.removeEventListener('focusout', onFocusOut, true);
+        if (container) {
+          container.style.removeProperty('--liquid-intensity');
+          container.style.removeProperty('--liquid-hx');
+          container.style.removeProperty('--liquid-hy');
+          container.style.removeProperty('--liquid-c1');
+          container.style.removeProperty('--liquid-c2');
+          container.style.removeProperty('--liquid-c3');
+        }
+        __liquidBackgroundState = null;
+      };
 
       window.__initGradientSpheresParticles = function() {
         const particlesContainer = document.getElementById('particles-container');

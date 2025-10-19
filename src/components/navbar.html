@@ -205,6 +205,15 @@
                 <div class="text-xs opacity-60 px-3 mb-1">Animated</div>
               </li>
               <li>
+                <button onclick="__setBackground('liquid')" class="flex w-full items-center gap-2 px-3 py-1.5 rounded-lg transition-all hover:shadow-sm bg-item" data-bg="liquid">
+                  <span class="text-lg">🌊</span>
+                  <span class="flex-1 text-left text-sm">Liquid Glass (Default)</span>
+                  <svg class="h-3.5 w-3.5 flex-shrink-0 opacity-0 bg-checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                  </svg>
+                </button>
+              </li>
+              <li>
                 <button onclick="__setBackground('gradient-spheres')" class="flex w-full items-center gap-2 px-3 py-1.5 rounded-lg transition-all hover:shadow-sm bg-item" data-bg="gradient-spheres">
                   <span class="text-lg">🌈</span>
                   <span class="flex-1 text-left text-sm">Gradient Spheres</span>
@@ -540,7 +549,7 @@
     
     function updateActiveIndicators() {
       const currentTheme = document.documentElement.getAttribute('data-theme') || '[[THEME]]';
-      const currentBackground = localStorage.getItem('evo-background') || 'magic';
+      const currentBackground = localStorage.getItem('evo-background') || 'liquid';
 
       // Update theme checkmarks
       document.querySelectorAll('[data-set-theme]').forEach(btn => {
